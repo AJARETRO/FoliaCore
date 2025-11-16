@@ -104,7 +104,8 @@ public class ChatManager {
                         loadedMail.add(new Mail(sender, timestamp, message));
                     }
                 }
-                mailboxes.put(playerUUID, loadedMail);
+                // BUGFIX 1: Wrap the loaded list to make it thread-safe
+                mailboxes.put(playerUUID, Collections.synchronizedList(loadedMail));
             } catch (Exception e) {
                 plugin.getLogger().warning("Could not load mail for invalid UUID: " + key);
             }
@@ -131,12 +132,15 @@ public class ChatManager {
                 List<Map<String, Object>> serializedMail = new ArrayList<>();
                 List<Mail> mailList = mailboxes.get(uuid);
 
-                for (Mail mail : mailList) {
-                    Map<String, Object> mailMap = new LinkedHashMap<>();
-                    mailMap.put("sender", mail.sender().toString());
-                    mailMap.put("timestamp", mail.timestamp());
-                    mailMap.put("message", mail.message());
-                    serializedMail.add(mailMap);
+                // We must synchronize on the list when iterating to prevent errors
+                synchronized (mailList) {
+                    for (Mail mail : mailList) {
+                        Map<String, Object> mailMap = new LinkedHashMap<>();
+                        mailMap.put("sender", mail.sender().toString());
+                        mailMap.put("timestamp", mail.timestamp());
+                        mailMap.put("message", mail.message());
+                        serializedMail.add(mailMap);
+                    }
                 }
                 dataConfig.set("mail." + uuid.toString(), serializedMail);
             }
@@ -212,7 +216,8 @@ public class ChatManager {
 
     public void sendMail(UUID sender, UUID target, String message) {
         Mail mail = new Mail(sender, message);
-        List<Mail> mailList = mailboxes.computeIfAbsent(target, k -> new ArrayList<>());
+        // BUGFIX 2: Ensure the new list created is thread-safe
+        List<Mail> mailList = mailboxes.computeIfAbsent(target, k -> Collections.synchronizedList(new ArrayList<>()));
         mailList.add(mail);
         saveDataAsync();
     }

@@ -69,6 +69,6 @@ permissions:
   foliacore.mail.read:
     description: Allows reading mail.
     default: true
-  foliacsore.mail.clear:
+  foliacore.mail.clear:
     description: Allows clearing your mailbox.
     default: true

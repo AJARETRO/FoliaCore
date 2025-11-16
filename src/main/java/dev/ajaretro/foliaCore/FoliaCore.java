@@ -4,6 +4,7 @@ import dev.ajaretro.foliaCore.commands.*;
 import dev.ajaretro.foliaCore.listeners.ChatListener;
 import dev.ajaretro.foliaCore.listeners.MailListener;
 import dev.ajaretro.foliaCore.managers.ChatManager;
+import dev.ajaretro.foliaCore.managers.TeleportManager;
 import dev.ajaretro.foliaCore.utils.Messenger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -13,6 +14,7 @@ public final class FoliaCore extends JavaPlugin {
 
     private static FoliaCore instance;
     private ChatManager chatManager;
+    private TeleportManager teleportManager;
     private Messenger messenger;
 
     @Override
@@ -39,11 +41,15 @@ public final class FoliaCore extends JavaPlugin {
         chatManager = new ChatManager(this);
         chatManager.load();
 
+        teleportManager = new TeleportManager(this);
+        teleportManager.load();
+
         this.messenger = new Messenger("&l[ &4AJA_RETRO/&3FoliaCore&f ]");
     }
 
     private void saveManagers() {
         chatManager.saveData();
+        teleportManager.saveData();
     }
 
     private void loadListeners() {
@@ -71,6 +77,10 @@ public final class FoliaCore extends JavaPlugin {
 
     public ChatManager getChatManager() {
         return chatManager;
+    }
+
+    public TeleportManager getTeleportManager() {
+        return teleportManager;
     }
 
     public Messenger getMessenger() {
