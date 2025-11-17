@@ -1,18 +1,15 @@
-
-
 # FoliaCore
 
-**The Native, Thread-Safe Essentials Suite for Folia Servers.**
 
 -----
 
 Hey there. So, you're running a Folia server? That's awesome. You're on the cutting edge, but you've probably realized it breaks *everything*.
 
-Your old "essentials" plugin (like EssentialsX) is built on a single "main thread." The second you run it on Folia, it will cause crashes, data corruption, and lag. Other "Folia-compatible" plugins are often just quick patches, not true fixes.
+Your old "essentials" plugin (like EssentialsX) is built on a single "main thread". The second you run it on Folia, it will cause crashes, data corruption, and lag. Other "Folia-compatible" plugins are often just quick patches, not true fixes.
 
 **FoliaCore is not a patch. It's a from-scratch replacement.**
 
-We built this plugin with a "Folia-first" design. We use Folia's native schedulers for *everything*. The result? A rock-solid, thread-safe core plugin that will **never** lag your server just because someone saved a home or sent a TPA request.
+We built this plugin with a "Folia-first" design. We use Folia's native schedulers for *everything*. The result? A rock-solid, thread-safe core plugin that will **never** lag your server just because a player saved their home or sent a TPA request.
 
 ## Why FoliaCore is Better (The Technical Facts)
 
@@ -21,12 +18,12 @@ We're not just another essentials plugin. We are an architectural upgrade.
 | Feature | FoliaCore (Our Code) | EssentialsX / CMI | `Essentials-Folia` (Fork) | `zEssentials` (Paid) |
 | :--- | :--- | :--- | :--- | :--- |
 | **Threading Model** | **Folia-Native.** Uses `EntityScheduler` & `RegionScheduler` for all tasks. 100% thread-safe. | **Single-Threaded.** Incompatible. Will crash, stall, or corrupt data on Folia. | **Patched Legacy Code.** Still built on a single-thread mindset. Risky. | **Folia-Compatible.** Uses schedulers, but as a patch to a Paper design. |
-| **Data Saving (Performance)** | **Asynchronous YAML.** All file saves (`/sethome`, `/mute`) use the `AsyncScheduler`. **Guarantees zero tick-skips.** | **Synchronous YAML.** Pauses the entire server to write to a file, causing lag spikes. | **Synchronous YAML.** Inherits the same lag-inducing file saving. | **Requires External MySQL.** The developer *warns* not to use its default file storage, forcing you to set up a database. |
+| **Data Saving (Performance)** | **Asynchronous YAML.** All file saves (`/sethome`, `/mute`) use the `AsyncScheduler`. **Guarantees zero tick-skips**. | **Synchronous YAML.** Pauses the entire server to write to a file, causing lag spikes. | **Synchronous YAML.** Inherits the same lag-inducing file saving. | **Requires External MySQL.** The developer *warns* not to use its default file storage, forcing you to set up a database. |
 | **Simplicity** | **True "Drag & Drop".** Our async saving is fast *and* simple. No setup needed. | N/A (Doesn't work) | Just drag-and-drop, but has the lag problems above. | **Complex Setup.** Requires a database and multiple dependencies (like `zMenu`) to get full use. |
 | **API for Devs** | **Clean Singleton API.** Built from day one to be an API. All managers are thread-safe. | Messy, static-heavy. Unsafe to call from other plugins. | Messy. Still not thread-safe. | Good, but built around its own ecosystem. |
 | **The Price** | **100% Free & Open Source.** (We're backed by sponsors\!) | Free | Free | **Paid.** |
 
-## Features (Modules)
+## Features (v1.0-ALPHA)
 
   * **Chat Module:** Mute, Unmute, Block, Unblock, Msg, Reply.
   * **Mail Module:** Offline `mail` system (send, read, clear).
@@ -35,13 +32,14 @@ We're not just another essentials plugin. We are an architectural upgrade.
   * **Home Module:** Permission-based homes (`/sethome`, `/home`, `/delhome`, `/homes`).
   * **Spawn Module:** `/setspawn` and `/spawn`.
   * **Team System:** Create, invite, kick, and manage teams.
-  * **Kit System:** Full GUI-based kit system with cooldowns.
+  * **Kit System:** Full GUI-based kit system with admin commands.
   * **Warp System:** Admin-defined, permission-based server warps.
   * **GPS System:** Player-based waypoints (`/marker`) with an action-bar compass (`/gps`).
+  * **Economy Module:** Vault integration for `/balance`, `/pay`, and `/eco`.
 
 -----
 
-## Commands & Permissions (The "How-To")
+## Commands & Permissions
 
 ### Chat & Mail Module
 
@@ -58,11 +56,17 @@ We're not just another essentials plugin. We are an architectural upgrade.
   * `/unblock <player>` - Unblocks a player.
       * `foliacore.unblock` (default: true)
   * `/mail <send|read|clear>` - Manages offline mail.
-      * `foliacore.mail`, `foliacore.mail.send`, `foliacore.mail.read`, `foliacore.mail.clear` (default: true)
+      * `foliacore.mail` (default: true)
+      * `foliacore.mail.send` (default: true)
+      * `foliacore.mail.read` (default: true)
+      * `foliacore.mail.clear` (default: true)
   * `/chat <global|world|regional>` - Toggles your chat mode.
-      * `foliacore.chat`, `foliacore.chat.global`, `foliacore.chat.world`, `foliacore.chat.regional` (default: true)
+      * `foliacore.chat` (default: true)
+      * `foliacore.chat.global` (default: true)
+      * `foliacore.chat.world` (default: true)
+      * `foliacore.chat.regional` (default: true)
 
-### Teleportation Module
+### Teleportation & Spawn Module
 
   * `/tpa <player>` - Sends a teleport request to a player.
       * `foliacore.tpa` (default: true)
@@ -84,17 +88,17 @@ We're not just another essentials plugin. We are an architectural upgrade.
       * `foliacore.homes.default` - Gives the player 1 home.
       * `foliacore.homes.5` - Gives the player 5 homes.
       * `foliacore.homes.unlimited` - Gives unlimited homes.
-
-### Spawn & Warp Module
-
   * `/setspawn` - Sets the server's main spawn.
       * `foliacore.setspawn` (default: op)
   * `/spawn` - Teleports you to the server spawn.
       * `foliacore.spawn` (default: true)
+
+### Warp Module
+
   * `/setwarp <name>` - Creates a server-wide warp.
       * `foliacore.setwarp` (default: op)
   * `/delwarp <name>` - Deletes a server warp.
-      * `foliacore.delwarp` (default: op)
+      * `foliacgcore.delwarp` (default: op)
   * `/warp <name>` - Teleports to a warp.
       * `foliacore.warp` (default: true)
       * `foliacore.warp.<name>` (for specific warp perms)
@@ -142,6 +146,16 @@ We're not just another essentials plugin. We are an architectural upgrade.
   * `/gps <name|off>` - Starts/stops the action bar compass to a marker.
       * `foliacore.gps` (default: true)
 
+### Economy Module
+
+  * `/balance [player]` - Checks your or another's balance.
+      * `foliacore.balance.self` (default: true)
+      * `foliacore.balance.other` (default: op)
+  * `/pay <player> <amount>` - Pays another player.
+      * `foliacore.pay` (default: true)
+  * `/eco <give|take|set> <player> <amount>` - Admin economy command.
+      * `foliacore.eco` (default: op)
+
 -----
 
 ## For Developers (Our API)
@@ -175,11 +189,6 @@ public class MyPlugin extends JavaPlugin {
 ## Installation
 
 1.  Make sure you are running a **Paper 1.20+** or **Folia** server.
-2.  Download the `FoliaCore.jar` from our [Releases Page](https://github.com/AJARETRO/FoliaCore/releases).
+2.  Download the `FoliaCore.jar` from our [Releases Page](https://www.google.com/search?q=https://github.com/AJARETRO/FoliaCore/releases).
 3.  Drop it in your `/plugins` folder.
 4.  Restart your server. (Do not use `/reload`\!)
-
-
-**This plugin is proudly developed and tested on hardware from:**
-
-`[ YOUR SPONSOR'S BANNER HERE ]`
