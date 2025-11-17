@@ -1,21 +1,19 @@
 package dev.ajaretro.foliaCore.commands;
 
 import dev.ajaretro.foliaCore.FoliaCore;
-import dev.ajaretro.foliaCore.data.Home;
 import dev.ajaretro.foliaCore.managers.TeleportManager;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class HomeCommand implements CommandExecutor {
+public class TpDenyCommand implements CommandExecutor {
 
     private final FoliaCore plugin;
     private final TeleportManager tm;
 
-    public HomeCommand(FoliaCore plugin) {
+    public TpDenyCommand(FoliaCore plugin) {
         this.plugin = plugin;
         this.tm = plugin.getTeleportManager();
     }
@@ -27,27 +25,28 @@ public class HomeCommand implements CommandExecutor {
             return true;
         }
 
-        if (!player.hasPermission("foliacore.home")) {
+        if (!player.hasPermission("foliacore.tpdeny")) {
             plugin.getMessenger().sendError(player, "You do not have permission to use this command.");
             return true;
         }
 
-        String homeName = (args.length == 0) ? "home" : args[0];
-
-        Home home = tm.getHome(player.getUniqueId(), homeName);
-        if (home == null) {
-            plugin.getMessenger().sendError(player, "Home '" + ChatColor.GOLD + homeName + ChatColor.RED + "' not found.");
+        TeleportManager.TeleportRequest request = tm.getTpaRequest(player.getUniqueId());
+        if (request == null) {
+            plugin.getMessenger().sendError(player, "You have no pending teleport requests.");
             return true;
         }
 
-        Location location = home.toLocation();
-        if (location == null) {
-            plugin.getMessenger().sendError(player, "The world for this home is not loaded or does not exist!");
-            return true;
+        tm.removeTpaRequest(player.getUniqueId());
+
+        plugin.getMessenger().sendSuccess(player, "Teleport request denied.");
+
+        Player requester = Bukkit.getPlayer(request.requester());
+        if (requester != null && requester.isOnline()) {
+            requester.getScheduler().run(plugin, (task) -> {
+                plugin.getMessenger().sendError(requester, player.getName() + " denied your teleport request.");
+            }, null);
         }
 
-        String successMessage = "Teleported to '" + ChatColor.GOLD + homeName + ChatColor.GREEN + "'.";
-        tm.startTeleport(player, location, successMessage);
         return true;
     }
 }

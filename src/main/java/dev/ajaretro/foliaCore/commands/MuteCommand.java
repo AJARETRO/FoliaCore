@@ -57,7 +57,9 @@ public class MuteCommand implements CommandExecutor {
 
         Player onlineTarget = target.getPlayer();
         if (onlineTarget != null) {
-            plugin.getMessenger().sendError(onlineTarget, "You have been " + durationFormatted + " muted.");
+            onlineTarget.getScheduler().run(plugin, (task) -> {
+                plugin.getMessenger().sendError(onlineTarget, "You have been " + durationFormatted + " muted.");
+            }, null);
         }
 
         return true;

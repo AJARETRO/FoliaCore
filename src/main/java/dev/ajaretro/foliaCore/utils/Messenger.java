@@ -1,5 +1,9 @@
 package dev.ajaretro.foliaCore.utils;
 
+// Import the new serializer
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer; // <-- Use this import
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -25,5 +29,11 @@ public class Messenger {
 
     public String getPrefix() {
         return prefix;
+    }
+
+    // --- THIS IS THE UPDATED METHOD ---
+    public String componentToString(Component component) {
+        // Use .plainText() instead of .plain()
+        return PlainTextComponentSerializer.plainText().serialize(component);
     }
 }

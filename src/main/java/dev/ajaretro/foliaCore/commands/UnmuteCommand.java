@@ -40,7 +40,9 @@ public class UnmuteCommand implements CommandExecutor {
 
         Player onlineTarget = target.getPlayer();
         if (onlineTarget != null) {
-            plugin.getMessenger().sendSuccess(onlineTarget, "You have been unmuted.");
+            onlineTarget.getScheduler().run(plugin, (task) -> {
+                plugin.getMessenger().sendSuccess(onlineTarget, "You have been unmuted.");
+            }, null);
         }
 
         return true;

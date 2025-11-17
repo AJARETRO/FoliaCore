@@ -1,0 +1,5 @@
+# The server's main spawn location
+spawn: null
+
+# Player homes
+homes: {}

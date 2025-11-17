@@ -1,5 +1,5 @@
 name: FoliaCore
-version: '1.0-SNAPSHOT'
+version: '1.0-ALPHA'
 main: dev.ajaretro.foliaCore.FoliaCore
 api-version: '1.21'
 prefix: "&l[ &4AJA_RETRO/&3FoliaCore&f ]"
@@ -9,12 +9,45 @@ website: ajaretro.dev
 folia-supported: true
 
 commands:
-  # ... (Chat & Mail commands) ...
+  # Chat & Mail Module
+  mute:
+    description: Mutes a player for a specified amount of time.
+    usage: /<command> <player> <time|permanent>
+    permission: foliacore.mute
+  unmute:
+    description: Unmutes a player.
+    usage: /<command> <player>
+    permission: foliacore.unmute
+  msg:
+    description: Sends a private message to another player.
+    usage: /<command> <player> <message...>
+    aliases: [ m, tell, w ]
+    permission: foliacore.msg
+  reply:
+    description: Replies to the last player who messaged you.
+    usage: /<command> <message...>
+    aliases: [ r ]
+    permission: foliacore.reply
+  block:
+    description: Blocks a player from messaging you.
+    usage: /<command> <player>
+    permission: foliacore.block
+  unblock:
+    description: Unblocks a player.
+    usage: /<command> <player>
+    permission: foliacore.unblock
+  mail:
+    description: Manages your offline mail.
+    usage: /<command> <send|read|clear>
+    permission: foliacore.mail
+    aliases: [ email ]
   chat:
     description: Changes your chat mode.
     usage: /<command> <global|world|regional>
     permission: foliacore.chat
     aliases: [ ch ]
+
+  # Teleportation & Spawn Module
   sethome:
     description: Sets a home at your location.
     usage: /<command> [name]
@@ -31,12 +64,127 @@ commands:
     description: Lists all your homes.
     usage: /<command>
     permission: foliacore.homes.list
+  tpa:
+    description: Sends a teleport request to another player.
+    usage: /<command> <player>
+    permission: foliacore.tpa
+  tpahere:
+    description: Requests another player to teleport to you.
+    usage: /<command> <player>
+    permission: foliacore.tpahere
+  tpaccept:
+    description: Accepts a pending teleport request.
+    usage: /<command>
+    permission: foliacore.tpaccept
+  tpdeny:
+    description: Denies a pending teleport request.
+    usage: /<command>
+    permission: foliacore.tpdeny
+  setspawn:
+    description: Sets the server's spawn location.
+    usage: /<command>
+    permission: foliacore.setspawn
+  spawn:
+    description: Teleports you to the server spawn.
+    usage: /<command>
+    permission: foliacore.spawn
+
+  # Team Module
+  team:
+    description: Manages your team.
+    usage: /<command> <subcommand>
+    permission: foliacore.team
+    aliases: [ t, party ]
+
+  # Kit Module
+  kit:
+    description: Opens the kit GUI or redeems a kit.
+    usage: /<command> [name]
+    permission: foliacore.kit
+  createkit:
+    description: Creates a new kit from your inventory.
+    usage: /<command> <name> <cooldown>
+    permission: foliacore.kit.admin
+  delkit:
+    description: Deletes a kit.
+    usage: /<command> <name>
+    permission: foliacore.kit.admin
+
+  # Warp Module
+  setwarp:
+    description: Creates a new server warp.
+    usage: /<command> <name>
+    permission: foliacore.setwarp
+  delwarp:
+    description: Deletes a server warp.
+    usage: /<command> <name>
+    permission: foliacore.delwarp
+  warp:
+    description: Teleports to a server warp.
+    usage: /<command> <name>
+    permission: foliacore.warp
+  warps:
+    description: Lists all available warps.
+    usage: /<command>
+    permission: foliacore.warps.list
+    aliases: [ warplist ]
+
+  # GPS Module
+  marker:
+    description: Manages your personal markers.
+    usage: /<command> <set|del|list>
+    permission: foliacore.marker
+  gps:
+    description: Navigates to a saved marker.
+    usage: /<command> <name|off>
+    permission: foliacore.gps
 
 permissions:
-  # ... (Chat & Mail permissions) ...
+  # Chat & Mail Permissions
+  foliacore.mute:
+    description: Allows muting players.
+    default: op
+  foliacore.unmute:
+    description: Allows unmuting players.
+    default: op
+  foliacore.msg:
+    description: Allows sending private messages.
+    default: true
+  foliacore.reply:
+    description: Allows replying to private messages.
+    default: true
+  foliacore.block:
+    description: Allows blocking players.
+    default: true
+  foliacore.unblock:
+    description: Allows unblocking players.
+    default: true
+  foliacore.mail:
+    description: Base permission for the /mail command.
+    default: true
+  foliacore.mail.send:
+    description: Allows sending mail.
+    default: true
+  foliacore.mail.read:
+    description: Allows reading mail.
+    default: true
+  foliacore.mail.clear:
+    description: Allows clearing your mailbox.
+    default: true
+  foliacore.chat:
+    description: Base permission for the /chat command.
+    default: true
+  foliacore.chat.global:
+    description: Allows switching to GLOBAL chat.
+    default: true
+  foliacore.chat.world:
+    description: Allows switching to WORLD chat.
+    default: true
   foliacore.chat.regional:
     description: Allows switching to REGIONAL chat.
     default: true
+
+  # Teleportation & Spawn Permissions
   foliacore.sethome:
     description: Allows setting a home.
     default: true
@@ -61,3 +209,89 @@ permissions:
   foliacore.homes.10:
     description: Gives the player 10 homes.
     default: false
+  foliacore.tpa:
+    description: Allows sending /tpa requests.
+    default: true
+  foliacore.tpahere:
+    description: Allows sending /tpahere requests.
+    default: true
+  foliacore.tpaccept:
+    description: Allows accepting teleport requests.
+    default: true
+  foliacore.tpdeny:
+    description: Allows denying teleport requests.
+    default: true
+  foliacore.setspawn:
+    description: Allows setting the server spawn.
+    default: op
+  foliacore.spawn:
+    description: Allows teleporting to spawn.
+    default: true
+
+  # Team Permissions
+  foliacore.team:
+    description: Base permission for the /team command.
+    default: true
+  foliacore.team.create:
+    description: Allows creating a team.
+    default: true
+  foliacore.team.disband:
+    description: Allows disbanding a team (owner only).
+    default: true
+  foliacore.team.invite:
+    description: Allows inviting players to a team.
+    default: true
+  foliacore.team.accept:
+    description: Allows accepting a team invite.
+    default: true
+  foliacore.team.leave:
+    description: Allows leaving a team.
+    default: true
+  foliacore.team.kick:
+    description: Allows kicking players from a team.
+    default: true
+
+  # Kit Permissions
+  foliacore.kit:
+    description: Allows using the /kit command and GUI.
+    default: true
+  foliacore.kit.starter:
+    description: Allows redeeming the 'starter' kit.
+    default: true
+  foliacore.kit.admin:
+    description: Allows creating and deleting kits.
+    default: op
+
+  # Warp Permissions
+  foliacore.setwarp:
+    description: Allows setting server warps.
+    default: op
+  foliacore.delwarp:
+    description: Allows deleting server warps.
+    default: op
+  foliacore.warp:
+    description: Allows using the base /warp command.
+    default: true
+  foliacore.warp.all:
+    description: Allows using all warps without specific permissions.
+    default: op
+  foliacore.warps.list:
+    description: Allows listing available warps.
+    default: true
+
+  # GPS Permissions
+  foliacore.marker:
+    description: Base permission for /marker.
+    default: true
+  foliacore.marker.set:
+    description: Allows setting markers.
+    default: true
+  foliacore.marker.delete:
+    description: Allows deleting markers.
+    default: true
+  foliacore.marker.list:
+    description: Allows listing markers.
+    default: true
+  foliacore.gps:
+    description: Allows using the /gps command.
+    default: true

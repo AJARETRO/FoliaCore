@@ -1,11 +1,8 @@
 package dev.ajaretro.foliaCore;
 
 import dev.ajaretro.foliaCore.commands.*;
-import dev.ajaretro.foliaCore.listeners.ChatListener;
-import dev.ajaretro.foliaCore.listeners.MailListener;
-import dev.ajaretro.foliaCore.listeners.PlayerMoveListener;
-import dev.ajaretro.foliaCore.managers.ChatManager;
-import dev.ajaretro.foliaCore.managers.TeleportManager;
+import dev.ajaretro.foliaCore.listeners.*;
+import dev.ajaretro.foliaCore.managers.*; // Import all managers
 import dev.ajaretro.foliaCore.utils.Messenger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -16,6 +13,10 @@ public final class FoliaCore extends JavaPlugin {
     private static FoliaCore instance;
     private ChatManager chatManager;
     private TeleportManager teleportManager;
+    private TeamManager teamManager;
+    private KitManager kitManager;
+    private WarpManager warpManager;
+    private MarkerManager markerManager;
     private Messenger messenger;
 
     @Override
@@ -45,18 +46,36 @@ public final class FoliaCore extends JavaPlugin {
         teleportManager = new TeleportManager(this);
         teleportManager.load();
 
+        teamManager = new TeamManager(this);
+        teamManager.load();
+
+        kitManager = new KitManager(this);
+        kitManager.load();
+
+        warpManager = new WarpManager(this);
+        warpManager.load();
+
+        markerManager = new MarkerManager(this);
+        markerManager.load();
+
         this.messenger = new Messenger("&l[ &4AJA_RETRO/&3FoliaCore&f ]");
     }
 
     private void saveManagers() {
         chatManager.saveData();
         teleportManager.saveData();
+        teamManager.saveData();
+        kitManager.saveData();
+        warpManager.saveData();
+        markerManager.saveData();
     }
 
     private void loadListeners() {
         getServer().getPluginManager().registerEvents(new ChatListener(this), this);
         getServer().getPluginManager().registerEvents(new MailListener(this), this);
         getServer().getPluginManager().registerEvents(new PlayerMoveListener(this), this);
+        getServer().getPluginManager().registerEvents(new KitGUIListener(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerGpsListener(this), this);
     }
 
     private void loadCommands() {
@@ -72,6 +91,23 @@ public final class FoliaCore extends JavaPlugin {
         getCommand("home").setExecutor(new HomeCommand(this));
         getCommand("delhome").setExecutor(new DelHomeCommand(this));
         getCommand("homes").setExecutor(new HomesCommand(this));
+        getCommand("tpa").setExecutor(new TpaCommand(this));
+        getCommand("tpahere").setExecutor(new TpaHereCommand(this));
+        getCommand("tpaccept").setExecutor(new TpAcceptCommand(this));
+        getCommand("tpdeny").setExecutor(new TpDenyCommand(this));
+        getCommand("setspawn").setExecutor(new SetSpawnCommand(this));
+        getCommand("spawn").setExecutor(new SpawnCommand(this));
+        getCommand("team").setExecutor(new TeamCommand(this));
+        getCommand("kit").setExecutor(new KitCommand(this));
+        getCommand("createkit").setExecutor(new CreateKitCommand(this));
+        getCommand("delkit").setExecutor(new DeleteKitCommand(this));
+        getCommand("marker").setExecutor(new MarkerCommand(this));
+        getCommand("gps").setExecutor(new GpsCommand(this));
+        getCommand("setwarp").setExecutor(new SetWarpCommand(this));
+        getCommand("delwarp").setExecutor(new DelWarpCommand(this));
+        getCommand("warp").setExecutor(new WarpCommand(this));
+        getCommand("warps").setExecutor(new WarpsCommand(this));
+        // -------------
     }
 
     private void sendBloodRedMessage(String message) {
@@ -88,6 +124,21 @@ public final class FoliaCore extends JavaPlugin {
 
     public TeleportManager getTeleportManager() {
         return teleportManager;
+    }
+
+    public TeamManager getTeamManager() {
+        return teamManager;
+    }
+
+    public KitManager getKitManager() {
+        return kitManager;
+    }
+
+    public WarpManager getWarpManager() {
+        return warpManager;
+    }
+    public MarkerManager getMarkerManager() {
+        return markerManager;
     }
 
     public Messenger getMessenger() {

@@ -6,7 +6,7 @@
 
     <groupId>dev.ajaretro</groupId>
     <artifactId>folia_core</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-APLHA</version>
     <packaging>jar</packaging>
 
     <name>folia_core</name>
