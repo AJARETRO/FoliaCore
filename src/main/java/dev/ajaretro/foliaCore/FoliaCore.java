@@ -2,7 +2,7 @@ package dev.ajaretro.foliaCore;
 
 import dev.ajaretro.foliaCore.commands.*;
 import dev.ajaretro.foliaCore.listeners.*;
-import dev.ajaretro.foliaCore.managers.*; // Import all managers
+import dev.ajaretro.foliaCore.managers.*;
 import dev.ajaretro.foliaCore.utils.Messenger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,6 +17,7 @@ public final class FoliaCore extends JavaPlugin {
     private KitManager kitManager;
     private WarpManager warpManager;
     private MarkerManager markerManager;
+    private EconomyManager economyManager;
     private Messenger messenger;
 
     @Override
@@ -57,6 +58,9 @@ public final class FoliaCore extends JavaPlugin {
 
         markerManager = new MarkerManager(this);
         markerManager.load();
+
+        economyManager = new EconomyManager(this);
+        economyManager.load();
 
         this.messenger = new Messenger("&l[ &4AJA_RETRO/&3FoliaCore&f ]");
     }
@@ -107,6 +111,11 @@ public final class FoliaCore extends JavaPlugin {
         getCommand("delwarp").setExecutor(new DelWarpCommand(this));
         getCommand("warp").setExecutor(new WarpCommand(this));
         getCommand("warps").setExecutor(new WarpsCommand(this));
+
+        // --- ADDED ---
+        getCommand("balance").setExecutor(new BalanceCommand(this));
+        getCommand("pay").setExecutor(new PayCommand(this));
+        getCommand("eco").setExecutor(new EcoCommand(this));
         // -------------
     }
 
@@ -139,6 +148,10 @@ public final class FoliaCore extends JavaPlugin {
     }
     public MarkerManager getMarkerManager() {
         return markerManager;
+    }
+
+    public EconomyManager getEconomyManager() {
+        return economyManager;
     }
 
     public Messenger getMessenger() {

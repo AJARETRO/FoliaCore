@@ -1,5 +1,5 @@
 name: FoliaCore
-version: '1.0-ALPHA'
+version: '1.0-PRE-RELEASE'
 main: dev.ajaretro.foliaCore.FoliaCore
 api-version: '1.21'
 prefix: "&l[ &4AJA_RETRO/&3FoliaCore&f ]"
@@ -7,6 +7,7 @@ authors: [ AJA RETRO ]
 description: The essential plugin suite, rebuilt natively for Folia.
 website: ajaretro.dev
 folia-supported: true
+softdepend: [ Vault ]
 
 commands:
   # Chat & Mail Module
@@ -138,6 +139,21 @@ commands:
     description: Navigates to a saved marker.
     usage: /<command> <name|off>
     permission: foliacore.gps
+
+  # Economy Module
+  balance:
+    description: Checks your balance.
+    usage: /<command> [player]
+    aliases: [ bal, money ]
+    permission: foliacore.balance.self
+  pay:
+    description: Pays another player.
+    usage: /<command> <player> <amount>
+    permission: foliacore.pay
+  eco:
+    description: Admin economy command.
+    usage: /<command> <give|take|set> <player> <amount>
+    permission: foliacore.eco
 
 permissions:
   # Chat & Mail Permissions
@@ -295,3 +311,18 @@ permissions:
   foliacore.gps:
     description: Allows using the /gps command.
     default: true
+
+  # --- FIX 2: These permissions were indented. ---
+  # --- They must be at the root level. ---
+  foliacore.balance.self:
+    description: Allows checking your own balance.
+    default: true
+  foliacore.balance.other:
+    description: Allows checking other players' balances.
+    default: op
+  foliacore.pay:
+    description: Allows paying other players.
+    default: true
+  foliacore.eco:
+    description: Allows using the admin /eco command.
+    default: op
