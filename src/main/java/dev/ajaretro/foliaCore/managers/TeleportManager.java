@@ -2,6 +2,7 @@ package dev.ajaretro.foliaCore.managers;
 
 import dev.ajaretro.foliaCore.FoliaCore;
 import dev.ajaretro.foliaCore.data.Home;
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -20,9 +21,9 @@ public class TeleportManager {
 
     private static TeleportManager instance;
     private final FoliaCore plugin;
-    private static final Pattern PERM_PATTERN = Pattern.compile("foliacore\\.homes\\.(\\d+|unlimited)");
 
     private final ConcurrentHashMap<UUID, Map<String, Home>> playerHomes;
+    private final ConcurrentHashMap<UUID, ScheduledTask> pendingTeleports;
 
     private File dataFile;
     private FileConfiguration dataConfig;
@@ -30,6 +31,7 @@ public class TeleportManager {
     public TeleportManager(FoliaCore plugin) {
         this.plugin = plugin;
         this.playerHomes = new ConcurrentHashMap<>();
+        this.pendingTeleports = new ConcurrentHashMap<>();
     }
 
     public static TeleportManager getInstance() {
@@ -60,7 +62,6 @@ public class TeleportManager {
 
                 Map<String, Home> homes = new ConcurrentHashMap<>();
                 for (String homeName : playerHomeSection.getKeys(false)) {
-                    // THE FIX: We get the ConfigurationSection for the home, then get all its values.
                     ConfigurationSection homeSection = playerHomeSection.getConfigurationSection(homeName);
                     if (homeSection == null) continue;
 
@@ -134,13 +135,13 @@ public class TeleportManager {
             String perm = permInfo.getPermission();
             if (perm.startsWith("foliacore.homes.")) {
                 try {
-                    String numString = perm.substring(16); // "foliacore.homes." is 16 chars long
+                    String numString = perm.substring(16);
                     int num = Integer.parseInt(numString);
                     if (num > max) {
                         max = num;
                     }
                 } catch (NumberFormatException e) {
-                    // Ignore, not a number permission
+                    // Ignore
                 }
             }
         }
@@ -150,5 +151,26 @@ public class TeleportManager {
         }
 
         return max;
+    }
+
+    public void startTeleport(Player player, ScheduledTask task) {
+        cancelTeleport(player);
+        pendingTeleports.put(player.getUniqueId(), task);
+    }
+
+    public void cancelTeleport(Player player) {
+        ScheduledTask existingTask = pendingTeleports.remove(player.getUniqueId());
+        if (existingTask != null && !existingTask.isCancelled()) {
+            existingTask.cancel();
+            plugin.getMessenger().sendError(player, "Teleport cancelled.");
+        }
+    }
+
+    public void completeTeleport(UUID uuid) {
+        pendingTeleports.remove(uuid);
+    }
+
+    public boolean isTeleporting(UUID uuid) {
+        return pendingTeleports.containsKey(uuid);
     }
 }

@@ -9,35 +9,55 @@ website: ajaretro.dev
 folia-supported: true
 
 commands:
-  # ... (all your existing commands) ...
-  mail:
-    description: Manages your offline mail.
-    usage: /<command> <send|read|clear>
-    permission: foliacore.mail
-    aliases: [ email ]
+  # ... (Chat & Mail commands) ...
   chat:
     description: Changes your chat mode.
     usage: /<command> <global|world|regional>
     permission: foliacore.chat
     aliases: [ ch ]
+  sethome:
+    description: Sets a home at your location.
+    usage: /<command> [name]
+    permission: foliacore.sethome
+  home:
+    description: Teleports to one of your homes.
+    usage: /<command> [name]
+    permission: foliacore.home
+  delhome:
+    description: Deletes one of your homes.
+    usage: /<command> <name>
+    permission: foliacore.delhome
+  homes:
+    description: Lists all your homes.
+    usage: /<command>
+    permission: foliacore.homes.list
 
 permissions:
-  # ... (all your existing permissions) ...
-  foliacore.mail.read:
-    description: Allows reading mail.
-    default: true
-  foliacore.mail.clear:
-    description: Allows clearing your mailbox.
-    default: true
-  foliacore.chat:
-    description: Base permission for the /chat command.
-    default: true
-  foliacore.chat.global:
-    description: Allows switching to GLOBAL chat.
-    default: true
-  foliacore.chat.world:
-    description: Allows switching to WORLD chat.
-    default: true
+  # ... (Chat & Mail permissions) ...
   foliacore.chat.regional:
     description: Allows switching to REGIONAL chat.
     default: true
+  foliacore.sethome:
+    description: Allows setting a home.
+    default: true
+  foliacore.home:
+    description: Allows teleporting to a home.
+    default: true
+  foliacore.delhome:
+    description: Allows deleting a home.
+    default: true
+  foliacore.homes.list:
+    description: Allows listing your homes.
+    default: true
+  foliacore.homes.default:
+    description: Gives the player 1 home.
+    default: true
+  foliacore.homes.unlimited:
+    description: Gives the player unlimited homes.
+    default: op
+  foliacore.homes.5:
+    description: Gives the player 5 homes.
+    default: false
+  foliacore.homes.10:
+    description: Gives the player 10 homes.
+    default: false

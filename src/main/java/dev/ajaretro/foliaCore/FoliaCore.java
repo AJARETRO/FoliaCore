@@ -3,6 +3,7 @@ package dev.ajaretro.foliaCore;
 import dev.ajaretro.foliaCore.commands.*;
 import dev.ajaretro.foliaCore.listeners.ChatListener;
 import dev.ajaretro.foliaCore.listeners.MailListener;
+import dev.ajaretro.foliaCore.listeners.PlayerMoveListener;
 import dev.ajaretro.foliaCore.managers.ChatManager;
 import dev.ajaretro.foliaCore.managers.TeleportManager;
 import dev.ajaretro.foliaCore.utils.Messenger;
@@ -55,6 +56,7 @@ public final class FoliaCore extends JavaPlugin {
     private void loadListeners() {
         getServer().getPluginManager().registerEvents(new ChatListener(this), this);
         getServer().getPluginManager().registerEvents(new MailListener(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerMoveListener(this), this);
     }
 
     private void loadCommands() {
@@ -66,6 +68,10 @@ public final class FoliaCore extends JavaPlugin {
         getCommand("unblock").setExecutor(new UnblockCommand(this));
         getCommand("mail").setExecutor(new MailCommand(this));
         getCommand("chat").setExecutor(new ChatCommand(this));
+        getCommand("sethome").setExecutor(new SetHomeCommand(this));
+        getCommand("home").setExecutor(new HomeCommand(this));
+        getCommand("delhome").setExecutor(new DelHomeCommand(this));
+        getCommand("homes").setExecutor(new HomesCommand(this));
     }
 
     private void sendBloodRedMessage(String message) {
