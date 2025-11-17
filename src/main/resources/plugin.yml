@@ -9,66 +9,35 @@ website: ajaretro.dev
 folia-supported: true
 
 commands:
-  mute:
-    description: Mutes a player for a specified amount of time.
-    usage: /<command> <player> <time|permanent>
-    permission: foliacore.mute
-  unmute:
-    description: Unmutes a player.
-    usage: /<command> <player>
-    permission: foliacore.unmute
-  msg:
-    description: Sends a private message to another player.
-    usage: /<command> <player> <message...>
-    aliases: [ m, tell, w ]
-    permission: foliacore.msg
-  reply:
-    description: Replies to the last player who messaged you.
-    usage: /<command> <message...>
-    aliases: [ r ]
-    permission: foliacore.reply
-  block:
-    description: Blocks a player from messaging you.
-    usage: /<command> <player>
-    permission: foliacore.block
-  unblock:
-    description: Unblocks a player.
-    usage: /<command> <player>
-    permission: foliacore.unblock
+  # ... (all your existing commands) ...
   mail:
     description: Manages your offline mail.
     usage: /<command> <send|read|clear>
     permission: foliacore.mail
     aliases: [ email ]
+  chat:
+    description: Changes your chat mode.
+    usage: /<command> <global|world|regional>
+    permission: foliacore.chat
+    aliases: [ ch ]
 
 permissions:
-  foliacore.mute:
-    description: Allows muting players.
-    default: op
-  foliacore.unmute:
-    description: Allows unmuting players.
-    default: op
-  foliacore.msg:
-    description: Allows sending private messages.
-    default: true
-  foliacore.reply:
-    description: Allows replying to private messages.
-    default: true
-  foliacore.block:
-    description: Allows blocking players.
-    default: true
-  foliacore.unblock:
-    description: Allows unblocking players.
-    default: true
-  foliacore.mail:
-    description: Base permission for the /mail command.
-    default: true
-  foliacore.mail.send:
-    description: Allows sending mail.
-    default: true
+  # ... (all your existing permissions) ...
   foliacore.mail.read:
     description: Allows reading mail.
     default: true
   foliacore.mail.clear:
     description: Allows clearing your mailbox.
+    default: true
+  foliacore.chat:
+    description: Base permission for the /chat command.
+    default: true
+  foliacore.chat.global:
+    description: Allows switching to GLOBAL chat.
+    default: true
+  foliacore.chat.world:
+    description: Allows switching to WORLD chat.
+    default: true
+  foliacore.chat.regional:
+    description: Allows switching to REGIONAL chat.
     default: true

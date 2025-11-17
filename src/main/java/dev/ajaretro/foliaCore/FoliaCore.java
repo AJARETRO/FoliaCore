@@ -65,6 +65,7 @@ public final class FoliaCore extends JavaPlugin {
         getCommand("block").setExecutor(new BlockCommand(this));
         getCommand("unblock").setExecutor(new UnblockCommand(this));
         getCommand("mail").setExecutor(new MailCommand(this));
+        getCommand("chat").setExecutor(new ChatCommand(this));
     }
 
     private void sendBloodRedMessage(String message) {
