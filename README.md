@@ -113,7 +113,7 @@ public class MyPlugin extends JavaPlugin {
         double bal = core.getEconomyManager().getBalance(player);
     }
 }
-```~~~~
+```
 ## 🤝 Support & Links
 
 * **Website:** [ajaretro.dev](https://ajaretro.dev)
