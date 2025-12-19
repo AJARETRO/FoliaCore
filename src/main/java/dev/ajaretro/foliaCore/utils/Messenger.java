@@ -1,39 +1,43 @@
 package dev.ajaretro.foliaCore.utils;
 
-// Import the new serializer
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer; // <-- Use this import
-
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
+/**
+ * Centralized messaging utility.
+ * Handles legacy color code serialization and standardizes plugin feedback.
+ */
 public class Messenger {
 
     private final String prefix;
+    // Legacy serializer required for standard Minecraft color codes (&a, &b, etc.)
+    private final LegacyComponentSerializer serializer;
 
     public Messenger(String prefix) {
         this.prefix = ChatColor.translateAlternateColorCodes('&', prefix) + " " + ChatColor.RESET;
+        this.serializer = LegacyComponentSerializer.legacyAmpersand();
     }
 
-    public void sendMessage(CommandSender sender, String message) {
+    public void sendMessage(@NotNull CommandSender sender, String message) {
         sender.sendMessage(prefix + ChatColor.WHITE + message);
     }
 
-    public void sendError(CommandSender sender, String errorMessage) {
+    public void sendError(@NotNull CommandSender sender, String errorMessage) {
         sender.sendMessage(prefix + ChatColor.RED + errorMessage);
     }
 
-    public void sendSuccess(CommandSender sender, String successMessage) {
+    public void sendSuccess(@NotNull CommandSender sender, String successMessage) {
         sender.sendMessage(prefix + ChatColor.GREEN + successMessage);
     }
 
-    public String getPrefix() {
-        return prefix;
-    }
-
-    // --- THIS IS THE UPDATED METHOD ---
+    /**
+     * Serializes an Adventure Component into a legacy String.
+     * Crucial for compatibility with plugins relying on String-based comparisons (e.g. GUI listeners).
+     */
     public String componentToString(Component component) {
-        // Use .plainText() instead of .plain()
-        return PlainTextComponentSerializer.plainText().serialize(component);
+        return serializer.serialize(component);
     }
 }

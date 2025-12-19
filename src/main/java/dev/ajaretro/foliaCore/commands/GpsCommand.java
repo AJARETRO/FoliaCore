@@ -47,7 +47,6 @@ public class GpsCommand implements CommandExecutor {
             return true;
         }
 
-        // It's a marker name, try to start navigation
         Marker marker = markerManager.getMarker(player.getUniqueId(), arg);
         if (marker == null) {
             plugin.getMessenger().sendError(player, "Marker '" + ChatColor.GOLD + args[0] + ChatColor.RED + "' not found.");

@@ -3,12 +3,16 @@ package dev.ajaretro.foliaCore.listeners;
 import dev.ajaretro.foliaCore.FoliaCore;
 import dev.ajaretro.foliaCore.data.ChatMode;
 import dev.ajaretro.foliaCore.managers.ChatManager;
-import io.papermc.paper.event.player.AsyncChatEvent; // <-- IMPORT THE NEW EVENT
-import net.kyori.adventure.text.Component; // <-- We must use Adventure components
+import io.papermc.paper.event.player.AsyncChatEvent;
+import io.papermc.paper.chat.ChatRenderer;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -24,7 +28,7 @@ public class ChatListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onPlayerChat(AsyncChatEvent event) { // <-- USE THE NEW EVENT
+    public void onPlayerChat(AsyncChatEvent event) {
         Player player = event.getPlayer();
 
         if (chatManager.isMuted(player.getUniqueId())) {
@@ -33,44 +37,44 @@ public class ChatListener implements Listener {
             return;
         }
 
+        String rawFormat = chatManager.getChatFormat();
+        event.renderer(new ChatRenderer() {
+            @Override
+            public @NotNull Component render(@NotNull Player source, @NotNull Component sourceDisplayName, @NotNull Component message, @NotNull Audience viewer) {
+                return LegacyComponentSerializer.legacyAmpersand().deserialize(rawFormat
+                        .replace("{DISPLAYNAME}", LegacyComponentSerializer.legacyAmpersand().serialize(sourceDisplayName))
+                        .replace("{MESSAGE}", LegacyComponentSerializer.legacyAmpersand().serialize(message)));
+            }
+        });
+
         if (!chatManager.isChatRangesEnabled()) {
-            return; // Not enabled, let the server handle it
+            return;
         }
 
-        // We get the message as a String from the original message component
         String messageString = plugin.getMessenger().componentToString(event.originalMessage());
         String globalPrefix = chatManager.getGlobalPrefix();
         boolean isGlobal = false;
 
-        // Check for global prefix
         if (messageString.startsWith(globalPrefix)) {
-            // Re-set the message component without the prefix
             String messageWithoutPrefix = messageString.substring(globalPrefix.length()).trim();
             event.message(Component.text(messageWithoutPrefix));
-            isGlobal = true; // This is now a global message
+            isGlobal = true;
         }
 
-        // Get the player's mode
         ChatMode mode = chatManager.getPlayerChatMode(player.getUniqueId());
 
-        // If the mode is GLOBAL or they used the prefix, don't change viewers
         if (mode == ChatMode.GLOBAL || isGlobal) {
-            return; // Let everyone see it
+            return;
         }
 
-        // --- At this point, it's a ranged chat (WORLD or REGIONAL) ---
-
-        // Get the collection of viewers (audiences)
         Collection<Player> viewers = event.viewers().stream()
                 .filter(audience -> audience instanceof Player)
                 .map(audience -> (Player) audience)
                 .collect(Collectors.toList());
 
-        // Clear the viewers
         event.viewers().clear();
 
         if (mode == ChatMode.WORLD) {
-            // Add only players in the same world
             for (Player viewer : viewers) {
                 if (viewer.getWorld().equals(player.getWorld())) {
                     event.viewers().add(viewer);
@@ -78,7 +82,6 @@ public class ChatListener implements Listener {
             }
         } else if (mode == ChatMode.REGIONAL) {
             int radius = chatManager.getRegionalRadius();
-            // Add only players in the same world AND within the radius
             for (Player viewer : viewers) {
                 if (viewer.getWorld().equals(player.getWorld()) &&
                         viewer.getLocation().distanceSquared(player.getLocation()) <= (radius * radius))
@@ -88,7 +91,6 @@ public class ChatListener implements Listener {
             }
         }
 
-        // Always add the player themself so they can see their own message
         event.viewers().add(player);
     }
 }

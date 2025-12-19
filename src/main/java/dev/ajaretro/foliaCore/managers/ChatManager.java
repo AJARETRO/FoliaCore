@@ -11,8 +11,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class ChatManager {
 
@@ -24,6 +24,7 @@ public class ChatManager {
     private final ConcurrentHashMap<UUID, Set<UUID>> blockedPlayers;
     private final ConcurrentHashMap<UUID, List<Mail>> mailboxes;
     private final ConcurrentHashMap<UUID, ChatMode> playerChatModes;
+    private final ConcurrentHashMap<UUID, String> nicknames;
 
     private File dataFile;
     private FileConfiguration dataConfig;
@@ -32,6 +33,7 @@ public class ChatManager {
     private ChatMode defaultMode;
     private int regionalRadius;
     private String globalPrefix;
+    private String chatFormat;
 
     public ChatManager(FoliaCore plugin) {
         this.plugin = plugin;
@@ -40,6 +42,7 @@ public class ChatManager {
         this.blockedPlayers = new ConcurrentHashMap<>();
         this.mailboxes = new ConcurrentHashMap<>();
         this.playerChatModes = new ConcurrentHashMap<>();
+        this.nicknames = new ConcurrentHashMap<>();
     }
 
     public static ChatManager getInstance() {
@@ -59,6 +62,7 @@ public class ChatManager {
         loadMutes();
         loadBlockedPlayers();
         loadMail();
+        loadNicknames();
     }
 
     private void loadConfigSettings() {
@@ -66,77 +70,70 @@ public class ChatManager {
         try {
             defaultMode = ChatMode.valueOf(dataConfig.getString("chat-settings.default-mode", "GLOBAL").toUpperCase());
         } catch (IllegalArgumentException e) {
-            plugin.getLogger().warning("Invalid default-mode in chat_data.yml! Defaulting to GLOBAL.");
             defaultMode = ChatMode.GLOBAL;
         }
         regionalRadius = dataConfig.getInt("chat-settings.regional-chat-radius", 100);
         globalPrefix = dataConfig.getString("chat-settings.global-chat-prefix", "!");
+        chatFormat = dataConfig.getString("chat-settings.format", "<{DISPLAYNAME}> {MESSAGE}");
     }
 
     private void loadMutes() {
-        // ... (this method is unchanged)
         ConfigurationSection mutesSection = dataConfig.getConfigurationSection("mutes");
         if (mutesSection == null) return;
-
         for (String key : mutesSection.getKeys(false)) {
             try {
-                UUID uuid = UUID.fromString(key);
-                long expiration = dataConfig.getLong("mutes." + key);
-                mutes.put(uuid, expiration);
-            } catch (Exception e) {
-                plugin.getLogger().warning("Could not load mute for invalid UUID: " + key);
-            }
+                mutes.put(UUID.fromString(key), dataConfig.getLong("mutes." + key));
+            } catch (Exception ignored) {}
         }
     }
 
     private void loadBlockedPlayers() {
-        // ... (this method is unchanged)
         ConfigurationSection blockedSection = dataConfig.getConfigurationSection("blocked");
         if (blockedSection == null) return;
-
         for (String key : blockedSection.getKeys(false)) {
             try {
-                UUID playerUUID = UUID.fromString(key);
-                List<String> blockedUUIDs = dataConfig.getStringList("blocked." + key);
-                Set<UUID> blockedSet = blockedUUIDs.stream()
+                Set<UUID> blockedSet = dataConfig.getStringList("blocked." + key).stream()
                         .map(UUID::fromString)
                         .collect(Collectors.toSet());
-                blockedPlayers.put(playerUUID, ConcurrentHashMap.newKeySet(blockedSet.size()));
-                blockedPlayers.get(playerUUID).addAll(blockedSet);
-            } catch (Exception e) {
-                plugin.getLogger().warning("Could not load block list for invalid UUID: " + key);
-            }
+                blockedPlayers.put(UUID.fromString(key), ConcurrentHashMap.newKeySet(blockedSet.size()));
+                blockedPlayers.get(UUID.fromString(key)).addAll(blockedSet);
+            } catch (Exception ignored) {}
         }
     }
 
     private void loadMail() {
-        // ... (this method is unchanged, but I've included the bugfix)
         ConfigurationSection mailSection = dataConfig.getConfigurationSection("mail");
         if (mailSection == null) return;
-
         for (String key : mailSection.getKeys(false)) {
             try {
                 UUID playerUUID = UUID.fromString(key);
                 List<?> mailList = dataConfig.getList("mail." + key);
                 List<Mail> loadedMail = new ArrayList<>();
-
                 for (Object obj : mailList) {
                     if (obj instanceof Map<?,?> map) {
-                        UUID sender = UUID.fromString((String) map.get("sender"));
-                        long timestamp = (long) map.get("timestamp");
-                        String message = (String) map.get("message");
-                        loadedMail.add(new Mail(sender, timestamp, message));
+                        loadedMail.add(new Mail(
+                                UUID.fromString((String) map.get("sender")),
+                                (long) map.get("timestamp"),
+                                (String) map.get("message")
+                        ));
                     }
                 }
                 mailboxes.put(playerUUID, Collections.synchronizedList(loadedMail));
-            } catch (Exception e) {
-                plugin.getLogger().warning("Could not load mail for invalid UUID: " + key);
-            }
+            } catch (Exception ignored) {}
+        }
+    }
+
+    private void loadNicknames() {
+        ConfigurationSection nickSection = dataConfig.getConfigurationSection("nicknames");
+        if (nickSection == null) return;
+        for (String key : nickSection.getKeys(false)) {
+            try {
+                nicknames.put(UUID.fromString(key), dataConfig.getString("nicknames." + key));
+            } catch (Exception ignored) {}
         }
     }
 
     public void saveData() {
-        // ... (this method is unchanged, but I've included the bugfix)
         try {
             dataConfig.set("mutes", null);
             for (UUID uuid : mutes.keySet()) {
@@ -145,9 +142,7 @@ public class ChatManager {
 
             dataConfig.set("blocked", null);
             for (UUID uuid : blockedPlayers.keySet()) {
-                List<String> blockedList = blockedPlayers.get(uuid).stream()
-                        .map(UUID::toString)
-                        .collect(Collectors.toList());
+                List<String> blockedList = blockedPlayers.get(uuid).stream().map(UUID::toString).collect(Collectors.toList());
                 dataConfig.set("blocked." + uuid.toString(), blockedList);
             }
 
@@ -155,7 +150,6 @@ public class ChatManager {
             for (UUID uuid : mailboxes.keySet()) {
                 List<Map<String, Object>> serializedMail = new ArrayList<>();
                 List<Mail> mailList = mailboxes.get(uuid);
-
                 synchronized (mailList) {
                     for (Mail mail : mailList) {
                         Map<String, Object> mailMap = new LinkedHashMap<>();
@@ -168,124 +162,97 @@ public class ChatManager {
                 dataConfig.set("mail." + uuid.toString(), serializedMail);
             }
 
+            dataConfig.set("nicknames", null);
+            for (UUID uuid : nicknames.keySet()) {
+                dataConfig.set("nicknames." + uuid.toString(), nicknames.get(uuid));
+            }
+
             dataConfig.save(dataFile);
         } catch (IOException e) {
-            plugin.getLogger().severe("Could not save chat data to file!");
             e.printStackTrace();
         }
     }
 
     private void saveDataAsync() {
-        // ... (this method is unchanged)
-        Bukkit.getAsyncScheduler().runNow(plugin, (task) -> {
-            saveData();
-        });
+        Bukkit.getAsyncScheduler().runNow(plugin, (task) -> saveData());
     }
 
-    // --- NEW METHODS FOR CHAT RANGES ---
-
-    public boolean isChatRangesEnabled() {
-        return chatRangesEnabled;
+    public String getChatFormat() {
+        return chatFormat;
     }
 
-    public String getGlobalPrefix() {
-        return globalPrefix;
-    }
-
-    public int getRegionalRadius() {
-        return regionalRadius;
-    }
-
-    public ChatMode getPlayerChatMode(UUID uuid) {
-        return playerChatModes.getOrDefault(uuid, defaultMode);
-    }
-
-    public void setPlayerChatMode(UUID uuid, ChatMode mode) {
-        playerChatModes.put(uuid, mode);
-    }
-
-    // --- EXISTING METHODS ---
+    public boolean isChatRangesEnabled() { return chatRangesEnabled; }
+    public String getGlobalPrefix() { return globalPrefix; }
+    public int getRegionalRadius() { return regionalRadius; }
+    public ChatMode getPlayerChatMode(UUID uuid) { return playerChatModes.getOrDefault(uuid, defaultMode); }
+    public void setPlayerChatMode(UUID uuid, ChatMode mode) { playerChatModes.put(uuid, mode); }
 
     public boolean isMuted(UUID uuid) {
-        // ... (this method is unchanged)
-        if (!mutes.containsKey(uuid)) {
-            return false;
-        }
-
+        if (!mutes.containsKey(uuid)) return false;
         long expiration = mutes.get(uuid);
-        if (expiration == -1) {
-            return true;
-        }
-
-        if (System.currentTimeMillis() < expiration) {
-            return true;
-        } else {
-            mutes.remove(uuid);
-            saveDataAsync();
-            return false;
-        }
+        if (expiration == -1) return true;
+        if (System.currentTimeMillis() < expiration) return true;
+        mutes.remove(uuid);
+        saveDataAsync();
+        return false;
     }
 
     public void mutePlayer(UUID uuid, long durationMillis) {
-        // ... (this method is unchanged)
-        long expirationTime = (durationMillis == -1) ? -1 : System.currentTimeMillis() + durationMillis;
-        mutes.put(uuid, expirationTime);
+        mutes.put(uuid, (durationMillis == -1) ? -1 : System.currentTimeMillis() + durationMillis);
         saveDataAsync();
     }
 
     public void unmutePlayer(UUID uuid) {
-        // ... (this method is unchanged)
         mutes.remove(uuid);
         saveDataAsync();
     }
 
-    public UUID getReplyTarget(UUID uuid) {
-        // ... (this method is unchanged)
-        return replyTargets.get(uuid);
-    }
-
-    public void setReplyTarget(UUID player, UUID target) {
-        // ... (this method is unchanged)
-        replyTargets.put(player, target);
-    }
+    public UUID getReplyTarget(UUID uuid) { return replyTargets.get(uuid); }
+    public void setReplyTarget(UUID player, UUID target) { replyTargets.put(player, target); }
 
     public boolean isBlocked(UUID target, UUID blocker) {
-        // ... (this method is unchanged)
         Set<UUID> blockers = blockedPlayers.get(target);
         return blockers != null && blockers.contains(blocker);
     }
 
     public void blockPlayer(UUID target, UUID blocker) {
-        // ... (this method is unchanged)
         blockedPlayers.computeIfAbsent(target, k -> ConcurrentHashMap.newKeySet()).add(blocker);
         saveDataAsync();
     }
 
     public void unblockPlayer(UUID target, UUID blocker) {
-        // ... (this method is unchanged)
         Set<UUID> blockers = blockedPlayers.get(target);
-        if (blockers != null) {
-            blockers.remove(blocker);
-        }
+        if (blockers != null) blockers.remove(blocker);
         saveDataAsync();
     }
 
     public void sendMail(UUID sender, UUID target, String message) {
-        // ... (this method is unchanged, but I've included the bugfix)
-        Mail mail = new Mail(sender, message);
         List<Mail> mailList = mailboxes.computeIfAbsent(target, k -> Collections.synchronizedList(new ArrayList<>()));
-        mailList.add(mail);
+        mailList.add(new Mail(sender, message));
         saveDataAsync();
     }
 
-    public List<Mail> getMail(UUID player) {
-        // ... (this method is unchanged)
-        return mailboxes.get(player);
-    }
-
+    public List<Mail> getMail(UUID player) { return mailboxes.get(player); }
     public void clearMail(UUID player) {
-        // ... (this method is unchanged)
         mailboxes.remove(player);
         saveDataAsync();
+    }
+
+    public void setNickname(UUID uuid, String nickname) {
+        nicknames.put(uuid, nickname);
+        saveDataAsync();
+    }
+
+    public String getNickname(UUID uuid) {
+        return nicknames.get(uuid);
+    }
+
+    public void removeNickname(UUID uuid) {
+        nicknames.remove(uuid);
+        saveDataAsync();
+    }
+
+    public Map<UUID, String> getAllNicknames() {
+        return nicknames;
     }
 }

@@ -3,13 +3,18 @@ package dev.ajaretro.foliaCore.utils;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Base64;
 
+/**
+ * Handles Base64 serialization of ItemStacks for flat-file storage.
+ */
 public class ItemUtil {
 
+    @Nullable
     public static String serializeItems(ItemStack[] items) {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
              BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream)) {

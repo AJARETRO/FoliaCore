@@ -1,6 +1,8 @@
 # Chat Formatting Settings
 chat-settings:
   enabled: true
-  default-mode: "GLOBAL" # Can be: GLOBAL, WORLD, REGIONAL
+  default-mode: "GLOBAL"
   regional-chat-radius: 100
   global-chat-prefix: "!"
+  # Add this line so admins can edit it:
+  format: "<{DISPLAYNAME}> {MESSAGE}"

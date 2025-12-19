@@ -8,34 +8,26 @@ public class TimeUtil {
 
     private static final Pattern TIME_PATTERN = Pattern.compile("(\\d+)([smhd])");
 
+    /**
+     * Parses a shorthand duration string (e.g., "1d12h") into milliseconds.
+     * @return milliseconds, or -1 if invalid.
+     */
     public static long parseTime(String timeString) {
         long totalMillis = 0;
         Matcher matcher = TIME_PATTERN.matcher(timeString);
 
-        if (!matcher.find()) {
-            return -1;
-        }
+        if (!matcher.find()) return -1;
 
         matcher.reset();
-
         while (matcher.find()) {
             try {
                 long value = Long.parseLong(matcher.group(1));
                 String unit = matcher.group(2);
-
                 switch (unit) {
-                    case "s":
-                        totalMillis += TimeUnit.SECONDS.toMillis(value);
-                        break;
-                    case "m":
-                        totalMillis += TimeUnit.MINUTES.toMillis(value);
-                        break;
-                    case "h":
-                        totalMillis += TimeUnit.HOURS.toMillis(value);
-                        break;
-                    case "d":
-                        totalMillis += TimeUnit.DAYS.toMillis(value);
-                        break;
+                    case "s" -> totalMillis += TimeUnit.SECONDS.toMillis(value);
+                    case "m" -> totalMillis += TimeUnit.MINUTES.toMillis(value);
+                    case "h" -> totalMillis += TimeUnit.HOURS.toMillis(value);
+                    case "d" -> totalMillis += TimeUnit.DAYS.toMillis(value);
                 }
             } catch (NumberFormatException e) {
                 return -1;
@@ -45,9 +37,7 @@ public class TimeUtil {
     }
 
     public static String formatDuration(long millis) {
-        if (millis < 0) {
-            return "Permanent";
-        }
+        if (millis < 0) return "Permanent";
 
         long days = TimeUnit.MILLISECONDS.toDays(millis);
         millis -= TimeUnit.DAYS.toMillis(days);

@@ -10,60 +10,155 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
 
 public class TeleportManager {
 
-    private static TeleportManager instance;
     private final FoliaCore plugin;
 
-    private final ConcurrentHashMap<UUID, Map<String, Home>> playerHomes;
-    private final ConcurrentHashMap<UUID, ScheduledTask> pendingTeleports;
-    private final ConcurrentHashMap<UUID, TeleportRequest> pendingTpaRequests;
-    private Location spawnLocation;
+    // Thread-safe storage for Cross-Region Access
+    private final Map<UUID, Map<String, Home>> playerHomes = new ConcurrentHashMap<>();
+    private final Map<UUID, ScheduledTask> pendingTeleports = new ConcurrentHashMap<>();
+    private final Map<UUID, TeleportRequest> pendingTpaRequests = new ConcurrentHashMap<>();
 
-    private File dataFile;
+    private volatile Location spawnLocation; // Volatile for visibility across threads
+    private final File dataFile;
     private FileConfiguration dataConfig;
 
     private static final long TPA_REQUEST_TIMEOUT_MS = 60 * 1000;
-    private static final long TELEPORT_DELAY_TICKS = 60L;
+    private static final long TELEPORT_DELAY_TICKS = 60L; // 3 seconds at 20 TPS
 
     public enum TpaType { TPA, TPAHERE }
-
     public record TeleportRequest(UUID requester, UUID target, TpaType type, long timestamp) {}
 
     public TeleportManager(FoliaCore plugin) {
         this.plugin = plugin;
-        this.playerHomes = new ConcurrentHashMap<>();
-        this.pendingTeleports = new ConcurrentHashMap<>();
-        this.pendingTpaRequests = new ConcurrentHashMap<>();
-        this.spawnLocation = null;
-    }
-
-    public static TeleportManager getInstance() {
-        return instance;
+        this.dataFile = new File(plugin.getDataFolder(), "teleport_data.yml");
     }
 
     public void load() {
-        instance = this;
-
-        dataFile = new File(plugin.getDataFolder(), "teleport_data.yml");
         if (!dataFile.exists()) {
             plugin.saveResource("teleport_data.yml", false);
         }
         dataConfig = YamlConfiguration.loadConfiguration(dataFile);
-
         loadHomes();
         loadSpawn();
     }
 
+    // --- Logic ---
+
+    public void startTeleport(@NotNull Player player, @NotNull Location location, String successMessage) {
+        if (isTeleporting(player.getUniqueId())) {
+            plugin.getMessenger().sendError(player, "Teleportation already in progress.");
+            return;
+        }
+
+        plugin.getMessenger().sendMessage(player, "Teleporting... Stand still for 3 seconds.");
+
+        // Folia Requirement: Use the entity's scheduler to ensure thread locality.
+        ScheduledTask task = player.getScheduler().runDelayed(plugin, (scheduledTask) -> {
+            pendingTeleports.remove(player.getUniqueId());
+
+            // Async teleport is safer on Folia as it handles chunk loading internally without blocking
+            player.teleportAsync(location).thenAccept(result -> {
+                if (result) {
+                    plugin.getMessenger().sendSuccess(player, successMessage);
+                } else {
+                    plugin.getMessenger().sendError(player, "Teleport failed. Destination may be obstructed.");
+                }
+            });
+
+        }, null, TELEPORT_DELAY_TICKS);
+
+        pendingTeleports.put(player.getUniqueId(), task);
+    }
+
+    public void cancelTeleport(@NotNull Player player) {
+        ScheduledTask task = pendingTeleports.remove(player.getUniqueId());
+        if (task != null && !task.isCancelled()) {
+            task.cancel();
+            plugin.getMessenger().sendError(player, "Teleport cancelled due to movement.");
+        }
+    }
+
+    public boolean isTeleporting(UUID uuid) {
+        return pendingTeleports.containsKey(uuid);
+    }
+
+    public void cleanupPlayer(UUID uuid) {
+        pendingTeleports.remove(uuid);
+        pendingTpaRequests.remove(uuid);
+    }
+
+    // --- TPA Request Logic ---
+
+    public void createTpaRequest(UUID requester, UUID target, TpaType type) {
+        pendingTpaRequests.put(target, new TeleportRequest(requester, target, type, System.currentTimeMillis()));
+    }
+
+    @Nullable
+    public TeleportRequest getTpaRequest(UUID target) {
+        TeleportRequest request = pendingTpaRequests.get(target);
+        if (request == null) return null;
+
+        if (System.currentTimeMillis() - request.timestamp() > TPA_REQUEST_TIMEOUT_MS) {
+            pendingTpaRequests.remove(target);
+            return null;
+        }
+        return request;
+    }
+
+    public void removeTpaRequest(UUID target) {
+        pendingTpaRequests.remove(target);
+    }
+
+    // --- Persistence (Snapshot Pattern) ---
+
+    /**
+     * Saves data using the Snapshot Pattern.
+     * Creates a copy of the data in memory, then writes to disk asynchronously.
+     * This prevents ConcurrentModificationException if the main thread updates data during save.
+     */
+    public void saveData() {
+        final var homesSnapshot = new java.util.HashMap<>(this.playerHomes);
+        final var spawnSnapshot = this.spawnLocation;
+
+        Bukkit.getAsyncScheduler().runNow(plugin, (task) -> {
+            try {
+                YamlConfiguration tempConfig = new YamlConfiguration();
+
+                // Serialize Homes
+                for (var entry : homesSnapshot.entrySet()) {
+                    String uuid = entry.getKey().toString();
+                    for (var homeEntry : entry.getValue().entrySet()) {
+                        tempConfig.set("homes." + uuid + "." + homeEntry.getKey(), homeEntry.getValue().serialize());
+                    }
+                }
+
+                // Serialize Spawn
+                if (spawnSnapshot != null) {
+                    tempConfig.set("spawn", spawnSnapshot.serialize());
+                }
+
+                tempConfig.save(dataFile);
+            } catch (IOException e) {
+                plugin.getLogger().severe("Failed to save teleport data.");
+                e.printStackTrace();
+            }
+        });
+    }
+
+    // --- Loading Logic ---
+
     private void loadHomes() {
-        // ... (this method is unchanged)
         ConfigurationSection homesSection = dataConfig.getConfigurationSection("homes");
         if (homesSection == null) return;
 
@@ -77,13 +172,11 @@ public class TeleportManager {
                 for (String homeName : playerHomeSection.getKeys(false)) {
                     ConfigurationSection homeSection = playerHomeSection.getConfigurationSection(homeName);
                     if (homeSection == null) continue;
-
-                    Map<String, Object> homeData = homeSection.getValues(false);
-                    homes.put(homeName.toLowerCase(), Home.deserialize(homeData));
+                    homes.put(homeName.toLowerCase(), Home.deserialize(homeSection.getValues(false)));
                 }
                 playerHomes.put(playerUUID, homes);
-            } catch (Exception e) {
-                plugin.getLogger().warning("Could not load homes for invalid UUID: " + uuidString);
+            } catch (IllegalArgumentException e) {
+                plugin.getLogger().warning("Skipping invalid UUID in homes.yml: " + uuidString);
             }
         }
     }
@@ -92,187 +185,66 @@ public class TeleportManager {
         ConfigurationSection spawnSection = dataConfig.getConfigurationSection("spawn");
         if (spawnSection != null) {
             try {
-                Map<String, Object> spawnData = spawnSection.getValues(false);
-                this.spawnLocation = Location.deserialize(spawnData);
+                this.spawnLocation = Location.deserialize(spawnSection.getValues(false));
             } catch (Exception e) {
-                plugin.getLogger().warning("Could not load spawn location from teleport_data.yml!");
+                plugin.getLogger().warning("Failed to deserialize spawn location.");
             }
         }
     }
 
-    public void saveData() {
-        // ... (saveHomes part is unchanged)
-        try {
-            dataConfig.set("homes", null);
-            for (Map.Entry<UUID, Map<String, Home>> entry : playerHomes.entrySet()) {
-                String uuidString = entry.getKey().toString();
-                for (Map.Entry<String, Home> homeEntry : entry.getValue().entrySet()) {
-                    dataConfig.set("homes." + uuidString + "." + homeEntry.getKey(), homeEntry.getValue().serialize());
-                }
-            }
-
-            if (this.spawnLocation != null) {
-                dataConfig.set("spawn", this.spawnLocation.serialize());
-            } else {
-                dataConfig.set("spawn", null);
-            }
-
-            dataConfig.save(dataFile);
-        } catch (IOException e) {
-            plugin.getLogger().severe("Could not save teleport data to file!");
-            e.printStackTrace();
-        }
-    }
-
-    private void saveDataAsync() {
-        // ... (this method is unchanged)
-        Bukkit.getAsyncScheduler().runNow(plugin, (task) -> {
-            saveData();
-        });
-    }
-
-    // --- Spawn Methods ---
-
-    public void setSpawn(Location location) {
-        this.spawnLocation = location;
-        saveDataAsync();
-    }
-
-    public Location getSpawn() {
-        if (this.spawnLocation == null) {
-            return Bukkit.getWorlds().get(0).getSpawnLocation();
-        }
-        return this.spawnLocation;
-    }
-
-    // --- Home Methods ---
+    // --- Home Accessors ---
 
     public void setHome(UUID playerUUID, String homeName, Location location) {
-        // ... (this method is unchanged)
-        playerHomes.computeIfAbsent(playerUUID, k -> new ConcurrentHashMap<>()).put(homeName.toLowerCase(), new Home(location));
-        saveDataAsync();
+        playerHomes.computeIfAbsent(playerUUID, k -> new ConcurrentHashMap<>())
+                .put(homeName.toLowerCase(), new Home(location));
+        saveData(); // Triggers async save
     }
 
+    @Nullable
     public Home getHome(UUID playerUUID, String homeName) {
-        // ... (this method is unchanged)
-        Map<String, Home> homes = playerHomes.get(playerUUID);
-        if (homes == null) return null;
-        return homes.get(homeName.toLowerCase());
+        var homes = playerHomes.get(playerUUID);
+        return homes == null ? null : homes.get(homeName.toLowerCase());
     }
 
     public void deleteHome(UUID playerUUID, String homeName) {
-        // ... (this method is unchanged)
-        Map<String, Home> homes = playerHomes.get(playerUUID);
+        var homes = playerHomes.get(playerUUID);
         if (homes != null) {
             homes.remove(homeName.toLowerCase());
-            saveDataAsync();
+            saveData();
         }
     }
 
     public int getHomeCount(UUID playerUUID) {
-        // ... (this method is unchanged)
-        Map<String, Home> homes = playerHomes.get(playerUUID);
-        return (homes == null) ? 0 : homes.size();
+        var homes = playerHomes.get(playerUUID);
+        return homes == null ? 0 : homes.size();
     }
 
     public Map<String, Home> getHomes(UUID playerUUID) {
-        // ... (this method is unchanged)
         return playerHomes.getOrDefault(playerUUID, Collections.emptyMap());
     }
 
+    public void setSpawn(Location location) {
+        this.spawnLocation = location;
+        saveData();
+    }
+
+    public Location getSpawn() {
+        return this.spawnLocation != null ? this.spawnLocation : Bukkit.getWorlds().get(0).getSpawnLocation();
+    }
+
     public int getMaxHomes(Player player) {
-        // ... (this method is unchanged)
-        if (player.hasPermission("foliacore.homes.unlimited")) {
-            return Integer.MAX_VALUE;
-        }
+        if (player.hasPermission("foliacore.homes.unlimited")) return Integer.MAX_VALUE;
 
         int max = 0;
         for (PermissionAttachmentInfo permInfo : player.getEffectivePermissions()) {
             String perm = permInfo.getPermission();
             if (perm.startsWith("foliacore.homes.")) {
                 try {
-                    String numString = perm.substring(16);
-                    int num = Integer.parseInt(numString);
-                    if (num > max) {
-                        max = num;
-                    }
-                } catch (NumberFormatException e) {
-                    // Ignore
-                }
+                    int num = Integer.parseInt(perm.substring(16));
+                    max = Math.max(max, num);
+                } catch (NumberFormatException ignored) {}
             }
         }
-
-        if (max == 0 && player.hasPermission("foliacore.homes.default")) {
-            return 1;
-        }
-
-        return max;
-    }
-
-    // --- Teleport Delay Methods ---
-
-    public void startTeleport(Player player, Location location, String successMessage) {
-        // ... (this method is unchanged)
-        if (isTeleporting(player.getUniqueId())) {
-            plugin.getMessenger().sendError(player, "You are already teleporting!");
-            return;
-        }
-
-        plugin.getMessenger().sendMessage(player, "Teleporting... Don't move for 3 seconds...");
-
-        var task = player.getScheduler().runDelayed(plugin, (scheduledTask) -> {
-            completeTeleport(player.getUniqueId());
-            player.teleportAsync(location);
-            plugin.getMessenger().sendSuccess(player, successMessage);
-        }, null, TELEPORT_DELAY_TICKS);
-
-        pendingTeleports.put(player.getUniqueId(), task);
-    }
-
-    public void cancelTeleport(Player player) {
-        // ... (this method is unchanged)
-        ScheduledTask existingTask = pendingTeleports.remove(player.getUniqueId());
-        if (existingTask != null && !existingTask.isCancelled()) {
-            existingTask.cancel();
-            plugin.getMessenger().sendError(player, "Teleport cancelled.");
-        }
-    }
-
-    public void completeTeleport(UUID uuid) {
-        // ... (this method is unchanged)
-        pendingTeleports.remove(uuid);
-    }
-
-    public boolean isTeleporting(UUID uuid) {
-        // ... (this method is unchanged)
-        return pendingTeleports.containsKey(uuid);
-    }
-
-    // --- TPA Request Methods ---
-
-    public void createTpaRequest(UUID requester, UUID target, TpaType type) {
-        // ... (this method is unchanged)
-        TeleportRequest request = new TeleportRequest(requester, target, type, System.currentTimeMillis());
-        pendingTpaRequests.put(target, request);
-    }
-
-    public TeleportRequest getTpaRequest(UUID target) {
-        // ... (this method is unchanged)
-        TeleportRequest request = pendingTpaRequests.get(target);
-        if (request == null) {
-            return null;
-        }
-
-        if (System.currentTimeMillis() - request.timestamp() > TPA_REQUEST_TIMEOUT_MS) {
-            pendingTpaRequests.remove(target);
-            return null;
-        }
-
-        return request;
-    }
-
-    public void removeTpaRequest(UUID target) {
-        // ... (this method is unchanged)
-        pendingTpaRequests.remove(target);
+        return (max == 0 && player.hasPermission("foliacore.homes.default")) ? 1 : max;
     }
 }

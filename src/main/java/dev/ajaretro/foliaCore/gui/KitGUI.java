@@ -6,13 +6,15 @@ import dev.ajaretro.foliaCore.managers.KitManager;
 import dev.ajaretro.foliaCore.utils.TimeUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.NamespacedKey; // <-- New Import
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType; // <-- New Import
 
 import java.util.ArrayList;
-import java.util.Collection; // <-- THIS IS THE FIX
+import java.util.Collection;
 import java.util.List;
 
 public class KitGUI {
@@ -34,13 +36,21 @@ public class KitGUI {
         int size = (int) Math.ceil(kits.size() / 9.0) * 9;
         gui = Bukkit.createInventory(null, Math.max(9, size), GUI_TITLE);
 
+        // Define our hidden key
+        NamespacedKey key = new NamespacedKey(plugin, "kit_key");
+
         for (Kit kit : kits) {
             ItemStack item = new ItemStack(kit.displayMaterial());
             ItemMeta meta = item.getItemMeta();
 
+            // 1. Set Visible Name
             meta.setDisplayName(ChatColor.GOLD + kit.name());
-            List<String> lore = new ArrayList<>();
 
+            // 2. Set Hidden Data (The Fix)
+            // We store the exact kit name inside the item's code.
+            meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, kit.name());
+
+            List<String> lore = new ArrayList<>();
             if (player.hasPermission(kit.permission())) {
                 if (kitManager.isOnCooldown(player.getUniqueId(), kit)) {
                     long remaining = kitManager.getRemainingCooldown(player.getUniqueId(), kit);
