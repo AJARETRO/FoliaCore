@@ -1,128 +1,123 @@
 # ⚡ FoliaCore
+> **The native essential suite for the next generation of Minecraft servers.**
 
-![Java](https://img.shields.io/badge/Java-21-orange) ![Platform](https://img.shields.io/badge/Platform-Folia-blue) ![Vault](https://img.shields.io/badge/Vault-Compatible-green)
+![Platform](https://img.shields.io/badge/platform-Folia-7289DA?style=for-the-badge&logo=paper&logoColor=white)
+![Java](https://img.shields.io/badge/Java-21-orange?style=for-the-badge)
+![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)
+![Build Status](https://img.shields.io/badge/build-passing-brightgreen?style=for-the-badge)
 
-**The essential plugin suite, rebuilt natively for Folia.**
+**FoliaCore** is a high-performance, multithreaded replacement for plugins like *EssentialsX* or *CMI*, designed specifically for **[Folia](https://github.com/PaperMC/Folia)**.
 
-FoliaCore provides the fundamental features every survival or anarchy server needs—Essentials-like commands, Economy, Chat formatting, and Teleportation—but engineered specifically for the multi-threaded environment of [Folia](https://github.com/PaperMC/Folia).
+If you are running a Folia server, you know that standard plugins break. They freeze the server, cause "Unsafe Teleport" crashes, or corrupt player data because they don't understand Region Scheduling. **FoliaCore fixes this.**
+
+---
+
+## 🆚 Why FoliaCore? (vs EssentialsX)
+
+Standard core plugins were built for Spigot—a single-threaded software. Folia is multi-threaded. Here is why you need FoliaCore:
+
+| Feature | ❌ EssentialsX (on Folia) | ✅ FoliaCore |
+| :--- | :--- | :--- |
+| **Teleportation** | Often causes server crashes or "Unsafe" exceptions. | Uses `teleportAsync` to safely move players between regions. |
+| **Economy** | Can lag the main thread or cause race conditions. | **Thread-safe implementation** using `ConcurrentHashMap` & atomic operations. |
+| **User Data** | Saves data on the main thread (Lag spikes). | Saves data asynchronously using snapshots (No lag). |
+| **Scheduling** | Uses standard Bukkit Scheduler (Breaks on Folia). | Built natively on the **Folia Region Scheduler**. |
+| **Chat** | Standard listeners. | Async Chat Event handling with radius support. |
+
+---
 
 ## 🚀 Features
 
-Unlike standard Spigot plugins that crash on Folia due to thread safety issues, **FoliaCore** uses:
-* **Region Schedulers** for block/player interactions.
-* **Global Schedulers** for server-wide tasks.
-* **Async Teleportation** (`player.teleportAsync`) to prevent chunk loading lag.
-* **Snapshot Persistence** to save data asynchronously without freezing the main thread.
+### 💰 Native Economy
+FoliaCore includes a built-in, **Vault-compatible** economy provider. You do not need an external economy plugin.
+* Fully Thread-Safe.
+* Commands: `/balance`, `/pay`, `/eco`.
+* Data persistence to `economy.yml`.
 
-### 🛠️ Modules
-* **Economy:** Built-in **Vault** Economy Provider. No other economy plugin needed.
-* **Chat System:** Global, World, and Regional (Radius) chat channels. Includes muting, blocking, and nicknames.
-* **Teleportation:** `/home`, `/tpa`, `/warp`, and `/spawn` logic handling cross-region movement safely.
-* **Kits:** GUI-based kit preview and redemption with cooldowns.
-* **Teams:** Create clans/teams to group up with friends.
-* **GPS/Markers:** Save personal waypoints and navigate to them using a real-time Action Bar compass.
-* **Mail:** Send offline messages to players.
+### 📍 Smart Teleportation
+Move players across threaded regions without crashing your server.
+* **Homes:** `/sethome`, `/home`, `/delhome` (With limit permissions).
+* **Warps:** `/setwarp`, `/warp` (Global server waypoints).
+* **TPA System:** `/tpa`, `/tpahere`, `/tpaccept` (With timeout expiry).
+* **Spawn:** Safe `/spawn` handling.
+
+### 🎒 Kits & GUI
+* **In-Game Creation:** Create kits instantly by arranging your inventory and typing `/createkit <name> <cooldown>`.
+* **GUI Menu:** Beautiful, automatic `/kit` GUI.
+* **NBT Support:** Preserves custom item names, lore, and enchantments perfectly.
+
+### 🧭 GPS Navigation
+* Save personal waypoints with `/marker set <name>`.
+* Navigate to them using `/gps <name>`.
+* **Visual Guide:** Shows an arrow and distance in the Action Bar (e.g., `⬆ MyBase | 150m`).
+
+### 💬 Chat Management
+* **Channels:** Switch between Global, World, and Regional chat (`/chat`).
+* **Formatting:** customizable prefixes and suffixes.
+* **Moderation:** `/mute`, `/unmute` (Time-based), `/block`.
+* **Mail:** Send offline messages with `/mail`.
 
 ---
 
 ## 📥 Installation
 
-1.  Ensure you are running **Java 21** or higher.
-2.  Download `FoliaCore.jar` and place it in your `plugins` folder.
-3.  **Required:** Install **[Vault](https://www.spigotmc.org/resources/vault.34315/)**. FoliaCore handles the money, but Vault is required for the API.
-4.  Restart your server.
+1.  Stop your server.
+2.  Download the latest `FoliaCore.jar` from [Releases](https://github.com/AJA-Retro/FoliaCore/releases).
+3.  **Required:** Install [Vault](https://www.spigotmc.org/resources/vault.34315/) (FoliaCore hooks into Vault to provide the economy).
+4.  Place both JARs in your `plugins` folder.
+5.  Start the server.
 
 ---
 
 ## 📜 Commands & Permissions
 
-### 🟢 Player Commands
+### Player Commands
+| Command | Permission | Description |
+| :--- | :--- | :--- |
+| `/balance` | `foliacore.balance.self` | Check your current balance. |
+| `/pay <player> <amount>` | `foliacore.pay` | Send money to another player. |
+| `/tpa <player>` | `foliacore.tpa` | Request to teleport to someone. |
+| `/sethome [name]` | `foliacore.sethome` | Set a home at your location. |
+| `/kit` | `foliacore.kit` | Open the Kit GUI. |
+| `/marker set <name>` | `foliacore.marker` | Set a GPS waypoint. |
+| `/gps <name>` | `foliacore.gps` | Start navigation to a waypoint. |
+| `/msg <player>` | `foliacore.msg` | Send a private message. |
 
-| Command | Usage | Description | Permission |
-| :--- | :--- | :--- | :--- |
-| **Chat & Social** | | | |
-| `/chat` | `<global/world/local>` | Switch chat channel. | `foliacore.chat` |
-| `/msg` | `<player> <msg>` | Send private message. | `foliacore.msg` |
-| `/reply` | `<msg>` | Reply to last message. | `foliacore.reply` |
-| `/mail` | `send/read/clear` | Manage offline mail. | `foliacore.mail` |
-| `/block` | `<player>` | Block a player. | `foliacore.block` |
-| `/nick` | `<name/off>` | Set display nickname. | `foliacore.nick` |
-| **Teleportation** | | | |
-| `/spawn` | | Teleport to spawn. | `foliacore.spawn` |
-| `/sethome` | `<name>` | Set a home. | `foliacore.sethome` |
-| `/home` | `<name>` | Teleport to home. | `foliacore.home` |
-| `/delhome` | `<name>` | Delete a home. | `foliacore.delhome` |
-| `/homes` | | List your homes. | `foliacore.homes.list` |
-| `/tpa` | `<player>` | Request to teleport to player. | `foliacore.tpa` |
-| `/tpahere` | `<player>` | Request player teleport to you. | `foliacore.tpahere` |
-| `/tpaccept`| | Accept TPA request. | `foliacore.tpaccept` |
-| `/tpdeny` | | Deny TPA request. | `foliacore.tpdeny` |
-| `/warp` | `<name>` | Teleport to server warp. | `foliacore.warp` |
-| **Gameplay** | | | |
-| `/balance` | | Check your wallet. | `foliacore.balance.self` |
-| `/pay` | `<player> <amt>` | Send money to players. | `foliacore.pay` |
-| `/kit` | `[name]` | Open Kit GUI or claim kit. | `foliacore.kit` |
-| `/marker` | `set/del/list` | Manage personal waypoints. | `foliacore.marker` |
-| `/gps` | `<name>` | Start compass navigation. | `foliacore.gps` |
-| `/team` | `create/invite/etc` | Manage player teams. | `foliacore.team` |
-
-### 🔴 Admin / Staff Commands
-
-| Command | Usage | Description | Permission |
-| :--- | :--- | :--- | :--- |
-| `/setspawn`| | Set server spawn point. | `foliacore.setspawn` |
-| `/setwarp` | `<name>` | Create a server warp. | `foliacore.setwarp` |
-| `/delwarp` | `<name>` | Delete a server warp. | `foliacore.delwarp` |
-| `/createkit`| `<name> <time>` | Create kit from inventory. | `foliacore.kit.admin` |
-| `/delkit` | `<name>` | Delete a kit. | `foliacore.kit.admin` |
-| `/eco` | `give/take/set` | Manage player money. | `foliacore.eco` |
-| `/mute` | `<player> <time>` | Mute a player. | `foliacore.mute` |
-| `/unmute` | `<player>` | Unmute a player. | `foliacore.unmute` |
-| `/realname`| `<nickname>` | See real name of nicked user.| `foliacore.realname` |
+### Admin Commands
+| Command | Permission | Description |
+| :--- | :--- | :--- |
+| `/eco <give/take/set>` | `foliacore.eco` | Modify player balances. |
+| `/createkit <name>` | `foliacore.kit.admin` | Create a kit from inventory. |
+| `/setwarp <name>` | `foliacore.setwarp` | Set a server warp. |
+| `/setspawn` | `foliacore.setspawn` | Set the global spawn point. |
+| `/mute <player> <time>` | `foliacore.mute` | Temporarily mute a player. |
+| `/invsee <player>` | `foliacore.invsee` | *(Coming in Admin Addon)* |
 
 ---
 
-## ⚙️ Configuration
+## 🔧 Developer API
 
-Configuration is split into module-specific files found in `/plugins/FoliaCore/`:
+FoliaCore is designed to be a library for your server. You can access its managers to handle logic safely.
 
-* `chat_data.yml`: Edit chat formatting, channel radius, and global prefixes.
-* `kits.yml`: Edit kit items (Base64) and cooldowns manually if needed.
-* `warps.yml`: Stores warp locations.
-* `teleport_data.yml`: Stores spawn location and player homes.
+```java
+public class MyPlugin extends JavaPlugin {
+    @Override
+    public void onEnable() {
+        // Get the API instance
+        FoliaCore core = FoliaCore.getInstance();
+        
+        // Example: Send mail to a player safely
+        core.getChatManager().sendMail(senderUUID, targetUUID, "Welcome to the server!");
+        
+        // Example: Check a balance directly (or use Vault)
+        double bal = core.getEconomyManager().getBalance(player);
+    }
+}
+```~~~~
+## 🤝 Support & Links
 
-**Example `chat_data.yml`:**
-```yaml
-chat-settings:
-  enabled: true
-  default-mode: "GLOBAL"
-  regional-chat-radius: 100
-  global-chat-prefix: "!"
-  format: "<{DISPLAYNAME}> {MESSAGE}"
-```
+* **Website:** [ajaretro.dev](https://ajaretro.dev)
+* **Bug Reports:** [GitHub Issues](https://github.com/AJA-Retro/FoliaCore/issues)
 
-  
-  **🏗️ For Developers**
-FoliaCore is a standalone plugin, but if you need to interface with it, it uses standard Bukkit/Paper APIs.
-
-*Building the project:*
-
-
-
-`mvn clean package`
-Dependency (Maven):
-
-```
-<dependency>
-    <groupId>dev.ajaretro</groupId>
-    <artifactId>folia_core</artifactId>
-    <version>1.0-RELEASE</version>
-    <scope>provided</scope>
-</dependency>
-```
-**📊 bStats**
-This plugin utilizes bStats to collect anonymous usage data. You can disable this in the plugins/bStats/config.yml file.
-
-Plugin ID: 28430
-
-**Developed by AJA RETRO**
+---
+**Developed with ❤️ by [Niloy](https://ajaretro.dev)**
