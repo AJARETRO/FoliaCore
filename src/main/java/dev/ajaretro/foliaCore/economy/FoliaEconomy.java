@@ -1,3 +1,5 @@
+// File: src/main/java/dev/ajaretro/foliaCore/economy/FoliaEconomy.java
+
 package dev.ajaretro.foliaCore.economy;
 
 import net.milkbowl.vault.economy.Economy;
@@ -6,13 +8,28 @@ import org.bukkit.OfflinePlayer;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class FoliaEconomy implements Economy {
 
     // Thread-safe storage.
-    // Key: Player UUID (String), Value: Balance (Double)
     private final ConcurrentHashMap<String, Double> balances = new ConcurrentHashMap<>();
+
+    // --- NEW METHODS FOR SAVING/LOADING ---
+
+    // Allow the EconomyManager to get the data to save it
+    public Map<String, Double> getBalances() {
+        return balances;
+    }
+
+    // Allow the EconomyManager to load data from file
+    public void setBalances(Map<String, Double> loadedBalances) {
+        this.balances.clear();
+        this.balances.putAll(loadedBalances);
+    }
+
+    // --------------------------------------
 
     @Override
     public boolean isEnabled() { return true; }
@@ -37,8 +54,6 @@ public class FoliaEconomy implements Economy {
     @Override
     public String currencyNameSingular() { return "Dollar"; }
 
-    // --- Thread-Safe Read Operations ---
-
     @Override
     public boolean hasAccount(OfflinePlayer player) {
         return balances.containsKey(player.getUniqueId().toString());
@@ -54,17 +69,12 @@ public class FoliaEconomy implements Economy {
         return getBalance(player) >= amount;
     }
 
-    // --- CRITICAL: Thread-Safe Write Operations ---
-    // We synchronize on the 'balances' map to prevent race conditions (Double Spending).
-    // In a massive server, you would lock specific UUIDs, but for a Core plugin, this is perfect.
-
     @Override
     public EconomyResponse withdrawPlayer(OfflinePlayer player, double amount) {
         if (amount < 0) return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Cannot withdraw negative funds");
 
         String uuid = player.getUniqueId().toString();
 
-        // Lock the map briefly to ensure the math is atomic
         synchronized (balances) {
             double current = balances.getOrDefault(uuid, 0.0);
 
@@ -98,14 +108,12 @@ public class FoliaEconomy implements Economy {
         return true;
     }
 
-    // --- The "Missing Method" Fix (createBank with OfflinePlayer) ---
     @Override
     public EconomyResponse createBank(String name, OfflinePlayer player) {
         return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Banks are not supported");
     }
 
-    // --- Legacy / Unused Methods (Required by Interface) ---
-
+    // Legacy / Unused Methods
     @Override public boolean hasAccount(String playerName) { return false; }
     @Override public double getBalance(String playerName) { return 0; }
     @Override public boolean has(String playerName, double amount) { return false; }

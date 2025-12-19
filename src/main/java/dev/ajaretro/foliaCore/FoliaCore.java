@@ -17,6 +17,7 @@ public final class FoliaCore extends JavaPlugin {
 
     private static FoliaCore instance;
 
+    // Subsystems
     private ChatManager chatManager;
     private TeleportManager teleportManager;
     private TeamManager teamManager;
@@ -29,22 +30,23 @@ public final class FoliaCore extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        // 1. Assign Instance for API access
         instance = this;
 
+        // 2. Initialize Utils
         this.messenger = new Messenger("&l[ &4AJA_RETRO/&3FoliaCore&f ]");
 
+        // 3. Metrics (bStats)
         int pluginId = 28430;
         try {
             Metrics metrics = new Metrics(this, pluginId);
-
-            // 2. FIX THIS LINE (Remove "Metrics." before SimplePie)
             metrics.addCustomChart(new SimplePie("chart_id", () -> "My Value"));
-
             getLogger().info("bStats metrics enabled.");
         } catch (Exception e) {
             getLogger().warning("Failed to enable bStats metrics.");
         }
 
+        // 4. Folia Check
         try {
             Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
         } catch (ClassNotFoundException e) {
@@ -53,8 +55,7 @@ public final class FoliaCore extends JavaPlugin {
             return;
         }
 
-        instance = this;
-
+        // 5. Vault / Economy Setup
         if (getServer().getPluginManager().getPlugin("Vault") != null) {
             getServer().getServicesManager().register(
                     Economy.class,
@@ -62,7 +63,6 @@ public final class FoliaCore extends JavaPlugin {
                     this,
                     ServicePriority.Highest
             );
-
             Bukkit.getConsoleSender().sendMessage(
                     LegacyComponentSerializer.legacyAmpersand().deserialize("&l&4[FoliaCore] &aVault found! Economy Provider registered.")
             );
@@ -70,8 +70,7 @@ public final class FoliaCore extends JavaPlugin {
             getLogger().warning("Vault NOT found! Economy features will be disabled.");
         }
 
-
-
+        // 6. Initialize Managers
         this.chatManager = new ChatManager(this);
         this.teleportManager = new TeleportManager(this);
         this.teamManager = new TeamManager(this);
@@ -80,10 +79,9 @@ public final class FoliaCore extends JavaPlugin {
         this.markerManager = new MarkerManager(this);
         this.economyManager = new EconomyManager(this);
 
+        // 7. Load Data & Register Content
         loadSubsystems();
-
         registerListeners();
-
         registerCommands();
 
         Bukkit.getConsoleSender().sendMessage(
@@ -93,23 +91,25 @@ public final class FoliaCore extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        // Safe shutdown - save all data
         if (chatManager != null) chatManager.saveData();
         if (teleportManager != null) teleportManager.saveData();
         if (teamManager != null) teamManager.saveData();
         if (kitManager != null) kitManager.saveData();
         if (warpManager != null) warpManager.saveData();
         if (markerManager != null) markerManager.saveData();
+        if (economyManager != null) economyManager.saveData(); // Added check for economyManager too just in case
 
         getLogger().info("FoliaCore shutdown sequence completed.");
     }
 
     private void loadSubsystems() {
-        chatManager.load();
-        teleportManager.load();
-        teamManager.load();
-        kitManager.load();
-        warpManager.load();
-        markerManager.load();
+        if (chatManager != null) chatManager.load();
+        if (teleportManager != null) teleportManager.load();
+        if (teamManager != null) teamManager.load();
+        if (kitManager != null) kitManager.load();
+        if (warpManager != null) warpManager.load();
+        if (markerManager != null) markerManager.load();
         if (economyManager != null) economyManager.load();
     }
 
@@ -124,6 +124,7 @@ public final class FoliaCore extends JavaPlugin {
     }
 
     private void registerCommands() {
+        // Chat / Social
         getCommand("mute").setExecutor(new MuteCommand(this));
         getCommand("unmute").setExecutor(new UnmuteCommand(this));
         getCommand("msg").setExecutor(new MsgCommand(this));
@@ -133,6 +134,7 @@ public final class FoliaCore extends JavaPlugin {
         getCommand("mail").setExecutor(new MailCommand(this));
         getCommand("chat").setExecutor(new ChatCommand(this));
 
+        // Teleportation
         getCommand("sethome").setExecutor(new SetHomeCommand(this));
         getCommand("home").setExecutor(new HomeCommand(this));
         getCommand("delhome").setExecutor(new DelHomeCommand(this));
@@ -144,6 +146,7 @@ public final class FoliaCore extends JavaPlugin {
         getCommand("setspawn").setExecutor(new SetSpawnCommand(this));
         getCommand("spawn").setExecutor(new SpawnCommand(this));
 
+        // Gameplay
         getCommand("team").setExecutor(new TeamCommand(this));
         getCommand("kit").setExecutor(new KitCommand(this));
         getCommand("createkit").setExecutor(new CreateKitCommand(this));
@@ -155,14 +158,21 @@ public final class FoliaCore extends JavaPlugin {
         getCommand("warp").setExecutor(new WarpCommand(this));
         getCommand("warps").setExecutor(new WarpsCommand(this));
 
+        // Economy
         getCommand("balance").setExecutor(new BalanceCommand(this));
         getCommand("pay").setExecutor(new PayCommand(this));
         getCommand("eco").setExecutor(new EcoCommand(this));
+
+        // Identity
         getCommand("nick").setExecutor(new NickCommand(this));
         getCommand("realname").setExecutor(new RealNameCommand(this));
     }
 
+    // --- API ACCESS ---
+    // These methods allow FoliaCore-Admin to hook into this plugin!
+
     public static FoliaCore getInstance() { return instance; }
+
     public ChatManager getChatManager() { return chatManager; }
     public TeleportManager getTeleportManager() { return teleportManager; }
     public TeamManager getTeamManager() { return teamManager; }
