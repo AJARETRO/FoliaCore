@@ -63,7 +63,7 @@ Move players across threaded regions without crashing your server.
 
 1.  Stop your server.
 2.  Download the latest `FoliaCore.jar` from [Releases](https://github.com/AJA-Retro/FoliaCore/releases).
-3.  **Required:** Install [Vault](https://www.spigotmc.org/resources/vault.34315/) (FoliaCore hooks into Vault to provide the economy).
+3.  **Soft-Required:** Install [Vault](https://www.spigotmc.org/resources/vault.34315/) (FoliaCore hooks into Vault to provide the economy).
 4.  Place both JARs in your `plugins` folder.
 5.  Start the server.
 
