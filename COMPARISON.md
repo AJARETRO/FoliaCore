@@ -253,14 +253,14 @@ Even if you're on Paper today, Folia represents the future of Minecraft server p
 ### Scenario 1: Player Uses `/home` on Folia
 
 **EssentialsX:**
-```
+```log
 [ERROR] Unsafe teleport detected!
 [SEVERE] Player cannot be teleported across regions
 Server crashes or player is stuck
 ```
 
 **FoliaCore:**
-```
+```log
 ✅ Teleporting to home "base"...
 Player smoothly transitions between regions
 ```
@@ -268,14 +268,14 @@ Player smoothly transitions between regions
 ### Scenario 2: Economy Transaction During Combat
 
 **EssentialsX on Folia:**
-```
+```log
 [ERROR] Race condition in economy
 Player A and Player B both access same balance
 Data corruption: Money duplicated or lost
 ```
 
 **FoliaCore:**
-```
+```log
 ✅ Thread-safe atomic transaction
 Correct balance maintained for both players
 No data loss or duplication
@@ -284,13 +284,13 @@ No data loss or duplication
 ### Scenario 3: Player Claims Kit While Server Saves
 
 **EssentialsX:**
-```
+```log
 Server freezes for 2-3 seconds (main thread blocked)
 Player experiences lag spike
 ```
 
 **FoliaCore:**
-```
+```log
 ✅ Async snapshot taken in background
 Zero server lag
 Player receives kit instantly
