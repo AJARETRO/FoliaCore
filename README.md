@@ -10,19 +10,23 @@
 
 If you are running a Folia server, you know that standard plugins break. They freeze the server, cause "Unsafe Teleport" crashes, or corrupt player data because they don't understand Region Scheduling. **FoliaCore fixes this.**
 
+> 📚 **Quick Navigation:** [Why FoliaCore?](#-why-foliacore-vs-legacy-plugins) • [Features](#-features) • [Installation](#-installation) • [Commands](#-commands--permissions) • [Developer API](#-developer-api) • [📊 Detailed Comparison](COMPARISON.md)
+
 ---
 
-## 🆚 Why FoliaCore? (vs EssentialsX)
+## 🆚 Why FoliaCore? (vs Legacy Plugins)
 
-Standard core plugins were built for Spigot—a single-threaded software. Folia is multi-threaded. Here is why you need FoliaCore:
+Standard core plugins (EssentialsX, CMI) were built for Spigot—a single-threaded software. Folia is multi-threaded. Here is why you need FoliaCore:
 
-| Feature | ❌ EssentialsX (on Folia) | ✅ FoliaCore |
+| Feature | ❌ Legacy Plugins (on Folia) | ✅ FoliaCore |
 | :--- | :--- | :--- |
 | **Teleportation** | Often causes server crashes or "Unsafe" exceptions. | Uses `teleportAsync` to safely move players between regions. |
 | **Economy** | Can lag the main thread or cause race conditions. | **Thread-safe implementation** using `ConcurrentHashMap` & atomic operations. |
 | **User Data** | Saves data on the main thread (Lag spikes). | Saves data asynchronously using snapshots (No lag). |
 | **Scheduling** | Uses standard Bukkit Scheduler (Breaks on Folia). | Built natively on the **Folia Region Scheduler**. |
 | **Chat** | Standard listeners. | Async Chat Event handling with radius support. |
+
+> **📊 Want a detailed comparison?** See [COMPARISON.md](COMPARISON.md) for a comprehensive feature-by-feature breakdown vs EssentialsX, CMI, and other legacy plugins, plus migration guides.
 
 ---
 
@@ -63,7 +67,7 @@ Move players across threaded regions without crashing your server.
 
 1.  Stop your server.
 2.  Download the latest `FoliaCore.jar` from [Releases](https://github.com/AJA-Retro/FoliaCore/releases).
-3.  **Required:** Install [Vault](https://www.spigotmc.org/resources/vault.34315/) (FoliaCore hooks into Vault to provide the economy).
+3.  **Soft-Required:** Install [Vault](https://www.spigotmc.org/resources/vault.34315/) (FoliaCore hooks into Vault to provide the economy).
 4.  Place both JARs in your `plugins` folder.
 5.  Start the server.
 
@@ -113,7 +117,31 @@ public class MyPlugin extends JavaPlugin {
         double bal = core.getEconomyManager().getBalance(player);
     }
 }
-```~~~~
+```
+---
+
+## ❓ Frequently Asked Questions
+
+### Can I use EssentialsX with Folia?
+**No.** EssentialsX and other legacy plugins are incompatible with Folia. They will cause crashes, "Unsafe Teleport" errors, and data corruption. Use FoliaCore instead.
+
+### Can I migrate from EssentialsX/CMI to FoliaCore?
+**Yes!** While automatic data import is planned, you can manually migrate:
+- Export economy data and homes from your old plugin
+- Import them into FoliaCore's YAML files
+- See the [migration guide](COMPARISON.md#-migration-guide) for details
+
+### Is FoliaCore feature-complete compared to EssentialsX?
+FoliaCore covers all **essential** features (economy, homes, warps, kits, TPA, chat, etc.). Some advanced EssentialsX features are planned for future releases. See [COMPARISON.md](COMPARISON.md) for a detailed feature matrix.
+
+### Can I use FoliaCore on Paper/Spigot?
+**No.** FoliaCore is designed exclusively for Folia. For Paper/Spigot servers, continue using EssentialsX or CMI.
+
+### Does FoliaCore support Vault?
+**Yes!** FoliaCore includes a thread-safe Vault economy provider. No external economy plugin is needed.
+
+---
+
 ## 🤝 Support & Links
 
 * **Website:** [ajaretro.dev](https://ajaretro.dev)
