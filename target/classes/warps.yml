@@ -1,0 +1,4 @@
+# A list of all server warps.
+# Admins can create these with /setwarp <name>
+# Players can use them with /warp <name>
+warps: {}

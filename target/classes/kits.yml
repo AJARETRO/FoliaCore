@@ -1,0 +1,15 @@
+kits:
+  starter:
+    cooldown-seconds: 86400
+    permission: "foliacore.kit.starter"
+    display-material: "IRON_SWORD"
+    items-base64: "AAEAAQDfAQAAAAUAAAABdAAIYnVra2l0LXZlcnNpb24AdABFMDA3Mi1wYXBlci0xLjIxLVgqKl
+                  VERVYgKFJldmlzaW9uOiA0ZjlmNjYyIGJ5IEplYnJvKSAoTWluZWNyYWZ0IDEuMjEpAAAAA3Ny
+                  ABpvcmcuYnVra2l0LmludmVudG9yeS5JdGVtU3RhY2sBPD9ajM54vQIAAARMAA12AAN2ZXJzaW9
+                  bgB0AEU3MzA5LVNwZ290LTEuMjAuMS1SMC4xLVNOQVBTSE9UKmUgKFJldmlzaW9uOiBmMGYxNzg2
+                  KSAobWluZWNyYWZ0LXZlcnNpb246IDEuMjAuMSl4cgATamF2YS5sYW5nLkVuYW1vYmplY3QAAAAA
+                  eHEAfgAGdAAGYW1vdW50dAABeHQACW1hdGVyaWFsc3IAEWphdmEubGFuZy5TdHJpbmcAlO+cFW0k
+                  ZiwCAAB4cHQAClNUT05FX1NXT1JEeHEAfgAOc3EAfgAIcQB+AA50AApxc3EAfgAQdAAIU1RPTkVf
+                  UElDS0FYRXhxAH4ADnNxAH4ACHEAfgAOdAAJcXNxAH4AEHQACEBUT05FX0FYRXhxAH4ADnNxAH4A
+                  CHEAfgAOdAAJcXNxAH4AEHQADFNUT05FX1NOV1ZFTHhxAH4ADnNxAH4ACHEAfgAOdAAHc3EAfgAQ
+                  dAAJQlJFQUR4cQB+AA50AAg="

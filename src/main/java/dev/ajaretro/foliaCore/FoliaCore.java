@@ -5,6 +5,7 @@ import dev.ajaretro.foliaCore.listeners.*;
 import dev.ajaretro.foliaCore.managers.*;
 import dev.ajaretro.foliaCore.utils.Messenger;
 import dev.ajaretro.foliaCore.economy.FoliaEconomy;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
@@ -30,13 +31,12 @@ public final class FoliaCore extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // 1. Assign Instance for API access
         instance = this;
 
-        // 2. Initialize Utils
+        // 1. Initialize Utils
         this.messenger = new Messenger("&l[ &4AJA_RETRO/&3FoliaCore&f ]");
 
-        // 3. Metrics (bStats)
+        // 2. Metrics (bStats)
         int pluginId = 28430;
         try {
             Metrics metrics = new Metrics(this, pluginId);
@@ -46,7 +46,7 @@ public final class FoliaCore extends JavaPlugin {
             getLogger().warning("Failed to enable bStats metrics.");
         }
 
-        // 4. Folia Check
+        // 3. Folia Check
         try {
             Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
         } catch (ClassNotFoundException e) {
@@ -55,7 +55,7 @@ public final class FoliaCore extends JavaPlugin {
             return;
         }
 
-        // 5. Vault / Economy Setup
+        // 4. Vault / Economy Setup
         if (getServer().getPluginManager().getPlugin("Vault") != null) {
             getServer().getServicesManager().register(
                     Economy.class,
@@ -70,7 +70,7 @@ public final class FoliaCore extends JavaPlugin {
             getLogger().warning("Vault NOT found! Economy features will be disabled.");
         }
 
-        // 6. Initialize Managers
+        // 5. Initialize Managers
         this.chatManager = new ChatManager(this);
         this.teleportManager = new TeleportManager(this);
         this.teamManager = new TeamManager(this);
@@ -79,10 +79,15 @@ public final class FoliaCore extends JavaPlugin {
         this.markerManager = new MarkerManager(this);
         this.economyManager = new EconomyManager(this);
 
-        // 7. Load Data & Register Content
+        // 6. Load Data & Register Content
         loadSubsystems();
         registerListeners();
-        registerCommands();
+
+        // --- FIXED: COMMAND REGISTRATION ---
+        // Paper plugins must use LifecycleEvents.COMMANDS to avoid UnsupportedOperationException
+        this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
+            registerCommands();
+        });
 
         Bukkit.getConsoleSender().sendMessage(
                 LegacyComponentSerializer.legacyAmpersand().deserialize("&l&4[FoliaCore] &aPlugin initialized successfully! &7(Backend: REGIONIZED)")
@@ -91,14 +96,13 @@ public final class FoliaCore extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Safe shutdown - save all data
         if (chatManager != null) chatManager.saveData();
         if (teleportManager != null) teleportManager.saveData();
         if (teamManager != null) teamManager.saveData();
         if (kitManager != null) kitManager.saveData();
         if (warpManager != null) warpManager.saveData();
         if (markerManager != null) markerManager.saveData();
-        if (economyManager != null) economyManager.saveData(); // Added check for economyManager too just in case
+        if (economyManager != null) economyManager.saveData();
 
         getLogger().info("FoliaCore shutdown sequence completed.");
     }
@@ -168,11 +172,7 @@ public final class FoliaCore extends JavaPlugin {
         getCommand("realname").setExecutor(new RealNameCommand(this));
     }
 
-    // --- API ACCESS ---
-    // These methods allow FoliaCore-Admin to hook into this plugin!
-
     public static FoliaCore getInstance() { return instance; }
-
     public ChatManager getChatManager() { return chatManager; }
     public TeleportManager getTeleportManager() { return teleportManager; }
     public TeamManager getTeamManager() { return teamManager; }
