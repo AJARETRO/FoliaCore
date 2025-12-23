@@ -134,6 +134,14 @@ public class ChatManager {
     }
 
     public void saveData() {
+        if (!plugin.isEnabled()) {
+            saveDataSync();
+            return;
+        }
+        saveDataAsync();
+    }
+
+    private void saveDataSync() {
         try {
             dataConfig.set("mutes", null);
             for (UUID uuid : mutes.keySet()) {
@@ -174,7 +182,7 @@ public class ChatManager {
     }
 
     private void saveDataAsync() {
-        Bukkit.getAsyncScheduler().runNow(plugin, (task) -> saveData());
+        Bukkit.getAsyncScheduler().runNow(plugin, (task) -> saveDataSync());
     }
 
     public String getChatFormat() {
@@ -193,18 +201,18 @@ public class ChatManager {
         if (expiration == -1) return true;
         if (System.currentTimeMillis() < expiration) return true;
         mutes.remove(uuid);
-        saveDataAsync();
+        saveData();
         return false;
     }
 
     public void mutePlayer(UUID uuid, long durationMillis) {
         mutes.put(uuid, (durationMillis == -1) ? -1 : System.currentTimeMillis() + durationMillis);
-        saveDataAsync();
+        saveData();
     }
 
     public void unmutePlayer(UUID uuid) {
         mutes.remove(uuid);
-        saveDataAsync();
+        saveData();
     }
 
     public UUID getReplyTarget(UUID uuid) { return replyTargets.get(uuid); }
@@ -217,30 +225,30 @@ public class ChatManager {
 
     public void blockPlayer(UUID target, UUID blocker) {
         blockedPlayers.computeIfAbsent(target, k -> ConcurrentHashMap.newKeySet()).add(blocker);
-        saveDataAsync();
+        saveData();
     }
 
     public void unblockPlayer(UUID target, UUID blocker) {
         Set<UUID> blockers = blockedPlayers.get(target);
         if (blockers != null) blockers.remove(blocker);
-        saveDataAsync();
+        saveData();
     }
 
     public void sendMail(UUID sender, UUID target, String message) {
         List<Mail> mailList = mailboxes.computeIfAbsent(target, k -> Collections.synchronizedList(new ArrayList<>()));
         mailList.add(new Mail(sender, message));
-        saveDataAsync();
+        saveData();
     }
 
     public List<Mail> getMail(UUID player) { return mailboxes.get(player); }
     public void clearMail(UUID player) {
         mailboxes.remove(player);
-        saveDataAsync();
+        saveData();
     }
 
     public void setNickname(UUID uuid, String nickname) {
         nicknames.put(uuid, nickname);
-        saveDataAsync();
+        saveData();
     }
 
     public String getNickname(UUID uuid) {
@@ -249,7 +257,7 @@ public class ChatManager {
 
     public void removeNickname(UUID uuid) {
         nicknames.remove(uuid);
-        saveDataAsync();
+        saveData();
     }
 
     public Map<UUID, String> getAllNicknames() {

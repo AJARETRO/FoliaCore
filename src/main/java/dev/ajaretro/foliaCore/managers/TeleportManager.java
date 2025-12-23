@@ -23,18 +23,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TeleportManager {
 
     private final FoliaCore plugin;
-
-    // Thread-safe storage for Cross-Region Access
     private final Map<UUID, Map<String, Home>> playerHomes = new ConcurrentHashMap<>();
     private final Map<UUID, ScheduledTask> pendingTeleports = new ConcurrentHashMap<>();
     private final Map<UUID, TeleportRequest> pendingTpaRequests = new ConcurrentHashMap<>();
-
-    private volatile Location spawnLocation; // Volatile for visibility across threads
+    private volatile Location spawnLocation;
     private final File dataFile;
     private FileConfiguration dataConfig;
 
     private static final long TPA_REQUEST_TIMEOUT_MS = 60 * 1000;
-    private static final long TELEPORT_DELAY_TICKS = 60L; // 3 seconds at 20 TPS
+    private static final long TELEPORT_DELAY_TICKS = 60L;
 
     public enum TpaType { TPA, TPAHERE }
     public record TeleportRequest(UUID requester, UUID target, TpaType type, long timestamp) {}
@@ -53,8 +50,6 @@ public class TeleportManager {
         loadSpawn();
     }
 
-    // --- Logic ---
-
     public void startTeleport(@NotNull Player player, @NotNull Location location, String successMessage) {
         if (isTeleporting(player.getUniqueId())) {
             plugin.getMessenger().sendError(player, "Teleportation already in progress.");
@@ -63,11 +58,9 @@ public class TeleportManager {
 
         plugin.getMessenger().sendMessage(player, "Teleporting... Stand still for 3 seconds.");
 
-        // Folia Requirement: Use the entity's scheduler to ensure thread locality.
         ScheduledTask task = player.getScheduler().runDelayed(plugin, (scheduledTask) -> {
             pendingTeleports.remove(player.getUniqueId());
 
-            // Async teleport is safer on Folia as it handles chunk loading internally without blocking
             player.teleportAsync(location).thenAccept(result -> {
                 if (result) {
                     plugin.getMessenger().sendSuccess(player, successMessage);
@@ -98,8 +91,6 @@ public class TeleportManager {
         pendingTpaRequests.remove(uuid);
     }
 
-    // --- TPA Request Logic ---
-
     public void createTpaRequest(UUID requester, UUID target, TpaType type) {
         pendingTpaRequests.put(target, new TeleportRequest(requester, target, type, System.currentTimeMillis()));
     }
@@ -120,43 +111,41 @@ public class TeleportManager {
         pendingTpaRequests.remove(target);
     }
 
-    // --- Persistence (Snapshot Pattern) ---
-
-    /**
-     * Saves data using the Snapshot Pattern.
-     * Creates a copy of the data in memory, then writes to disk asynchronously.
-     * This prevents ConcurrentModificationException if the main thread updates data during save.
-     */
     public void saveData() {
         final var homesSnapshot = new java.util.HashMap<>(this.playerHomes);
         final var spawnSnapshot = this.spawnLocation;
 
+        if (!plugin.isEnabled()) {
+            saveDataSync(homesSnapshot, spawnSnapshot);
+            return;
+        }
+
         Bukkit.getAsyncScheduler().runNow(plugin, (task) -> {
-            try {
-                YamlConfiguration tempConfig = new YamlConfiguration();
-
-                // Serialize Homes
-                for (var entry : homesSnapshot.entrySet()) {
-                    String uuid = entry.getKey().toString();
-                    for (var homeEntry : entry.getValue().entrySet()) {
-                        tempConfig.set("homes." + uuid + "." + homeEntry.getKey(), homeEntry.getValue().serialize());
-                    }
-                }
-
-                // Serialize Spawn
-                if (spawnSnapshot != null) {
-                    tempConfig.set("spawn", spawnSnapshot.serialize());
-                }
-
-                tempConfig.save(dataFile);
-            } catch (IOException e) {
-                plugin.getLogger().severe("Failed to save teleport data.");
-                e.printStackTrace();
-            }
+            saveDataSync(homesSnapshot, spawnSnapshot);
         });
     }
 
-    // --- Loading Logic ---
+    private void saveDataSync(Map<UUID, Map<String, Home>> homesSnapshot, Location spawnSnapshot) {
+        try {
+            YamlConfiguration tempConfig = new YamlConfiguration();
+
+            for (var entry : homesSnapshot.entrySet()) {
+                String uuid = entry.getKey().toString();
+                for (var homeEntry : entry.getValue().entrySet()) {
+                    tempConfig.set("homes." + uuid + "." + homeEntry.getKey(), homeEntry.getValue().serialize());
+                }
+            }
+
+            if (spawnSnapshot != null) {
+                tempConfig.set("spawn", spawnSnapshot.serialize());
+            }
+
+            tempConfig.save(dataFile);
+        } catch (IOException e) {
+            plugin.getLogger().severe("Failed to save teleport data.");
+            e.printStackTrace();
+        }
+    }
 
     private void loadHomes() {
         ConfigurationSection homesSection = dataConfig.getConfigurationSection("homes");
@@ -192,12 +181,10 @@ public class TeleportManager {
         }
     }
 
-    // --- Home Accessors ---
-
     public void setHome(UUID playerUUID, String homeName, Location location) {
         playerHomes.computeIfAbsent(playerUUID, k -> new ConcurrentHashMap<>())
                 .put(homeName.toLowerCase(), new Home(location));
-        saveData(); // Triggers async save
+        saveData();
     }
 
     @Nullable

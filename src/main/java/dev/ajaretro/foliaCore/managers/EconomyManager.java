@@ -1,5 +1,3 @@
-// File: src/main/java/dev/ajaretro/foliaCore/managers/EconomyManager.java
-
 package dev.ajaretro.foliaCore.managers;
 
 import dev.ajaretro.foliaCore.FoliaCore;
@@ -38,7 +36,6 @@ public class EconomyManager {
             return;
         }
 
-        // Only load data if WE are the economy provider
         if (econ instanceof FoliaEconomy) {
             loadLocalData();
         }
@@ -56,8 +53,6 @@ public class EconomyManager {
         return econ != null;
     }
 
-    // --- Persistence for Local FoliaEconomy ---
-
     private void loadLocalData() {
         dataFile = new File(plugin.getDataFolder(), "economy.yml");
         if (!dataFile.exists()) {
@@ -73,13 +68,11 @@ public class EconomyManager {
             }
         }
 
-        // Push data into the FoliaEconomy instance
         ((FoliaEconomy) econ).setBalances(loadedBalances);
         plugin.getLogger().info("Loaded " + loadedBalances.size() + " accounts into FoliaEconomy.");
     }
 
     public void saveData() {
-        // Only save if WE are the economy provider
         if (!(econ instanceof FoliaEconomy)) {
             return;
         }
@@ -88,8 +81,7 @@ public class EconomyManager {
 
         Map<String, Double> balances = ((FoliaEconomy) econ).getBalances();
 
-        // Create a snapshot to save async if needed (though onDisable is sync)
-        dataConfig.set("balances", null); // Clear old
+        dataConfig.set("balances", null);
         for (Map.Entry<String, Double> entry : balances.entrySet()) {
             dataConfig.set("balances." + entry.getKey(), entry.getValue());
         }
@@ -101,8 +93,6 @@ public class EconomyManager {
             e.printStackTrace();
         }
     }
-
-    // --- Standard Vault Wrappers ---
 
     public boolean hasEconomy() {
         return econ != null;
@@ -122,9 +112,8 @@ public class EconomyManager {
 
     public EconomyResponse withdraw(OfflinePlayer player, double amount) {
         EconomyResponse response = econ.withdrawPlayer(player, amount);
-        // If we are the provider, trigger an async save after transaction
         if (econ instanceof FoliaEconomy && response.transactionSuccess()) {
-            Bukkit.getAsyncScheduler().runNow(plugin, (task) -> saveData());
+            triggerSave();
         }
         return response;
     }
@@ -132,8 +121,16 @@ public class EconomyManager {
     public EconomyResponse deposit(OfflinePlayer player, double amount) {
         EconomyResponse response = econ.depositPlayer(player, amount);
         if (econ instanceof FoliaEconomy && response.transactionSuccess()) {
-            Bukkit.getAsyncScheduler().runNow(plugin, (task) -> saveData());
+            triggerSave();
         }
         return response;
+    }
+
+    private void triggerSave() {
+        if (!plugin.isEnabled()) {
+            saveData();
+            return;
+        }
+        Bukkit.getAsyncScheduler().runNow(plugin, (task) -> saveData());
     }
 }

@@ -70,6 +70,14 @@ public class MarkerManager {
     }
 
     public void saveData() {
+        if (!plugin.isEnabled()) {
+            saveDataSync();
+            return;
+        }
+        saveDataAsync();
+    }
+
+    private void saveDataSync() {
         try {
             dataConfig.set("markers", null);
             for (Map.Entry<UUID, Map<String, Marker>> entry : playerMarkers.entrySet()) {
@@ -86,22 +94,20 @@ public class MarkerManager {
     }
 
     private void saveDataAsync() {
-        Bukkit.getAsyncScheduler().runNow(plugin, (task) -> saveData());
+        Bukkit.getAsyncScheduler().runNow(plugin, (task) -> saveDataSync());
     }
-
-    // --- Marker CRUD Methods ---
 
     public void setMarker(UUID playerUUID, String name, Location location) {
         Marker marker = new Marker(name, location);
         playerMarkers.computeIfAbsent(playerUUID, k -> new ConcurrentHashMap<>()).put(name.toLowerCase(), marker);
-        saveDataAsync();
+        saveData();
     }
 
     public void deleteMarker(UUID playerUUID, String name) {
         Map<String, Marker> markers = playerMarkers.get(playerUUID);
         if (markers != null) {
             markers.remove(name.toLowerCase());
-            saveDataAsync();
+            saveData();
         }
     }
 
@@ -114,8 +120,6 @@ public class MarkerManager {
     public Map<String, Marker> getMarkers(UUID playerUUID) {
         return playerMarkers.getOrDefault(playerUUID, Collections.emptyMap());
     }
-
-    // --- GPS Task Methods ---
 
     public boolean isGpsActive(UUID playerUUID) {
         return activeGpsTasks.containsKey(playerUUID);
@@ -130,7 +134,6 @@ public class MarkerManager {
     }
 
     public void startGps(Player player, Marker marker) {
-        // Stop any existing GPS task
         stopGps(player);
 
         Location targetLocation = marker.toLocation();
@@ -141,10 +144,8 @@ public class MarkerManager {
 
         plugin.getMessenger().sendSuccess(player, "Starting GPS to " + marker.name() + ". Look at your action bar. Type /gps off to stop.");
 
-        // This is the Folia-native part: a repeating task on the player's *own* scheduler
         ScheduledTask task = player.getScheduler().runAtFixedRate(plugin, (scheduledTask) -> {
 
-            // 1. Check if player is still online or if target is valid
             if (!player.isOnline()) {
                 scheduledTask.cancel();
                 activeGpsTasks.remove(player.getUniqueId());
@@ -153,13 +154,11 @@ public class MarkerManager {
 
             Location playerLoc = player.getLocation();
 
-            // 2. Check if player is in the correct world
             if (!playerLoc.getWorld().equals(targetLocation.getWorld())) {
                 player.sendActionBar(Component.text("Wrong World! Target is in " + marker.worldName(), NamedTextColor.RED));
                 return;
             }
 
-            // 3. Check distance
             double distance = playerLoc.distance(targetLocation);
             if (distance < 5.0) {
                 player.sendActionBar(Component.text("You have arrived at " + marker.name() + "!", NamedTextColor.GREEN));
@@ -168,7 +167,6 @@ public class MarkerManager {
                 return;
             }
 
-            // 4. Calculate direction and send to action bar
             Vector direction = targetLocation.toVector().subtract(playerLoc.toVector()).normalize();
             String arrow = getArrow(playerLoc.getYaw(), direction);
 
@@ -181,27 +179,26 @@ public class MarkerManager {
 
             player.sendActionBar(message);
 
-        }, null, 1L, 20L); // Run every 20 ticks (1 second)
+        }, null, 1L, 20L);
 
         activeGpsTasks.put(player.getUniqueId(), task);
     }
 
-    // Helper method to get the arrow direction
     private String getArrow(float playerYaw, Vector direction) {
-        playerYaw = (playerYaw % 360 + 360) % 360; // Normalize yaw
+        playerYaw = (playerYaw % 360 + 360) % 360;
         double vectorAngle = Math.toDegrees(Math.atan2(-direction.getX(), direction.getZ()));
         double angle = (vectorAngle - playerYaw) % 360;
 
         if (angle < 0) angle += 360;
 
-        if (angle <= 22.5 || angle > 337.5) return "⬆"; // N
-        if (angle > 22.5 && angle <= 67.5) return "↗"; // NE
-        if (angle > 67.5 && angle <= 112.5) return "➡"; // E
-        if (angle > 112.5 && angle <= 157.5) return "↘"; // SE
-        if (angle > 157.5 && angle <= 202.5) return "⬇"; // S
-        if (angle > 202.5 && angle <= 247.5) return "↙"; // SW
-        if (angle > 247.5 && angle <= 292.5) return "⬅"; // W
-        if (angle > 292.5 && angle <= 337.5) return "↖"; // NW
+        if (angle <= 22.5 || angle > 337.5) return "⬆";
+        if (angle > 22.5 && angle <= 67.5) return "↗";
+        if (angle > 67.5 && angle <= 112.5) return "➡";
+        if (angle > 112.5 && angle <= 157.5) return "↘";
+        if (angle > 157.5 && angle <= 202.5) return "⬇";
+        if (angle > 202.5 && angle <= 247.5) return "↙";
+        if (angle > 247.5 && angle <= 292.5) return "⬅";
+        if (angle > 292.5 && angle <= 337.5) return "↖";
         return "?";
     }
 }

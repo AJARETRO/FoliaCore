@@ -61,11 +61,9 @@ public class TeamManager {
 
         for (String teamName : teamsSection.getKeys(false)) {
             try {
-                // --- THIS IS THE FIX ---
                 ConfigurationSection teamSection = teamsSection.getConfigurationSection(teamName);
                 if (teamSection == null) continue;
                 Map<String, Object> teamData = teamSection.getValues(false);
-                // --- END FIX ---
 
                 Team team = Team.deserialize(teamName, teamData);
                 teamsByName.put(teamName.toLowerCase(), team);
@@ -79,6 +77,14 @@ public class TeamManager {
     }
 
     public void saveData() {
+        if (!plugin.isEnabled()) {
+            saveDataSync();
+            return;
+        }
+        saveDataAsync();
+    }
+
+    private void saveDataSync() {
         try {
             dataConfig.set("teams", null);
             for (Map.Entry<String, Team> entry : teamsByName.entrySet()) {
@@ -93,7 +99,7 @@ public class TeamManager {
 
     private void saveDataAsync() {
         Bukkit.getAsyncScheduler().runNow(plugin, (task) -> {
-            saveData();
+            saveDataSync();
         });
     }
 
@@ -113,7 +119,7 @@ public class TeamManager {
         Team team = new Team(name, owner);
         teamsByName.put(name.toLowerCase(), team);
         teamByPlayer.put(owner, team);
-        saveDataAsync();
+        saveData();
     }
 
     public void disbandTeam(Team team) {
@@ -121,7 +127,7 @@ public class TeamManager {
         for (UUID member : team.getMembers()) {
             teamByPlayer.remove(member);
         }
-        saveDataAsync();
+        saveData();
     }
 
     public void addInvite(UUID target, Team team) {
@@ -146,12 +152,12 @@ public class TeamManager {
     public void joinTeam(Team team, UUID player) {
         team.addMember(player);
         teamByPlayer.put(player, team);
-        saveDataAsync();
+        saveData();
     }
 
     public void leaveTeam(Team team, UUID player) {
         team.removeMember(player);
         teamByPlayer.remove(player);
-        saveDataAsync();
+        saveData();
     }
 }

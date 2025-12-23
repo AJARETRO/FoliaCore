@@ -76,6 +76,14 @@ public class KitManager {
     }
 
     public void saveData() {
+        if (!plugin.isEnabled()) {
+            saveDataSync();
+            return;
+        }
+        saveDataAsync();
+    }
+
+    private void saveDataSync() {
         try {
             dataConfig.set("kits", null);
             for (Map.Entry<String, Kit> entry : kits.entrySet()) {
@@ -89,9 +97,7 @@ public class KitManager {
     }
 
     private void saveDataAsync() {
-        Bukkit.getAsyncScheduler().runNow(plugin, (task) -> {
-            saveData();
-        });
+        Bukkit.getAsyncScheduler().runNow(plugin, (task) -> saveDataSync());
     }
 
     public Kit getKit(String name) {
@@ -110,12 +116,12 @@ public class KitManager {
         String itemsBase64 = ItemUtil.serializeItems(items);
         Kit kit = new Kit(name, cooldown, permission, displayMaterial, itemsBase64);
         kits.put(name.toLowerCase(), kit);
-        saveDataAsync();
+        saveData();
     }
 
     public void deleteKit(String name) {
         kits.remove(name.toLowerCase());
-        saveDataAsync();
+        saveData();
     }
 
     public boolean isOnCooldown(UUID playerUUID, Kit kit) {

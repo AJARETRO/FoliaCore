@@ -54,8 +54,16 @@ public class WarpManager {
     }
 
     public void saveData() {
+        if (!plugin.isEnabled()) {
+            saveDataSync();
+            return;
+        }
+        saveDataAsync();
+    }
+
+    private void saveDataSync() {
         try {
-            dataConfig.set("warps", null); // Clear old warps
+            dataConfig.set("warps", null);
             for (Map.Entry<String, Warp> entry : warps.entrySet()) {
                 dataConfig.set("warps." + entry.getKey(), entry.getValue().serialize());
             }
@@ -67,18 +75,18 @@ public class WarpManager {
     }
 
     private void saveDataAsync() {
-        Bukkit.getAsyncScheduler().runNow(plugin, (task) -> saveData());
+        Bukkit.getAsyncScheduler().runNow(plugin, (task) -> saveDataSync());
     }
 
     public void createWarp(String name, Location location) {
         Warp warp = new Warp(name, location);
         warps.put(name.toLowerCase(), warp);
-        saveDataAsync();
+        saveData();
     }
 
     public void deleteWarp(String name) {
         warps.remove(name.toLowerCase());
-        saveDataAsync();
+        saveData();
     }
 
     public Warp getWarp(String name) {

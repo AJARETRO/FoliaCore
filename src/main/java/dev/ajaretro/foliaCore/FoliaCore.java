@@ -18,7 +18,6 @@ public final class FoliaCore extends JavaPlugin {
 
     private static FoliaCore instance;
 
-    // Subsystems
     private ChatManager chatManager;
     private TeleportManager teleportManager;
     private TeamManager teamManager;
@@ -33,10 +32,8 @@ public final class FoliaCore extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        // 1. Initialize Utils
         this.messenger = new Messenger("&l[ &4AJA_RETRO/&3FoliaCore&f ]");
 
-        // 2. Metrics (bStats)
         int pluginId = 28430;
         try {
             Metrics metrics = new Metrics(this, pluginId);
@@ -46,7 +43,6 @@ public final class FoliaCore extends JavaPlugin {
             getLogger().warning("Failed to enable bStats metrics.");
         }
 
-        // 3. Folia Check
         try {
             Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
         } catch (ClassNotFoundException e) {
@@ -55,7 +51,6 @@ public final class FoliaCore extends JavaPlugin {
             return;
         }
 
-        // 4. Vault / Economy Setup
         if (getServer().getPluginManager().getPlugin("Vault") != null) {
             getServer().getServicesManager().register(
                     Economy.class,
@@ -70,7 +65,6 @@ public final class FoliaCore extends JavaPlugin {
             getLogger().warning("Vault NOT found! Economy features will be disabled.");
         }
 
-        // 5. Initialize Managers
         this.chatManager = new ChatManager(this);
         this.teleportManager = new TeleportManager(this);
         this.teamManager = new TeamManager(this);
@@ -79,12 +73,9 @@ public final class FoliaCore extends JavaPlugin {
         this.markerManager = new MarkerManager(this);
         this.economyManager = new EconomyManager(this);
 
-        // 6. Load Data & Register Content
         loadSubsystems();
         registerListeners();
 
-        // --- FIXED: COMMAND REGISTRATION ---
-        // Paper plugins must use LifecycleEvents.COMMANDS to avoid UnsupportedOperationException
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
             registerCommands();
         });
@@ -128,7 +119,6 @@ public final class FoliaCore extends JavaPlugin {
     }
 
     private void registerCommands() {
-        // Chat / Social
         getCommand("mute").setExecutor(new MuteCommand(this));
         getCommand("unmute").setExecutor(new UnmuteCommand(this));
         getCommand("msg").setExecutor(new MsgCommand(this));
@@ -138,7 +128,6 @@ public final class FoliaCore extends JavaPlugin {
         getCommand("mail").setExecutor(new MailCommand(this));
         getCommand("chat").setExecutor(new ChatCommand(this));
 
-        // Teleportation
         getCommand("sethome").setExecutor(new SetHomeCommand(this));
         getCommand("home").setExecutor(new HomeCommand(this));
         getCommand("delhome").setExecutor(new DelHomeCommand(this));
@@ -150,7 +139,6 @@ public final class FoliaCore extends JavaPlugin {
         getCommand("setspawn").setExecutor(new SetSpawnCommand(this));
         getCommand("spawn").setExecutor(new SpawnCommand(this));
 
-        // Gameplay
         getCommand("team").setExecutor(new TeamCommand(this));
         getCommand("kit").setExecutor(new KitCommand(this));
         getCommand("createkit").setExecutor(new CreateKitCommand(this));
@@ -162,12 +150,10 @@ public final class FoliaCore extends JavaPlugin {
         getCommand("warp").setExecutor(new WarpCommand(this));
         getCommand("warps").setExecutor(new WarpsCommand(this));
 
-        // Economy
         getCommand("balance").setExecutor(new BalanceCommand(this));
         getCommand("pay").setExecutor(new PayCommand(this));
         getCommand("eco").setExecutor(new EcoCommand(this));
 
-        // Identity
         getCommand("nick").setExecutor(new NickCommand(this));
         getCommand("realname").setExecutor(new RealNameCommand(this));
     }
