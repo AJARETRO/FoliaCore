@@ -6,7 +6,7 @@ prefix: "AJA_R3TR0_FoliaCore"
 authors: [ AJA RETRO ]
 description: The essential plugin suite, rebuilt natively for Folia.
 website: ajaretro.dev
-
+folia-supported: true
 # Paper-specific dependency loading
 dependencies:
   server:
