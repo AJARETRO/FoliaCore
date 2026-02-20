@@ -3,11 +3,11 @@ package dev.ajaretro.foliaCore.commands;
 import dev.ajaretro.foliaCore.FoliaCore;
 import dev.ajaretro.foliaCore.data.Team;
 import dev.ajaretro.foliaCore.managers.TeamManager;
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -15,7 +15,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class TeamCommand implements CommandExecutor {
+public class TeamCommand implements BasicCommand {
 
     private final FoliaCore plugin;
     private final TeamManager tm;
@@ -27,15 +27,17 @@ public class TeamCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public void execute(CommandSourceStack source, String[] args) {
+        CommandSender sender = source.getSender();
+
         if (!(sender instanceof Player player)) {
             plugin.getMessenger().sendError(sender, "This command can only be run by a player.");
-            return true;
+            return;
         }
 
         if (args.length == 0) {
             handleHelp(player);
-            return true;
+            return;
         }
 
         String subCommand = args[0].toLowerCase();
@@ -71,7 +73,7 @@ public class TeamCommand implements CommandExecutor {
                 break;
         }
 
-        return true;
+        return;
     }
 
     private void handleHelp(Player player) {

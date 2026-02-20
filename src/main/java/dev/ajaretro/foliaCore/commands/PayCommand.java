@@ -2,16 +2,16 @@ package dev.ajaretro.foliaCore.commands;
 
 import dev.ajaretro.foliaCore.FoliaCore;
 import dev.ajaretro.foliaCore.managers.EconomyManager;
+import io.papermc.paper.command.brigadier.BasicCommand;
 import net.milkbowl.vault.economy.EconomyResponse;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class PayCommand implements CommandExecutor {
+public class PayCommand implements BasicCommand {
 
     private final FoliaCore plugin;
     private final EconomyManager eco;
@@ -22,36 +22,38 @@ public class PayCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public void execute(CommandSourceStack source, String[] args) {
+        CommandSender sender = source.getSender();
+
         if (!eco.hasEconomy()) {
             plugin.getMessenger().sendError(sender, "Economy features are disabled.");
-            return true;
+            return;
         }
 
         if (!(sender instanceof Player player)) {
             plugin.getMessenger().sendError(sender, "This command can only be run by a player.");
-            return true;
+            return;
         }
 
         if (!player.hasPermission("foliacore.pay")) {
             plugin.getMessenger().sendError(player, "You do not have permission to use this command.");
-            return true;
+            return;
         }
 
         if (args.length < 2) {
             plugin.getMessenger().sendError(player, "Usage: /pay <player> <amount>");
-            return true;
+            return;
         }
 
         OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
         if (!target.hasPlayedBefore()) {
             plugin.getMessenger().sendError(player, "Player not found.");
-            return true;
+            return;
         }
 
         if (target.getUniqueId().equals(player.getUniqueId())) {
             plugin.getMessenger().sendError(player, "You cannot pay yourself.");
-            return true;
+            return;
         }
 
         double amount;
@@ -59,17 +61,17 @@ public class PayCommand implements CommandExecutor {
             amount = Double.parseDouble(args[1]);
         } catch (NumberFormatException e) {
             plugin.getMessenger().sendError(player, "Invalid amount.");
-            return true;
+            return;
         }
 
         if (amount <= 0) {
             plugin.getMessenger().sendError(player, "Amount must be greater than zero.");
-            return true;
+            return;
         }
 
         if (!eco.has(player, amount)) {
             plugin.getMessenger().sendError(player, "You do not have enough money.");
-            return true;
+            return;
         }
 
         EconomyResponse r = eco.withdraw(player, amount);
@@ -87,6 +89,6 @@ public class PayCommand implements CommandExecutor {
         } else {
             plugin.getMessenger().sendError(player, "An error occurred: " + r.errorMessage);
         }
-        return true;
+        return;
     }
 }

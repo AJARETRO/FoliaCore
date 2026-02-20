@@ -5,8 +5,8 @@ import dev.ajaretro.foliaCore.data.Mail;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -14,7 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-public class MailCommand implements CommandExecutor {
+public class MailCommand implements BasicCommand {
 
     private final FoliaCore plugin;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy HH:mm");
@@ -24,15 +24,17 @@ public class MailCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public void execute(CommandSourceStack source, String[] args) {
+        CommandSender sender = source.getSender();
+
         if (!(sender instanceof Player player)) {
             plugin.getMessenger().sendError(sender, "This command can only be run by a player.");
-            return true;
+            return;
         }
 
         if (args.length == 0) {
             sendHelp(player);
-            return true;
+            return;
         }
 
         String subCommand = args[0].toLowerCase();
@@ -52,7 +54,7 @@ public class MailCommand implements CommandExecutor {
                 break;
         }
 
-        return true;
+        return;
     }
 
     private void sendHelp(Player player) {

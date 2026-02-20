@@ -1,16 +1,14 @@
 package dev.ajaretro.foliaCore.commands;
 
 import dev.ajaretro.foliaCore.FoliaCore;
-import dev.ajaretro.foliaCore.utils.Messenger;
+import io.papermc.paper.command.brigadier.BasicCommand;
 import net.kyori.adventure.text.Component;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class NickCommand implements CommandExecutor {
+public class NickCommand implements BasicCommand {
 
     private final FoliaCore plugin;
 
@@ -19,20 +17,22 @@ public class NickCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public void execute(CommandSourceStack source, String[] args) {
+        CommandSender sender = source.getSender();
+
         if (!(sender instanceof Player player)) {
             plugin.getMessenger().sendError(sender, "Only players can set a nickname.");
-            return true;
+            return;
         }
 
         if (!player.hasPermission("foliacore.nick")) {
             plugin.getMessenger().sendError(player, "You do not have permission to change your nickname.");
-            return true;
+            return;
         }
 
         if (args.length == 0) {
             plugin.getMessenger().sendError(player, "Usage: /nick <name|off>");
-            return true;
+            return;
         }
 
         String input = args[0];
@@ -44,7 +44,7 @@ public class NickCommand implements CommandExecutor {
                 player.playerListName(Component.text(player.getName()));
             }
             plugin.getMessenger().sendSuccess(player, "Nickname reset.");
-            return true;
+            return;
         }
 
         if (!player.hasPermission("foliacore.nick.color")) {
@@ -62,6 +62,6 @@ public class NickCommand implements CommandExecutor {
         player.playerListName(nickComponent);
 
         plugin.getMessenger().sendSuccess(player, "Your nickname is now: " + formattedNick);
-        return true;
+        return;
     }
 }

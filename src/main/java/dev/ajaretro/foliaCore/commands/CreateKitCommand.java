@@ -3,6 +3,8 @@ package dev.ajaretro.foliaCore.commands;
 import dev.ajaretro.foliaCore.FoliaCore;
 import dev.ajaretro.foliaCore.managers.KitManager;
 import dev.ajaretro.foliaCore.utils.TimeUtil;
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -13,7 +15,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.regex.Pattern;
 
-public class CreateKitCommand implements CommandExecutor {
+public class CreateKitCommand implements BasicCommand {
 
     private final FoliaCore plugin;
     private final KitManager kitManager;
@@ -25,21 +27,23 @@ public class CreateKitCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public void execute(CommandSourceStack source, String[] args) {
+        CommandSender sender = source.getSender();
+
         if (!(sender instanceof Player player)) {
             plugin.getMessenger().sendError(sender, "This command can only be run by a player.");
-            return true;
+            return;
         }
 
         if (!player.hasPermission("foliacore.kit.admin")) {
             plugin.getMessenger().sendError(player, "You do not have permission to use this command.");
-            return true;
+            return;
         }
 
         if (args.length < 2) {
             plugin.getMessenger().sendError(player, "Usage: /createkit <name> <cooldown>");
             plugin.getMessenger().sendError(player, "Example: /createkit starter 1d");
-            return true;
+            return;
         }
 
         String kitName = args[0];
@@ -47,24 +51,24 @@ public class CreateKitCommand implements CommandExecutor {
 
         if (!KIT_NAME_PATTERN.matcher(kitName).matches()) {
             plugin.getMessenger().sendError(player, "Kit name must be 3-20 characters and only contain letters, numbers, and underscores.");
-            return true;
+            return;
         }
 
         if (kitManager.isKit(kitName)) {
             plugin.getMessenger().sendError(player, "A kit with that name already exists. Use /delkit first.");
-            return true;
+            return;
         }
 
         long cooldownSeconds = TimeUtil.parseTime(timeString) / 1000;
         if (cooldownSeconds <= 0) {
             plugin.getMessenger().sendError(player, "Invalid time format. Use: 10s, 5m, 1h, 3d");
-            return true;
+            return;
         }
 
         ItemStack displayItem = player.getInventory().getItemInMainHand();
         if (displayItem.getType() == Material.AIR) {
             plugin.getMessenger().sendError(player, "You must be holding an item to use as the kit's display icon.");
-            return true;
+            return;
         }
 
         String permission = "foliacore.kit." + kitName.toLowerCase();
@@ -72,6 +76,5 @@ public class CreateKitCommand implements CommandExecutor {
 
         kitManager.createKit(kitName, cooldownSeconds, permission, displayItem.getType(), items);
         plugin.getMessenger().sendSuccess(player, "Kit '" + ChatColor.GOLD + kitName + ChatColor.GREEN + "' created with a " + TimeUtil.formatDuration(cooldownSeconds * 1000) + " cooldown.");
-        return true;
     }
 }

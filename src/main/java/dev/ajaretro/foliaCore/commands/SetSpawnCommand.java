@@ -1,12 +1,12 @@
 package dev.ajaretro.foliaCore.commands;
 
 import dev.ajaretro.foliaCore.FoliaCore;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class SetSpawnCommand implements CommandExecutor {
+public class SetSpawnCommand implements BasicCommand {
 
     private final FoliaCore plugin;
 
@@ -15,19 +15,21 @@ public class SetSpawnCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public void execute(CommandSourceStack source, String[] args) {
+        CommandSender sender = source.getSender();
+
         if (!sender.hasPermission("foliacore.setspawn")) {
             plugin.getMessenger().sendError(sender, "You do not have permission to use this command.");
-            return true;
+            return;
         }
 
         if (!(sender instanceof Player player)) {
             plugin.getMessenger().sendError(sender, "This command can only be run by a player.");
-            return true;
+            return;
         }
 
         plugin.getTeleportManager().setSpawn(player.getLocation());
         plugin.getMessenger().sendSuccess(sender, "Server spawn location has been set!");
-        return true;
+        return;
     }
 }

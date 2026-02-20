@@ -2,15 +2,15 @@ package dev.ajaretro.foliaCore.commands;
 
 import dev.ajaretro.foliaCore.FoliaCore;
 import dev.ajaretro.foliaCore.managers.EconomyManager;
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class BalanceCommand implements CommandExecutor {
+public class BalanceCommand implements BasicCommand {
 
     private final FoliaCore plugin;
     private final EconomyManager eco;
@@ -21,20 +21,22 @@ public class BalanceCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public void execute(CommandSourceStack source, String[] args) {
+        CommandSender sender = source.getSender();
+
         if (!eco.hasEconomy()) {
             plugin.getMessenger().sendError(sender, "Economy features are disabled. Please install Vault and an economy plugin.");
-            return true;
+            return;
         }
 
         if (args.length == 0) {
             if (!(sender instanceof Player player)) {
                 plugin.getMessenger().sendError(sender, "Only players can check their own balance.");
-                return true;
+                return;
             }
             if (!player.hasPermission("foliacore.balance.self")) {
                 plugin.getMessenger().sendError(player, "You do not have permission to check your balance.");
-                return true;
+                return;
             }
 
             double balance = eco.getBalance(player);
@@ -42,18 +44,17 @@ public class BalanceCommand implements CommandExecutor {
         } else {
             if (!sender.hasPermission("foliacore.balance.other")) {
                 plugin.getMessenger().sendError(sender, "You do not have permission to check other players' balances.");
-                return true;
+                return;
             }
 
             OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
             if (!target.hasPlayedBefore()) {
                 plugin.getMessenger().sendError(sender, "Player not found.");
-                return true;
+                return;
             }
 
             double balance = eco.getBalance(target);
             plugin.getMessenger().sendMessage(sender, target.getName() + "'s balance: " + ChatColor.GOLD + eco.format(balance));
         }
-        return true;
     }
 }

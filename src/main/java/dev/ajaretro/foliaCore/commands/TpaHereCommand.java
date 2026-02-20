@@ -2,14 +2,14 @@ package dev.ajaretro.foliaCore.commands;
 
 import dev.ajaretro.foliaCore.FoliaCore;
 import dev.ajaretro.foliaCore.managers.TeleportManager;
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class TpaHereCommand implements CommandExecutor {
+public class TpaHereCommand implements BasicCommand {
 
     private final FoliaCore plugin;
 
@@ -18,31 +18,33 @@ public class TpaHereCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public void execute(CommandSourceStack source, String[] args) {
+        CommandSender sender = source.getSender();
+
         if (!(sender instanceof Player player)) {
             plugin.getMessenger().sendError(sender, "This command can only be run by a player.");
-            return true;
+            return;
         }
 
         if (!player.hasPermission("foliacore.tpahere")) {
             plugin.getMessenger().sendError(player, "You do not have permission to use this command.");
-            return true;
+            return;
         }
 
         if (args.length == 0) {
             plugin.getMessenger().sendError(player, "Usage: /tpahere <player>");
-            return true;
+            return;
         }
 
         Player target = Bukkit.getPlayer(args[0]);
         if (target == null || !target.isOnline()) {
             plugin.getMessenger().sendError(player, "Player not found or is not online.");
-            return true;
+            return;
         }
 
         if (player.equals(target)) {
             plugin.getMessenger().sendError(player, "You cannot send a teleport request to yourself.");
-            return true;
+            return;
         }
 
         plugin.getTeleportManager().createTpaRequest(player.getUniqueId(), target.getUniqueId(), TeleportManager.TpaType.TPAHERE);
@@ -53,6 +55,6 @@ public class TpaHereCommand implements CommandExecutor {
             plugin.getMessenger().sendMessage(target, "Type " + ChatColor.GREEN + "/tpaccept" + ChatColor.WHITE + " or " + ChatColor.RED + "/tpdeny");
         }, null);
 
-        return true;
+        return;
     }
 }

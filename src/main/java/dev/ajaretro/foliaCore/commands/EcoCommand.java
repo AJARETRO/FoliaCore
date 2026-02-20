@@ -2,14 +2,14 @@ package dev.ajaretro.foliaCore.commands;
 
 import dev.ajaretro.foliaCore.FoliaCore;
 import dev.ajaretro.foliaCore.managers.EconomyManager;
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-public class EcoCommand implements CommandExecutor {
+public class EcoCommand implements BasicCommand {
 
     private final FoliaCore plugin;
     private final EconomyManager eco;
@@ -20,27 +20,29 @@ public class EcoCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public void execute(CommandSourceStack source, String[] args) {
+        CommandSender sender = source.getSender();
+
         if (!eco.hasEconomy()) {
             plugin.getMessenger().sendError(sender, "Economy features are disabled.");
-            return true;
+            return;
         }
 
         if (!sender.hasPermission("foliacore.eco")) {
             plugin.getMessenger().sendError(sender, "You do not have permission to use this command.");
-            return true;
+            return;
         }
 
         if (args.length < 3) {
             sendHelp(sender);
-            return true;
+            return;
         }
 
         String subCommand = args[0].toLowerCase();
         OfflinePlayer target = Bukkit.getOfflinePlayer(args[1]);
         if (!target.hasPlayedBefore()) {
             plugin.getMessenger().sendError(sender, "Player not found.");
-            return true;
+            return;
         }
 
         double amount;
@@ -48,12 +50,12 @@ public class EcoCommand implements CommandExecutor {
             amount = Double.parseDouble(args[2]);
         } catch (NumberFormatException e) {
             plugin.getMessenger().sendError(sender, "Invalid amount.");
-            return true;
+            return;
         }
 
         if (amount < 0) {
             plugin.getMessenger().sendError(sender, "Amount cannot be negative.");
-            return true;
+            return;
         }
 
         String formattedAmount = eco.format(amount);
@@ -77,7 +79,7 @@ public class EcoCommand implements CommandExecutor {
                 sendHelp(sender);
                 break;
         }
-        return true;
+        return;
     }
 
     private void sendHelp(CommandSender sender) {

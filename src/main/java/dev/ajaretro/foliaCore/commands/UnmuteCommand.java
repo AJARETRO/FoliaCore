@@ -1,14 +1,14 @@
 package dev.ajaretro.foliaCore.commands;
 
 import dev.ajaretro.foliaCore.FoliaCore;
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class UnmuteCommand implements CommandExecutor {
+public class UnmuteCommand implements BasicCommand {
 
     private final FoliaCore plugin;
 
@@ -17,21 +17,23 @@ public class UnmuteCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public void execute(CommandSourceStack source, String[] args) {
+        CommandSender sender = source.getSender();
+
         if (!sender.hasPermission("foliacore.unmute")) {
             plugin.getMessenger().sendError(sender, "You do not have permission to use this command.");
-            return true;
+            return;
         }
 
         if (args.length == 0) {
             plugin.getMessenger().sendError(sender, "Usage: /unmute <player>");
-            return true;
+            return;
         }
 
         OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
         if (target == null || !target.hasPlayedBefore()) {
             plugin.getMessenger().sendError(sender, "Player not found.");
-            return true;
+            return;
         }
 
         plugin.getChatManager().unmutePlayer(target.getUniqueId());
@@ -45,6 +47,6 @@ public class UnmuteCommand implements CommandExecutor {
             }, null);
         }
 
-        return true;
+        return;
     }
 }

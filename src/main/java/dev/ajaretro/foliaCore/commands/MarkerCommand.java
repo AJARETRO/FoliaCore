@@ -3,9 +3,9 @@ package dev.ajaretro.foliaCore.commands;
 import dev.ajaretro.foliaCore.FoliaCore;
 import dev.ajaretro.foliaCore.data.Marker;
 import dev.ajaretro.foliaCore.managers.MarkerManager;
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class MarkerCommand implements CommandExecutor {
+public class MarkerCommand implements BasicCommand {
 
     private final FoliaCore plugin;
     private final MarkerManager markerManager;
@@ -25,15 +25,17 @@ public class MarkerCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public void execute(CommandSourceStack source, String[] args) {
+        CommandSender sender = source.getSender();
+
         if (!(sender instanceof Player player)) {
             plugin.getMessenger().sendError(sender, "This command can only be run by a player.");
-            return true;
+            return;
         }
 
         if (args.length == 0) {
             sendHelp(player);
-            return true;
+            return;
         }
 
         String subCommand = args[0].toLowerCase();
@@ -51,7 +53,7 @@ public class MarkerCommand implements CommandExecutor {
             default:
                 sendHelp(player);
         }
-        return true;
+        return;
     }
 
     private void sendHelp(Player player) {

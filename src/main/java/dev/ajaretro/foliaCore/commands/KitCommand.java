@@ -3,13 +3,13 @@ package dev.ajaretro.foliaCore.commands;
 import dev.ajaretro.foliaCore.FoliaCore;
 import dev.ajaretro.foliaCore.data.Kit;
 import dev.ajaretro.foliaCore.gui.KitGUI;
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class KitCommand implements CommandExecutor {
+public class KitCommand implements BasicCommand {
 
     private final FoliaCore plugin;
 
@@ -18,16 +18,18 @@ public class KitCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public void execute(CommandSourceStack source, String[] args) {
+        CommandSender sender = source.getSender();
+
         if (!(sender instanceof Player player)) {
             plugin.getMessenger().sendError(sender, "This command can only be run by a player.");
-            return true;
+            return;
         }
 
         if (args.length == 0) {
             KitGUI gui = new KitGUI(plugin, player);
             gui.openGUI();
-            return true;
+            return;
         }
 
         String kitName = args[0];
@@ -35,10 +37,10 @@ public class KitCommand implements CommandExecutor {
 
         if (kit == null) {
             plugin.getMessenger().sendError(player, "A kit with the name '" + ChatColor.GOLD + kitName + ChatColor.RED + "' does not exist.");
-            return true;
+            return;
         }
 
         plugin.getKitManager().giveKit(player, kit);
-        return true;
+        return;
     }
 }

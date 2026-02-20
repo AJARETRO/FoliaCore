@@ -3,12 +3,12 @@ package dev.ajaretro.foliaCore.commands;
 import dev.ajaretro.foliaCore.FoliaCore;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class MsgCommand implements CommandExecutor {
+public class MsgCommand implements BasicCommand {
 
     private final FoliaCore plugin;
 
@@ -17,42 +17,44 @@ public class MsgCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public void execute(CommandSourceStack source, String[] args) {
+        CommandSender sender = source.getSender();
+
         if (!(sender instanceof Player)) {
             plugin.getMessenger().sendError(sender, "This command can only be run by a player.");
-            return true;
+            return;
         }
 
         if (!sender.hasPermission("foliacore.msg")) {
             plugin.getMessenger().sendError(sender, "You do not have permission to use this command.");
-            return true;
+            return;
         }
 
         if (args.length < 2) {
             plugin.getMessenger().sendError(sender, "Usage: /msg <player> <message...>");
-            return true;
+            return;
         }
 
         Player target = Bukkit.getPlayer(args[0]);
         if (target == null || !target.isOnline()) {
             plugin.getMessenger().sendError(sender, "Player not found or is not online.");
-            return true;
+            return;
         }
 
         Player player = (Player) sender;
         if (player.equals(target)) {
             plugin.getMessenger().sendError(sender, "You cannot message yourself.");
-            return true;
+            return;
         }
 
         if (plugin.getChatManager().isBlocked(player.getUniqueId(), target.getUniqueId())) {
             plugin.getMessenger().sendError(sender, "You cannot message this player as they have you blocked.");
-            return true;
+            return;
         }
 
         if (plugin.getChatManager().isBlocked(target.getUniqueId(), player.getUniqueId())) {
             plugin.getMessenger().sendError(sender, "You have this player blocked. Use /unblock to message them.");
-            return true;
+            return;
         }
 
         StringBuilder messageBuilder = new StringBuilder();
@@ -73,6 +75,6 @@ public class MsgCommand implements CommandExecutor {
         plugin.getChatManager().setReplyTarget(player.getUniqueId(), target.getUniqueId());
         plugin.getChatManager().setReplyTarget(target.getUniqueId(), player.getUniqueId());
 
-        return true;
+        return;
     }
 }

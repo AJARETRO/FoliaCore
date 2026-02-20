@@ -1,17 +1,17 @@
 package dev.ajaretro.foliaCore.commands;
 
 import dev.ajaretro.foliaCore.FoliaCore;
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.UUID;
 import java.util.Map;
+import java.util.UUID;
 
-public class RealNameCommand implements CommandExecutor {
+public class RealNameCommand implements BasicCommand {
 
     private final FoliaCore plugin;
 
@@ -20,15 +20,17 @@ public class RealNameCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public void execute(CommandSourceStack source, String[] args) {
+        CommandSender sender = source.getSender();
+
         if (!sender.hasPermission("foliacore.realname")) {
             plugin.getMessenger().sendError(sender, "You do not have permission to use this command.");
-            return true;
+            return;
         }
 
         if (args.length == 0) {
             plugin.getMessenger().sendError(sender, "Usage: /realname <nickname>");
-            return true;
+            return;
         }
 
         String targetNick = args[0].toLowerCase();
@@ -43,11 +45,11 @@ public class RealNameCommand implements CommandExecutor {
 
                 plugin.getMessenger().sendMessage(sender, "Nickname: " + ChatColor.RESET + ChatColor.translateAlternateColorCodes('&', entry.getValue()));
                 plugin.getMessenger().sendMessage(sender, "Real Name: " + ChatColor.GOLD + realName);
-                return true;
+                return;
             }
         }
 
         plugin.getMessenger().sendError(sender, "No player found with that nickname.");
-        return true;
+        return;
     }
 }

@@ -2,15 +2,14 @@ package dev.ajaretro.foliaCore.commands;
 
 import dev.ajaretro.foliaCore.FoliaCore;
 import dev.ajaretro.foliaCore.data.Warp;
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.stream.Collectors;
 
-public class WarpsCommand implements CommandExecutor {
+public class WarpsCommand implements BasicCommand {
 
     private final FoliaCore plugin;
 
@@ -19,10 +18,12 @@ public class WarpsCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public void execute(CommandSourceStack source, String[] args) {
+        CommandSender sender = source.getSender();
+
         if (!sender.hasPermission("foliacore.warps.list")) {
             plugin.getMessenger().sendError(sender, "You do not have permission to list warps.");
-            return true;
+            return;
         }
 
         boolean isAdmin = sender.hasPermission("foliacore.warp.all");
@@ -38,6 +39,6 @@ public class WarpsCommand implements CommandExecutor {
         } else {
             plugin.getMessenger().sendMessage(sender, "Available Warps: " + ChatColor.WHITE + warpsList);
         }
-        return true;
+        return;
     }
 }

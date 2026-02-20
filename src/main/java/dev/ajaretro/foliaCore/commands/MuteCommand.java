@@ -3,13 +3,13 @@ package dev.ajaretro.foliaCore.commands;
 import dev.ajaretro.foliaCore.FoliaCore;
 import dev.ajaretro.foliaCore.utils.TimeUtil;
 import org.bukkit.Bukkit;
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class MuteCommand implements CommandExecutor {
+public class MuteCommand implements BasicCommand {
 
     private final FoliaCore plugin;
 
@@ -18,21 +18,23 @@ public class MuteCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public void execute(CommandSourceStack source, String[] args) {
+        CommandSender sender = source.getSender();
+
         if (!sender.hasPermission("foliacore.mute")) {
             plugin.getMessenger().sendError(sender, "You do not have permission to use this command.");
-            return true;
+            return;
         }
 
         if (args.length < 2) {
             plugin.getMessenger().sendError(sender, "Usage: /mute <player> <time|permanent>");
-            return true;
+            return;
         }
 
         OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
         if (target == null || !target.hasPlayedBefore()) {
             plugin.getMessenger().sendError(sender, "Player not found.");
-            return true;
+            return;
         }
 
         String timeString = args[1];
@@ -46,7 +48,7 @@ public class MuteCommand implements CommandExecutor {
             duration = TimeUtil.parseTime(timeString);
             if (duration <= 0) {
                 plugin.getMessenger().sendError(sender, "Invalid time format. Use: 10s, 5m, 1h, 3d");
-                return true;
+                return;
             }
             durationFormatted = "for " + TimeUtil.formatDuration(duration);
         }
@@ -62,6 +64,6 @@ public class MuteCommand implements CommandExecutor {
             }, null);
         }
 
-        return true;
+        return;
     }
 }

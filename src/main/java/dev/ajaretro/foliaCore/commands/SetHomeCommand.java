@@ -2,15 +2,15 @@ package dev.ajaretro.foliaCore.commands;
 
 import dev.ajaretro.foliaCore.FoliaCore;
 import dev.ajaretro.foliaCore.managers.TeleportManager;
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.regex.Pattern;
 
-public class SetHomeCommand implements CommandExecutor {
+public class SetHomeCommand implements BasicCommand {
 
     private final FoliaCore plugin;
     private final TeleportManager tm;
@@ -22,15 +22,17 @@ public class SetHomeCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public void execute(CommandSourceStack source, String[] args) {
+        CommandSender sender = source.getSender();
+
         if (!(sender instanceof Player player)) {
             plugin.getMessenger().sendError(sender, "This command can only be run by a player.");
-            return true;
+            return;
         }
 
         if (!player.hasPermission("foliacore.sethome")) {
             plugin.getMessenger().sendError(player, "You do not have permission to set a home.");
-            return true;
+            return;
         }
 
         String homeName;
@@ -41,7 +43,7 @@ public class SetHomeCommand implements CommandExecutor {
                 homeName = "home";
             } else {
                 plugin.getMessenger().sendError(player, "You have access to multiple homes. Please specify a name: /sethome <name>");
-                return true;
+                return;
             }
         } else {
             homeName = args[0];
@@ -49,7 +51,7 @@ public class SetHomeCommand implements CommandExecutor {
 
         if (!HOME_NAME_PATTERN.matcher(homeName).matches()) {
             plugin.getMessenger().sendError(player, "Home name must be 3-20 characters and only contain letters, numbers, and underscores.");
-            return true;
+            return;
         }
 
         boolean isOverwrite = tm.getHome(player.getUniqueId(), homeName) != null;
@@ -57,7 +59,7 @@ public class SetHomeCommand implements CommandExecutor {
 
         if (!isOverwrite && currentHomes >= maxHomes) {
             plugin.getMessenger().sendError(player, "You have reached your maximum home limit of " + maxHomes + ".");
-            return true;
+            return;
         }
 
         tm.setHome(player.getUniqueId(), homeName, player.getLocation());
@@ -67,6 +69,6 @@ public class SetHomeCommand implements CommandExecutor {
             plugin.getMessenger().sendSuccess(player, "Home '" + ChatColor.GOLD + homeName + ChatColor.GREEN + "' set! (" + (currentHomes + 1) + "/" + (maxHomes == Integer.MAX_VALUE ? "Unlimited" : maxHomes) + ")");
         }
 
-        return true;
+        return;
     }
 }

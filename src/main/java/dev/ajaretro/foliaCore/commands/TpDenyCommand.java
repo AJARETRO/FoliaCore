@@ -2,13 +2,13 @@ package dev.ajaretro.foliaCore.commands;
 
 import dev.ajaretro.foliaCore.FoliaCore;
 import dev.ajaretro.foliaCore.managers.TeleportManager;
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class TpDenyCommand implements CommandExecutor {
+public class TpDenyCommand implements BasicCommand {
 
     private final FoliaCore plugin;
     private final TeleportManager tm;
@@ -19,21 +19,23 @@ public class TpDenyCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public void execute(CommandSourceStack source, String[] args) {
+        CommandSender sender = source.getSender();
+
         if (!(sender instanceof Player player)) {
             plugin.getMessenger().sendError(sender, "This command can only be run by a player.");
-            return true;
+            return;
         }
 
         if (!player.hasPermission("foliacore.tpdeny")) {
             plugin.getMessenger().sendError(player, "You do not have permission to use this command.");
-            return true;
+            return;
         }
 
         TeleportManager.TeleportRequest request = tm.getTpaRequest(player.getUniqueId());
         if (request == null) {
             plugin.getMessenger().sendError(player, "You have no pending teleport requests.");
-            return true;
+            return;
         }
 
         tm.removeTpaRequest(player.getUniqueId());
@@ -47,6 +49,6 @@ public class TpDenyCommand implements CommandExecutor {
             }, null);
         }
 
-        return true;
+        return;
     }
 }

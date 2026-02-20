@@ -5,6 +5,7 @@ import dev.ajaretro.foliaCore.listeners.*;
 import dev.ajaretro.foliaCore.managers.*;
 import dev.ajaretro.foliaCore.utils.Messenger;
 import dev.ajaretro.foliaCore.economy.FoliaEconomy;
+import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.milkbowl.vault.economy.Economy;
@@ -76,9 +77,7 @@ public final class FoliaCore extends JavaPlugin {
         loadSubsystems();
         registerListeners();
 
-        this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
-            registerCommands();
-        });
+        registerCommands();
 
         Bukkit.getConsoleSender().sendMessage(
                 LegacyComponentSerializer.legacyAmpersand().deserialize("&l&4[FoliaCore] &aPlugin initialized successfully! &7(Backend: REGIONIZED)")
@@ -119,43 +118,43 @@ public final class FoliaCore extends JavaPlugin {
     }
 
     private void registerCommands() {
-        getCommand("mute").setExecutor(new MuteCommand(this));
-        getCommand("unmute").setExecutor(new UnmuteCommand(this));
-        getCommand("msg").setExecutor(new MsgCommand(this));
-        getCommand("reply").setExecutor(new ReplyCommand(this));
-        getCommand("block").setExecutor(new BlockCommand(this));
-        getCommand("unblock").setExecutor(new UnblockCommand(this));
-        getCommand("mail").setExecutor(new MailCommand(this));
-        getCommand("chat").setExecutor(new ChatCommand(this));
+        registerCommand("mute",new MuteCommand(this));
+        registerCommand("unmute",new UnmuteCommand(this));
+        registerCommand("msg",new MsgCommand(this));
+        registerCommand("reply",new ReplyCommand(this));
+        registerCommand("block",new BlockCommand(this));
+        registerCommand("unblock",new UnblockCommand(this));
+        registerCommand("mail",new MailCommand(this));
+        registerCommand("chat",new ChatCommand(this));
 
-        getCommand("sethome").setExecutor(new SetHomeCommand(this));
-        getCommand("home").setExecutor(new HomeCommand(this));
-        getCommand("delhome").setExecutor(new DelHomeCommand(this));
-        getCommand("homes").setExecutor(new HomesCommand(this));
-        getCommand("tpa").setExecutor(new TpaCommand(this));
-        getCommand("tpahere").setExecutor(new TpaHereCommand(this));
-        getCommand("tpaccept").setExecutor(new TpAcceptCommand(this));
-        getCommand("tpdeny").setExecutor(new TpDenyCommand(this));
-        getCommand("setspawn").setExecutor(new SetSpawnCommand(this));
-        getCommand("spawn").setExecutor(new SpawnCommand(this));
+        registerCommand("sethome",new SetHomeCommand(this));
+        registerCommand("home",new HomeCommand(this));
+        registerCommand("delhome",new DelHomeCommand(this));
+        registerCommand("homes",new HomesCommand(this));
+        registerCommand("tpa",new TpaCommand(this));
+        registerCommand("tpahere",new TpaHereCommand(this));
+        registerCommand("tpaccept",new TpAcceptCommand(this));
+        registerCommand("tpdeny",new TpDenyCommand(this));
+        registerCommand("setspawn",new SetSpawnCommand(this));
+        registerCommand("spawn",new SpawnCommand(this));
 
-        getCommand("team").setExecutor(new TeamCommand(this));
-        getCommand("kit").setExecutor(new KitCommand(this));
-        getCommand("createkit").setExecutor(new CreateKitCommand(this));
-        getCommand("delkit").setExecutor(new DeleteKitCommand(this));
-        getCommand("marker").setExecutor(new MarkerCommand(this));
-        getCommand("gps").setExecutor(new GpsCommand(this));
-        getCommand("setwarp").setExecutor(new SetWarpCommand(this));
-        getCommand("delwarp").setExecutor(new DelWarpCommand(this));
-        getCommand("warp").setExecutor(new WarpCommand(this));
-        getCommand("warps").setExecutor(new WarpsCommand(this));
+        registerCommand("team",new TeamCommand(this));
+        registerCommand("kit",new KitCommand(this));
+        registerCommand("createkit",new CreateKitCommand(this));
+        registerCommand("delkit",new DeleteKitCommand(this));
+        registerCommand("marker",new MarkerCommand(this));
+        registerCommand("gps",new GpsCommand(this));
+        registerCommand("setwarp",new SetWarpCommand(this));
+        registerCommand("delwarp",new DelWarpCommand(this));
+        registerCommand("warp",new WarpCommand(this));
+        registerCommand("warps",new WarpsCommand(this));
 
-        getCommand("balance").setExecutor(new BalanceCommand(this));
-        getCommand("pay").setExecutor(new PayCommand(this));
-        getCommand("eco").setExecutor(new EcoCommand(this));
+        registerCommand("balance", new BalanceCommand(this));
+        registerCommand("pay",new PayCommand(this));
+        registerCommand("eco",new EcoCommand(this));
 
-        getCommand("nick").setExecutor(new NickCommand(this));
-        getCommand("realname").setExecutor(new RealNameCommand(this));
+        registerCommand("nick",new NickCommand(this));
+        registerCommand("realname",new RealNameCommand(this));
     }
 
     public static FoliaCore getInstance() { return instance; }
