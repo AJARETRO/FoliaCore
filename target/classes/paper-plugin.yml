@@ -9,11 +9,7 @@ website: ajaretro.dev
 folia-supported: true
 # Paper-specific dependency loading
 dependencies:
-  server:
-    Vault:
-      load: BEFORE
-      required: false
-      join-classpath: true
+  - Vault
 
 commands:
   nick:
