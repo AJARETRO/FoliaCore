@@ -47,9 +47,9 @@ public class TpAcceptCommand implements CommandExecutor {
         }
 
         plugin.getMessenger().sendSuccess(player, "Teleport request accepted.");
-        requester.getScheduler().run(plugin, (task) -> {
+        requester.getScheduler().runDelayed(plugin, (task) -> {
             plugin.getMessenger().sendSuccess(requester, player.getName() + " accepted your teleport request.");
-        }, null);
+        }, null, 0L);
 
         if (request.type() == TeleportManager.TpaType.TPA) {
             tm.startTeleport(requester, player.getLocation(), "Teleported to " + ChatColor.GOLD + player.getName());

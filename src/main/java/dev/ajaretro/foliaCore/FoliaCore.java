@@ -14,6 +14,22 @@ import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bstats.charts.SimplePie;
 
+/**
+ * FoliaCore: A multi-threaded plugin suite for Paper/Folia servers.
+ * 
+ * This plugin provides essential gameplay features optimized for Folia's 
+ * multi-threaded architecture, including chat management, teleprotation,
+ * teams, kits, warps, and more.
+ * 
+ * Key Features:
+ * - Async command handling and scheduling
+ * - Thread-safe data management with ConcurrentHashMap
+ * - Vault economy integration
+ * - bStats metrics integration
+ * 
+ * @author AJARETRO
+ * @version 1.0-RELEASE
+ */
 public final class FoliaCore extends JavaPlugin {
 
     private static FoliaCore instance;

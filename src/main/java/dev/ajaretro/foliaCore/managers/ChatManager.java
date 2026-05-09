@@ -14,6 +14,18 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+/**
+ * Manages chat modes, mutes, blocked players, and mailbox data.
+ *
+ * Features:
+ * - Player chat mode management (GLOBAL, WORLD, REGIONAL)
+ * - Mute system with timeout validation
+ * - Player blocking system
+ * - Offline mail system
+ * - Nickname management
+ *
+ * Thread-safe data structures ensure compatibility with Folia's async chat.
+ */
 public class ChatManager {
 
     private static ChatManager instance;

@@ -20,6 +20,17 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Manages player homes, spawns, and teleportation requests.
+ *
+ * This manager handles:
+ * - Player home creation and teleportation
+ * - Server spawn management
+ * - TPA/TPA Here requests with timeout validation
+ * - Teleport delay with movement cancellation
+ *
+ * All operations are fully compatible with Folia's multi-threaded architecture.
+ */
 public class TeleportManager {
 
     private final FoliaCore plugin;

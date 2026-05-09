@@ -161,14 +161,14 @@ public class KitManager {
 
     public boolean giveKit(Player player, Kit kit) {
         if (!player.hasPermission(kit.permission())) {
-            FoliaCore.getInstance().getMessenger().sendError(player, "You do not have permission to use this kit.");
+            plugin.getMessenger().sendError(player, "You do not have permission to use this kit.");
             return false;
         }
 
         if (isOnCooldown(player.getUniqueId(), kit)) {
             long remaining = getRemainingCooldown(player.getUniqueId(), kit);
             String formattedTime = TimeUtil.formatDuration(remaining);
-            FoliaCore.getInstance().getMessenger().sendError(player, "You must wait " + ChatColor.GOLD + formattedTime + ChatColor.RED + " before using this kit again.");
+            plugin.getMessenger().sendError(player, "You must wait " + ChatColor.GOLD + formattedTime + ChatColor.RED + " before using this kit again.");
             return false;
         }
 
@@ -182,7 +182,7 @@ public class KitManager {
         }
 
         setOnCooldown(player.getUniqueId(), kit);
-        FoliaCore.getInstance().getMessenger().sendSuccess(player, "You have redeemed the " + ChatColor.GOLD + kit.name() + ChatColor.GREEN + " kit.");
+        plugin.getMessenger().sendSuccess(player, "You have redeemed the " + ChatColor.GOLD + kit.name() + ChatColor.GREEN + " kit.");
         return true;
     }
 }

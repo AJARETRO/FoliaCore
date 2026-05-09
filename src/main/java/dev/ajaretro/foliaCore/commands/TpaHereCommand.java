@@ -48,10 +48,10 @@ public class TpaHereCommand implements CommandExecutor {
         plugin.getTeleportManager().createTpaRequest(player.getUniqueId(), target.getUniqueId(), TeleportManager.TpaType.TPAHERE);
         plugin.getMessenger().sendSuccess(player, "Teleport request sent to " + target.getName() + ".");
 
-        target.getScheduler().run(plugin, (task) -> {
+        target.getScheduler().runDelayed(plugin, (task) -> {
             plugin.getMessenger().sendMessage(target, ChatColor.GOLD + player.getName() + ChatColor.WHITE + " has requested for you to teleport to them.");
             plugin.getMessenger().sendMessage(target, "Type " + ChatColor.GREEN + "/tpaccept" + ChatColor.WHITE + " or " + ChatColor.RED + "/tpdeny");
-        }, null);
+        }, null, 0L);
 
         return true;
     }

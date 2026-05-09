@@ -28,7 +28,7 @@ public class SpawnCommand implements CommandExecutor {
         }
 
         Location spawn = plugin.getTeleportManager().getSpawn();
-        if (spawn.getWorld() == null) {
+        if (spawn == null || spawn.getWorld() == null) {
             plugin.getMessenger().sendError(player, "The spawn world is not loaded! Please contact an admin.");
             return true;
         }
