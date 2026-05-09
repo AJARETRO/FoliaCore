@@ -89,12 +89,14 @@ public final class FoliaCore extends JavaPlugin {
         this.markerManager = new MarkerManager(this);
         this.economyManager = new EconomyManager(this);
 
+
+                
+
+
         loadSubsystems();
         registerListeners();
-
-        this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
-            registerCommands();
-        });
+         registerCommands();
+        
 
         Bukkit.getConsoleSender().sendMessage(
                 LegacyComponentSerializer.legacyAmpersand().deserialize("&l&4[FoliaCore] &aPlugin initialized successfully! &7(Backend: REGIONIZED)")
