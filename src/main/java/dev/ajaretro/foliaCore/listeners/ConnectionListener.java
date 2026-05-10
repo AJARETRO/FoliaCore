@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 public class ConnectionListener implements Listener {
 
@@ -29,6 +30,17 @@ public class ConnectionListener implements Listener {
 
         if (plugin.getUpdateChecker() != null) {
             plugin.getUpdateChecker().queueOpNotification(player);
+        }
+
+        if (plugin.getDisplayManager() != null) {
+            plugin.getDisplayManager().onPlayerJoin(player);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        if (plugin.getDisplayManager() != null) {
+            plugin.getDisplayManager().onPlayerQuit(event.getPlayer().getUniqueId());
         }
     }
 }

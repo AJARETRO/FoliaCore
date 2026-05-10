@@ -29,6 +29,8 @@ public class ConfigManager {
     public boolean staffEnabled;
     public boolean systemEnabled;
     public boolean utilityEnabled;
+    public boolean tabEnabled;
+    public boolean sidebarEnabled;
     public boolean antiRaidEnabled;
     public boolean securityEnabled;
 
@@ -100,6 +102,8 @@ public class ConfigManager {
             config.set("modules.staff", true);
             config.set("modules.system", true);
             config.set("modules.utility", true);
+            config.set("modules.tab", true);
+            config.set("modules.sidebar", true);
             config.set("modules.antiraid", true);
             config.set("modules.security", true);
 
@@ -122,6 +126,40 @@ public class ConfigManager {
             config.set("status.show-region-details", true);
             config.set("status.max-regions", 12);
             config.set("status.region-chunk-span", 8);
+
+                // Animated TAB defaults
+                config.set("tab.enabled", true);
+                config.set("tab.update-interval-ticks", 20);
+                config.set("tab.header-method", "method-1");
+                config.set("tab.footer-method", "method-2");
+                config.set("tab.methods.method-1", java.util.Arrays.asList(
+                    "&6&lFoliaCore &ev3 Nightingale",
+                    "&e&lFoliaCore &6v3 Nightingale",
+                    "&f&lFoliaCore &ev3 Nightingale"
+                ));
+                config.set("tab.methods.method-2", java.util.Arrays.asList(
+                    "&7Players: &a%online_players%&7/&a%max_players%",
+                    "&7TPS: &b%server_tps% &8| &7Ping: &b%player_ping%ms",
+                    "&7World: &d%world_name%"
+                ));
+
+                // Animated Sidebar defaults
+                config.set("sidebar.enabled", true);
+                config.set("sidebar.update-interval-ticks", 20);
+                config.set("sidebar.title-method", "method-1");
+                config.set("sidebar.line-methods", java.util.Arrays.asList(
+                    "method-2", "method-3", "method-4", "method-5", "method-6"
+                ));
+                config.set("sidebar.methods.method-1", java.util.Arrays.asList(
+                    "&6&lNightingale",
+                    "&e&lNightingale",
+                    "&f&lNightingale"
+                ));
+                config.set("sidebar.methods.method-2", java.util.Collections.singletonList("&7Player: &f%player_name%"));
+                config.set("sidebar.methods.method-3", java.util.Collections.singletonList("&7Online: &a%online_players%&7/&a%max_players%"));
+                config.set("sidebar.methods.method-4", java.util.Collections.singletonList("&7TPS: &b%server_tps%"));
+                config.set("sidebar.methods.method-5", java.util.Collections.singletonList("&7Ping: &b%player_ping%ms"));
+                config.set("sidebar.methods.method-6", java.util.Collections.singletonList("&7Coords: &f%x% &7/&f%y% &7/&f%z%"));
             
             // Anti-raid settings
             config.set("antiraid.enabled", true);
@@ -168,6 +206,8 @@ public class ConfigManager {
         staffEnabled = config.getBoolean("modules.staff", true);
         systemEnabled = config.getBoolean("modules.system", true);
         utilityEnabled = config.getBoolean("modules.utility", true);
+        tabEnabled = config.getBoolean("modules.tab", true);
+        sidebarEnabled = config.getBoolean("modules.sidebar", true);
         antiRaidEnabled = config.getBoolean("modules.antiraid", true);
         securityEnabled = config.getBoolean("modules.security", true);
     }
@@ -210,6 +250,8 @@ public class ConfigManager {
     public boolean isStaffEnabled() { return staffEnabled; }
     public boolean isSystemEnabled() { return systemEnabled; }
     public boolean isUtilityEnabled() { return utilityEnabled; }
+    public boolean isTabEnabled() { return tabEnabled; }
+    public boolean isSidebarEnabled() { return sidebarEnabled; }
 
     // System settings
     public boolean isMaintenanceMode() { return maintenanceMode; }

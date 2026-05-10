@@ -41,6 +41,7 @@ public final class FoliaCore extends JavaPlugin {
     // Core managers
     private ConfigManager configManager;
     private Messenger messenger;
+    private DisplayManager displayManager;
 
     // Feature managers (conditionally loaded)
     private ChatManager chatManager;
@@ -75,6 +76,7 @@ public final class FoliaCore extends JavaPlugin {
 
         this.messenger = new Messenger("&l[ &4AJA_RETRO/&3FoliaCore&f ]");
         this.updateChecker = new ModrinthUpdateChecker(this);
+        this.displayManager = new DisplayManager(this);
 
         // Setup metrics
         int pluginId = 28430;
@@ -133,6 +135,10 @@ public final class FoliaCore extends JavaPlugin {
             this.autoBroadcasterTask.start();
             
             getLogger().info("System tasks started.");
+        }
+
+        if ((configManager.isTabEnabled() || configManager.isSidebarEnabled()) && displayManager != null) {
+            displayManager.start();
         }
 
         printStartupBanner();
@@ -273,6 +279,7 @@ public final class FoliaCore extends JavaPlugin {
         registerCommandSafe("broadcast", new BroadcastCommand(this));
         registerCommandSafe("time", new TimeCommand(this));
         registerCommandSafe("weather", new WeatherCommand(this));
+        registerCommandSafe("calc", new CalcCommand(this));
 
         if (configManager.systemEnabled) {
             registerCommandSafe("status", new StatusCommand(this));
@@ -377,6 +384,7 @@ public final class FoliaCore extends JavaPlugin {
     public WarpManager getWarpManager() { return warpManager; }
     public MarkerManager getMarkerManager() { return markerManager; }
     public Messenger getMessenger() { return messenger; }
+    public DisplayManager getDisplayManager() { return displayManager; }
     public BanManager getBanManager() { return banManager; }
     public VanishManager getVanishManager() { return vanishManager; }
     public SocialSpyManager getSocialSpyManager() { return socialSpyManager; }

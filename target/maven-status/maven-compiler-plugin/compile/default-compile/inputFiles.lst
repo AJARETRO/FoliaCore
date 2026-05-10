@@ -38,6 +38,7 @@
 /workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/data/Team.java
 /workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/commands/CreateKitCommand.java
 /workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/commands/DeleteKitCommand.java
+/workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/utils/ExpressionEvaluator.java
 /workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/commands/TempbanCommand.java
 /workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/commands/DelWarpCommand.java
 /workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/managers/KitManager.java
@@ -67,6 +68,7 @@
 /workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/commands/TpCommand.java
 /workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/utils/TimeUtil.java
 /workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/managers/VanishManager.java
+/workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/managers/DisplayManager.java
 /workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/managers/SpawnManager.java
 /workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/commands/WarpsCommand.java
 /workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/commands/MailCommand.java
@@ -82,6 +84,7 @@
 /workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/tasks/AutoBroadcaster.java
 /workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/commands/GodCommand.java
 /workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/commands/TimeCommand.java
+/workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/commands/CalcCommand.java
 /workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/managers/TeamManager.java
 /workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/data/ChatMode.java
 /workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/listeners/SecurityListener.java

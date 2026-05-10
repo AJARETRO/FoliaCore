@@ -10,6 +10,8 @@ modules:
   staff: true
   system: true
   utility: true
+  tab: true
+  sidebar: true
 
 # System Settings
 system:
@@ -40,3 +42,46 @@ status:
   show-region-details: true
   max-regions: 12
   region-chunk-span: 8
+
+# Animated TAB configuration
+tab:
+  enabled: true
+  update-interval-ticks: 20
+  header-method: method-1
+  footer-method: method-2
+  methods:
+    method-1:
+      - "&6&lFoliaCore &ev3 Nightingale"
+      - "&e&lFoliaCore &6v3 Nightingale"
+      - "&f&lFoliaCore &ev3 Nightingale"
+    method-2:
+      - "&7Players: &a%online_players%&7/&a%max_players%"
+      - "&7TPS: &b%server_tps% &8| &7Ping: &b%player_ping%ms"
+      - "&7World: &d%world_name%"
+
+# Animated Sidebar configuration
+sidebar:
+  enabled: true
+  update-interval-ticks: 20
+  title-method: method-1
+  line-methods:
+    - method-2
+    - method-3
+    - method-4
+    - method-5
+    - method-6
+  methods:
+    method-1:
+      - "&6&lNightingale"
+      - "&e&lNightingale"
+      - "&f&lNightingale"
+    method-2:
+      - "&7Player: &f%player_name%"
+    method-3:
+      - "&7Online: &a%online_players%&7/&a%max_players%"
+    method-4:
+      - "&7TPS: &b%server_tps%"
+    method-5:
+      - "&7Ping: &b%player_ping%ms"
+    method-6:
+      - "&7Coords: &f%x% &7/&f%y% &7/&f%z%"

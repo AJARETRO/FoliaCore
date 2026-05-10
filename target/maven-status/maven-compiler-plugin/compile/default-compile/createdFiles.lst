@@ -61,11 +61,13 @@ dev/ajaretro/foliaCore/managers/AntiRaidManager$BlockTracker.class
 dev/ajaretro/foliaCore/data/Team.class
 dev/ajaretro/foliaCore/listeners/KitGUIListener.class
 dev/ajaretro/foliaCore/managers/TeamManager.class
+dev/ajaretro/foliaCore/managers/DisplayManager.class
 dev/ajaretro/foliaCore/ModrinthUpdateChecker.class
 dev/ajaretro/foliaCore/commands/TpDenyCommand.class
 dev/ajaretro/foliaCore/commands/WarpCommand.class
 dev/ajaretro/foliaCore/listeners/BlockChangeListener.class
 dev/ajaretro/foliaCore/commands/EnderchestCommand.class
+dev/ajaretro/foliaCore/commands/CalcCommand.class
 dev/ajaretro/foliaCore/listeners/MailListener.class
 dev/ajaretro/foliaCore/managers/WarpManager.class
 dev/ajaretro/foliaCore/commands/FeedCommand.class
@@ -74,6 +76,7 @@ dev/ajaretro/foliaCore/data/Kit.class
 dev/ajaretro/foliaCore/commands/SpawnCommand.class
 dev/ajaretro/foliaCore/listeners/PlayerGpsListener.class
 dev/ajaretro/foliaCore/managers/AntiRaidManager.class
+dev/ajaretro/foliaCore/utils/ExpressionEvaluator.class
 dev/ajaretro/foliaCore/commands/TempbanCommand.class
 dev/ajaretro/foliaCore/managers/KitManager.class
 dev/ajaretro/foliaCore/commands/HomesCommand.class
