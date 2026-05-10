@@ -465,6 +465,18 @@ A: Yes! Visit the GitHub repository for contributing guidelines.
 
 ---
 
+## 🤝 Sponsor & Infrastructure
+
+**Truecloud Hosting** — High-performance Minecraft server hosting across India and surrounding regions.
+
+- **Competitive Pricing:** Only $0.50/GB RAM (₹45 INR / 65 BDT)
+- **Reliable Infrastructure:** Optimized for Folia and modern Paper servers
+- **Expert Support:** Built by server operators, for server operators
+
+🔗 **Contact:** WhatsApp: [+880-198-920-8751](https://wa.me/8801989208751)
+
+---
+
 ## 🛠 Development & Support
 
 - **GitHub:** [AJARETRO/FoliaCore](https://github.com/AJARETRO/FoliaCore)
@@ -485,4 +497,5 @@ A: Yes! Visit the GitHub repository for contributing guidelines.
 
 ---
 
-*Last Updated: May 2026 | FoliaCore v2.5 Overhauled | Java 21+ | Folia 26.1.2+*
+*Last Updated: May 2026 | FoliaCore v2.5 Overhauled | Java 21+ | Folia 26.1.2+*  
+*Assisted by AI*
