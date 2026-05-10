@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * - Staff utilities and performance monitoring
  * 
  * @author AJARETRO
- * @version v2.0-Overhauled
+ * @version v2.5-Overhauled
  */
 public final class FoliaCore extends JavaPlugin {
 
@@ -342,19 +342,49 @@ public final class FoliaCore extends JavaPlugin {
 
         String owner = configManager.getStartupOwnerDisplay();
         Bukkit.getConsoleSender().sendMessage(
-                LegacyComponentSerializer.legacyAmpersand().deserialize("&8&m--------------------------------------------------")
+                LegacyComponentSerializer.legacyAmpersand().deserialize("&8")
         );
         Bukkit.getConsoleSender().sendMessage(
-                LegacyComponentSerializer.legacyAmpersand().deserialize("&6&lFoliaCore &f&lV2 &7Reinforced")
+                LegacyComponentSerializer.legacyAmpersand().deserialize("&8&m════════════════════════════════════════════════════════════════════════════════════")
         );
         Bukkit.getConsoleSender().sendMessage(
-                LegacyComponentSerializer.legacyAmpersand().deserialize("&7Maintained by " + owner)
+                LegacyComponentSerializer.legacyAmpersand().deserialize("")
         );
         Bukkit.getConsoleSender().sendMessage(
-                LegacyComponentSerializer.legacyAmpersand().deserialize("&aMode: &fRegionized &8| &aCommands: &fProgrammatic")
+                LegacyComponentSerializer.legacyAmpersand().deserialize("&l&6   ✦ &e&lFOLIACORE &6v2.5&e&l OVERHAULED &6✦")
         );
         Bukkit.getConsoleSender().sendMessage(
-                LegacyComponentSerializer.legacyAmpersand().deserialize("&8&m--------------------------------------------------")
+                LegacyComponentSerializer.legacyAmpersand().deserialize("&f   Folia-Native Essentials Suite")
+        );
+        Bukkit.getConsoleSender().sendMessage(
+                LegacyComponentSerializer.legacyAmpersand().deserialize("")
+        );
+        Bukkit.getConsoleSender().sendMessage(
+                LegacyComponentSerializer.legacyAmpersand().deserialize("&7   ⟶ &aRegionalized ThreadPool &7| &aModular Architecture &7| &aReal-time Telemetry")
+        );
+        Bukkit.getConsoleSender().sendMessage(
+                LegacyComponentSerializer.legacyAmpersand().deserialize("&7   ⟶ &a60+ Commands &7| &abStats Metrics &7| &aVault Economy Ready")
+        );
+        Bukkit.getConsoleSender().sendMessage(
+                LegacyComponentSerializer.legacyAmpersand().deserialize("")
+        );
+        Bukkit.getConsoleSender().sendMessage(
+                LegacyComponentSerializer.legacyAmpersand().deserialize("&8┌────────────────────────────────────────────────────────────────────────────────────┐")
+        );
+        Bukkit.getConsoleSender().sendMessage(
+                LegacyComponentSerializer.legacyAmpersand().deserialize("&8│ &b&lAJA&f&lRETRO &8│ " + owner + " &8│")
+        );
+        Bukkit.getConsoleSender().sendMessage(
+                LegacyComponentSerializer.legacyAmpersand().deserialize("&8└────────────────────────────────────────────────────────────────────────────────────┘")
+        );
+        Bukkit.getConsoleSender().sendMessage(
+                LegacyComponentSerializer.legacyAmpersand().deserialize("")
+        );
+        Bukkit.getConsoleSender().sendMessage(
+                LegacyComponentSerializer.legacyAmpersand().deserialize("&8&m════════════════════════════════════════════════════════════════════════════════════")
+        );
+        Bukkit.getConsoleSender().sendMessage(
+                LegacyComponentSerializer.legacyAmpersand().deserialize("&8")
         );
     }
 
