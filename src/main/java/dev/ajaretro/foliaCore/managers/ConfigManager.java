@@ -42,6 +42,12 @@ public class ConfigManager {
     public int minimumTpsThreshold;
     public boolean autoBroadcasterEnabled;
     public int autoBroadcastInterval;
+    public boolean startupBannerEnabled;
+    public String startupOwnerDisplay;
+    public boolean statusShowWorldSummary;
+    public boolean statusShowRegionDetails;
+    public int statusMaxRegions;
+    public int statusRegionChunkSpan;
 
     public ConfigManager(FoliaCore plugin) {
         this.plugin = plugin;
@@ -108,6 +114,16 @@ public class ConfigManager {
             config.set("system.minimum-tps-threshold", 16);
             config.set("system.auto-broadcaster-enabled", true);
             config.set("system.auto-broadcast-interval", 600);
+
+            // Branding / startup output
+            config.set("branding.startup-banner-enabled", true);
+            config.set("branding.owner-display", "&4AJA_R3TR0 &8x &bFoliaCore");
+
+            // Status command output tuning
+            config.set("status.show-world-summary", true);
+            config.set("status.show-region-details", true);
+            config.set("status.max-regions", 12);
+            config.set("status.region-chunk-span", 8);
             
             // Anti-raid settings
             config.set("antiraid.enabled", true);
@@ -168,6 +184,12 @@ public class ConfigManager {
         minimumTpsThreshold = config.getInt("system.minimum-tps-threshold", 16);
         autoBroadcasterEnabled = config.getBoolean("system.auto-broadcaster-enabled", true);
         autoBroadcastInterval = config.getInt("system.auto-broadcast-interval", 600);
+        startupBannerEnabled = config.getBoolean("branding.startup-banner-enabled", true);
+        startupOwnerDisplay = config.getString("branding.owner-display", "&4AJA_R3TR0 &8x &bFoliaCore");
+        statusShowWorldSummary = config.getBoolean("status.show-world-summary", true);
+        statusShowRegionDetails = config.getBoolean("status.show-region-details", true);
+        statusMaxRegions = Math.max(1, config.getInt("status.max-regions", 12));
+        statusRegionChunkSpan = Math.max(1, config.getInt("status.region-chunk-span", 8));
     }
 
     public void save() {
@@ -220,4 +242,10 @@ public class ConfigManager {
     }
     public boolean isAutoBroadcasterEnabled() { return autoBroadcasterEnabled; }
     public int getAutoBroadcastInterval() { return autoBroadcastInterval; }
+    public boolean isStartupBannerEnabled() { return startupBannerEnabled; }
+    public String getStartupOwnerDisplay() { return startupOwnerDisplay; }
+    public boolean isStatusShowWorldSummary() { return statusShowWorldSummary; }
+    public boolean isStatusShowRegionDetails() { return statusShowRegionDetails; }
+    public int getStatusMaxRegions() { return statusMaxRegions; }
+    public int getStatusRegionChunkSpan() { return statusRegionChunkSpan; }
 }

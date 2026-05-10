@@ -30,6 +30,7 @@ dev/ajaretro/foliaCore/data/Ban.class
 dev/ajaretro/foliaCore/commands/DeleteKitCommand.class
 dev/ajaretro/foliaCore/tasks/AutoBroadcaster.class
 dev/ajaretro/foliaCore/commands/BroadcastCommand.class
+dev/ajaretro/foliaCore/commands/StatusCommand$RegionSnapshot.class
 dev/ajaretro/foliaCore/commands/HealCommand.class
 dev/ajaretro/foliaCore/commands/MarkerCommand.class
 dev/ajaretro/foliaCore/commands/BlockCommand.class
@@ -80,6 +81,7 @@ dev/ajaretro/foliaCore/commands/TempbanCommand.class
 dev/ajaretro/foliaCore/managers/KitManager.class
 dev/ajaretro/foliaCore/commands/HomesCommand.class
 dev/ajaretro/foliaCore/commands/ClearChatCommand.class
+dev/ajaretro/foliaCore/FoliaCore$2.class
 dev/ajaretro/foliaCore/commands/ClearCommand.class
 dev/ajaretro/foliaCore/commands/HatCommand.class
 dev/ajaretro/foliaCore/data/Mail.class

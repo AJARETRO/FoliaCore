@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * - Staff utilities and performance monitoring
  * 
  * @author AJARETRO
- * @version 2.1-alpha
+ * @version FoliaCore-V2-Reinforced
  */
 public final class FoliaCore extends JavaPlugin {
 
@@ -154,6 +154,8 @@ public final class FoliaCore extends JavaPlugin {
             
             getLogger().info("System tasks started.");
         }
+
+        printStartupBanner();
 
         Bukkit.getConsoleSender().sendMessage(
                 LegacyComponentSerializer.legacyAmpersand().deserialize("&l&4[FoliaCore] &aPlugin initialized successfully! &7(Backend: REGIONIZED)")
@@ -314,17 +316,46 @@ public final class FoliaCore extends JavaPlugin {
     private void registerCommandSafe(String name, org.bukkit.command.CommandExecutor executor) {
         // Modern Paper API: use registerCommand() with BasicCommand wrapper
         try {
+            final org.bukkit.command.Command bridgeCommand = new org.bukkit.command.Command(name) {
+                @Override
+                public boolean execute(org.bukkit.command.CommandSender sender, String commandLabel, String[] args) {
+                    return executor.onCommand(sender, this, commandLabel, args);
+                }
+            };
             var basicCmd = new io.papermc.paper.command.brigadier.BasicCommand() {
                 @Override
                 public void execute(io.papermc.paper.command.brigadier.CommandSourceStack commandSourceStack, 
                                    String[] args) {
-                    executor.onCommand(commandSourceStack.getSender(), null, name, args);
+                    executor.onCommand(commandSourceStack.getSender(), bridgeCommand, name, args);
                 }
             };
             this.registerCommand(name, basicCmd);
         } catch (Exception e) {
             getLogger().warning("Failed to register command '" + name + "': " + e.getMessage());
         }
+    }
+
+    private void printStartupBanner() {
+        if (!configManager.isStartupBannerEnabled()) {
+            return;
+        }
+
+        String owner = configManager.getStartupOwnerDisplay();
+        Bukkit.getConsoleSender().sendMessage(
+                LegacyComponentSerializer.legacyAmpersand().deserialize("&8&m--------------------------------------------------")
+        );
+        Bukkit.getConsoleSender().sendMessage(
+                LegacyComponentSerializer.legacyAmpersand().deserialize("&6&lFoliaCore &f&lV2 &7Reinforced")
+        );
+        Bukkit.getConsoleSender().sendMessage(
+                LegacyComponentSerializer.legacyAmpersand().deserialize("&7Maintained by " + owner)
+        );
+        Bukkit.getConsoleSender().sendMessage(
+                LegacyComponentSerializer.legacyAmpersand().deserialize("&aMode: &fRegionized &8| &aCommands: &fProgrammatic")
+        );
+        Bukkit.getConsoleSender().sendMessage(
+                LegacyComponentSerializer.legacyAmpersand().deserialize("&8&m--------------------------------------------------")
+        );
     }
 
     public static FoliaCore getInstance() { return instance; }

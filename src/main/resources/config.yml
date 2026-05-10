@@ -29,3 +29,15 @@ system:
   # Auto Broadcaster - Sends messages at intervals
   auto-broadcaster-enabled: true
   auto-broadcast-interval: 600
+
+# Startup branding
+branding:
+  startup-banner-enabled: true
+  owner-display: "&4AJA_R3TR0 &8x &bFoliaCore"
+
+# Status command tuning
+status:
+  show-world-summary: true
+  show-region-details: true
+  max-regions: 12
+  region-chunk-span: 8
