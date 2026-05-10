@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * - Staff utilities and performance monitoring
  * 
  * @author AJARETRO
- * @version 1.0-RELEASE
+ * @version 2.0-alpha
  */
 public final class FoliaCore extends JavaPlugin {
 
