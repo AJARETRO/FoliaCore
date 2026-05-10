@@ -2,7 +2,6 @@
 
 # Module Toggles - Set to false to disable entire subsystems
 modules:
-  economy: true
   teleport: true
   kits: true
   chat: true

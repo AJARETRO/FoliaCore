@@ -21,7 +21,6 @@ public class ConfigManager {
     public FileConfiguration securityConfig;
 
     // Module toggles
-    public boolean economyEnabled;
     public boolean teleportEnabled;
     public boolean kitsEnabled;
     public boolean chatEnabled;
@@ -93,7 +92,6 @@ public class ConfigManager {
             config = new YamlConfiguration();
 
             // Module toggles
-            config.set("modules.economy", true);
             config.set("modules.teleport", true);
             config.set("modules.kits", true);
             config.set("modules.chat", true);
@@ -162,7 +160,6 @@ public class ConfigManager {
     }
 
     private void loadModuleToggles() {
-        economyEnabled = config.getBoolean("modules.economy", true);
         teleportEnabled = config.getBoolean("modules.teleport", true);
         kitsEnabled = config.getBoolean("modules.kits", true);
         chatEnabled = config.getBoolean("modules.chat", true);
@@ -205,7 +202,6 @@ public class ConfigManager {
     public org.bukkit.configuration.file.FileConfiguration getConfig() { return config; }
 
     // Module toggles
-    public boolean isEconomyEnabled() { return economyEnabled; }
     public boolean isTeleportEnabled() { return teleportEnabled; }
     public boolean isKitsEnabled() { return kitsEnabled; }
     public boolean isChatEnabled() { return chatEnabled; }

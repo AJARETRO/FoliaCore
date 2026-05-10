@@ -4,7 +4,6 @@ dev/ajaretro/foliaCore/commands/TpaCommand.class
 dev/ajaretro/foliaCore/FoliaCore$1.class
 dev/ajaretro/foliaCore/listeners/ChatListener.class
 dev/ajaretro/foliaCore/commands/UnblockCommand.class
-dev/ajaretro/foliaCore/commands/PayCommand.class
 dev/ajaretro/foliaCore/utils/ItemUtil.class
 dev/ajaretro/foliaCore/listeners/GodModeListener.class
 dev/ajaretro/foliaCore/managers/TeleportManager$TpaType.class
@@ -13,7 +12,6 @@ dev/ajaretro/foliaCore/listeners/ConnectionListener.class
 dev/ajaretro/foliaCore/managers/SocialSpyManager.class
 dev/ajaretro/foliaCore/commands/KickCommand.class
 dev/ajaretro/foliaCore/commands/WorkbenchCommand.class
-dev/ajaretro/foliaCore/commands/EcoCommand.class
 dev/ajaretro/foliaCore/data/Home.class
 dev/ajaretro/foliaCore/commands/StaffChatCommand.class
 dev/ajaretro/foliaCore/commands/SocialSpyCommand.class
@@ -63,13 +61,11 @@ dev/ajaretro/foliaCore/managers/AntiRaidManager$BlockTracker.class
 dev/ajaretro/foliaCore/data/Team.class
 dev/ajaretro/foliaCore/listeners/KitGUIListener.class
 dev/ajaretro/foliaCore/managers/TeamManager.class
-dev/ajaretro/foliaCore/managers/EconomyManager.class
 dev/ajaretro/foliaCore/ModrinthUpdateChecker.class
 dev/ajaretro/foliaCore/commands/TpDenyCommand.class
 dev/ajaretro/foliaCore/commands/WarpCommand.class
 dev/ajaretro/foliaCore/listeners/BlockChangeListener.class
 dev/ajaretro/foliaCore/commands/EnderchestCommand.class
-dev/ajaretro/foliaCore/economy/FoliaEconomy.class
 dev/ajaretro/foliaCore/listeners/MailListener.class
 dev/ajaretro/foliaCore/managers/WarpManager.class
 dev/ajaretro/foliaCore/commands/FeedCommand.class
@@ -87,7 +83,6 @@ dev/ajaretro/foliaCore/commands/ClearCommand.class
 dev/ajaretro/foliaCore/commands/HatCommand.class
 dev/ajaretro/foliaCore/data/Mail.class
 dev/ajaretro/foliaCore/commands/GamemodeCommand.class
-dev/ajaretro/foliaCore/commands/BalanceCommand.class
 dev/ajaretro/foliaCore/commands/TpCommand.class
 dev/ajaretro/foliaCore/commands/HomeCommand.class
 dev/ajaretro/foliaCore/commands/TpAcceptCommand.class
@@ -99,12 +94,14 @@ dev/ajaretro/foliaCore/data/Marker.class
 dev/ajaretro/foliaCore/commands/StatusCommand.class
 dev/ajaretro/foliaCore/managers/VanishManager.class
 dev/ajaretro/foliaCore/commands/MailCommand.class
+dev/ajaretro/foliaCore/commands/RepairCommand.class
 dev/ajaretro/foliaCore/utils/TimeUtil.class
 dev/ajaretro/foliaCore/commands/GpsCommand.class
 dev/ajaretro/foliaCore/managers/SpawnManager.class
 dev/ajaretro/foliaCore/commands/MsgCommand.class
 dev/ajaretro/foliaCore/managers/ChatManager.class
 dev/ajaretro/foliaCore/commands/CreateKitCommand.class
+dev/ajaretro/foliaCore/commands/TrashCommand.class
 dev/ajaretro/foliaCore/tasks/AutoBroadcasterTask.class
 dev/ajaretro/foliaCore/commands/AntiRaidCommand.class
 dev/ajaretro/foliaCore/commands/SetSpawnCommand.class

@@ -25,7 +25,7 @@ public final class ModrinthUpdateChecker {
     private static final String PROJECT_SLUG = "foliacore";
     private static final String MODRINTH_URL = "https://api.modrinth.com/v2/project/" + PROJECT_SLUG + "/version";
     private static final String PROJECT_LINK = "https://modrinth.com/plugin/foliacore";
-    private static final String USER_AGENT = "ajaretro/FoliaCore/2.6.1 (contact@ajaretro.dev)";
+    private static final String USER_AGENT = "ajaretro/FoliaCore/3.0 (contact@ajaretro.dev)";
 
     private final Plugin plugin;
     private final HttpClient httpClient;

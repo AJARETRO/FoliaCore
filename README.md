@@ -1,9 +1,9 @@
-# ⚡ FoliaCore v2.6.2 Hotfix - Overdrive Overhauled
+# ⚡ FoliaCore v-3 Nightingale
 > **The Folia-Native Essentials Suite** — Built for Regionalized Servers from the Ground Up
 
 ![Platform](https://img.shields.io/badge/platform-Folia%2026.1%2B-brightgreen?style=for-the-badge&logo=paper&logoColor=white)
 ![Java](https://img.shields.io/badge/Java-21+-orangered?style=for-the-badge)
-![Version](https://img.shields.io/badge/release-v2.6.2--hotfix-blue?style=for-the-badge)
+![Version](https://img.shields.io/badge/release-v3--Nightingale-blue?style=for-the-badge)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey?style=for-the-badge)
 ![bStats](https://img.shields.io/badge/metrics-bStats%20%2328430-purple?style=for-the-badge)
 
@@ -26,7 +26,7 @@ Folia introduced **regionalized multi-threading** to Minecraft servers. Existing
 ✅ **Modern Paper API** — Programmatic command registration via `JavaPlugin.registerCommand()` with Paper's `BasicCommand` bridge  
 ✅ **Real Telemetry** — `/status` uses reflection to call `getTPS()` and `getAverageTickTime()` from Folia's regionalized runtime  
 ✅ **Thread-Safe State** — All managers use `ConcurrentHashMap` and defensive null-checks; no sync-on-HashMap  
-✅ **Modular Architecture** — Enable/disable entire systems (chat, teleport, teams, economy) in `config.yml`  
+✅ **Modular Architecture** — Enable/disable major systems (chat, teleport, teams, utilities) in `config.yml`  
 ✅ **Proper Startup** — No fake command registration; graceful degradation when dependencies missing  
 ✅ **Folia-Aware Inventory** — GUI systems respect region boundaries; multi-threaded safely  
 
@@ -43,12 +43,12 @@ Folia introduced **regionalized multi-threading** to Minecraft servers. Existing
 | **Real Telemetry on Folia** | ✅ `/status` uses real APIs | ❌ Fake 0.00 MSPT | ❌ Fake 0.00 MSPT | ❌ Fake 0.00 MSPT |
 | **Modular (disable chat, etc)** | ✅ Per-system toggles | ❌ All-or-nothing | ❌ All-or-nothing | ❌ All-or-nothing |
 | **JAR Size** | 263 KB (shaded) | ~850 KB | ~600 KB | ~700 KB |
-| **Dependency Bloat** | ✅ Minimal | ❌ Vault + JSON-Simple + others | ❌ 5+ heavy deps | ❌ 5+ heavy deps |
+| **Dependency Bloat** | ✅ Minimal | ❌ JSON-Simple + legacy layers | ❌ 5+ heavy deps | ❌ 5+ heavy deps |
 | **Thread-Safe State** | ✅ ConcurrentHashMap | ⚠️ Sync-on-HashMap | ⚠️ Sync-on-HashMap | ⚠️ Sync-on-HashMap |
 | **Region-Aware Logic** | ✅ Yes | ❌ No | ❌ No | ❌ No |
 | **bStats Integration** | ✅ Included (ID 28430) | ✅ Included | ✅ Included | ✅ Included |
-| **Vault Economy** | ✅ Supported | ✅ Supported | ✅ Supported | ✅ Supported |
-| **Active Folia Maintenance** | ✅ Yes (v2.6.2) | ❌ EOL for Folia | ❌ Minimal | ❌ Minimal |
+| **Built-in Economy Layer** | ❌ Removed in v3 | ✅ Supported | ✅ Supported | ✅ Supported |
+| **Active Folia Maintenance** | ✅ Yes (v3) | ❌ EOL for Folia | ❌ Minimal | ❌ Minimal |
 
 **The Core Difference:** FoliaCore is built *for* Folia; others are adapted *to* Folia. It shows in startup time, memory footprint, and permission handling.
 
@@ -117,11 +117,11 @@ Folia introduced **regionalized multi-threading** to Minecraft servers. Existing
 - **GPS Tracking** — `/gps set`, `/gps go` — Compass navigation
 - **Distance Calculation** — Real block distance between regions
 
-### Economy (Modular + Vault Integration)
-- **Currency Management** — `/balance`, `/pay <player> <amount>`
-- **Vault Integration** — Works with any Vault provider
-- **Async Transactions** — No lag on financial operations
-- **Transaction Logging** — Track all exchanges
+### QoL & Admin Upgrades (New in Nightingale)
+- **Trash Bin Command** — `/trash` or `/dispose` to quickly discard items
+- **Repair Command** — `/repair [all]` and `/repair <player> [all]`
+- **Reduced Dependency Surface** — No Vault hook required
+- **Cleaner Ops Workflow** — Faster moderation and inventory maintenance
 
 ### Punishment & Moderation (Always Enabled)
 - **Bans** — `/ban <player> [reason]`, `/banlist`, `/unban <player>`
@@ -150,16 +150,15 @@ Folia introduced **regionalized multi-threading** to Minecraft servers. Existing
 ### Requirements
 - **Folia 26.1.2** or later (Folia 26+, Paper 1.21+)
 - **Java 21** LTS or newer
-- **Vault** (optional, for economy features)
 
 ### Installation Steps
 
 1. **Download the JAR**
-   - Grab `folia_core-v2.6.2-hotfix.jar` from [GitHub Releases](https://github.com/AJARETRO/FoliaCore/releases)
+   - Grab `folia_core-v-3-Nightingale.jar` from [GitHub Releases](https://github.com/AJARETRO/FoliaCore/releases)
 
 2. **Place in Plugins Folder**
    ```bash
-   cp folia_core-v2.6.2-hotfix.jar /path/to/server/plugins/
+   cp folia_core-v-3-Nightingale.jar /path/to/server/plugins/
    ```
 
 3. **Start Server**
@@ -195,7 +194,6 @@ teleport-enabled: true
 teams-enabled: true
 kits-enabled: true
 utility-enabled: true          # Warps + Markers
-economy-enabled: true
 system-enabled: true           # Entity cleanup, auto-broadcaster
 
 # ========== SYSTEM TUNING ==========
@@ -206,11 +204,6 @@ broadcaster-interval: 300      # seconds
 # ========== TELEPORT ==========
 teleport-cooldown: 5           # seconds between tps
 tpa-timeout: 60               # seconds before tpa expires
-
-# ========== ECONOMY ==========
-starting-balance: 1000.0
-max-balance: 1000000.0
-transaction-fee: 0             # % fee on /pay
 
 # ========== ADVANCED ==========
 debug-mode: false
@@ -240,8 +233,11 @@ foliacore.teleport.back      # /back command
 foliacore.chat.msg           # /msg, /reply
 foliacore.chat.socialspy      # /socialspy - monitor conversations
 foliacore.chat.staff          # Access staff chat
-foliacore.economy.balance    # /balance
-foliacore.economy.pay        # /pay <player> <amount>
+foliacore.trash              # /trash, /dispose
+foliacore.repair             # /repair
+foliacore.repair.all         # /repair all
+foliacore.repair.others      # /repair <player>
+foliacore.repair.others.all  # /repair <player> all
 foliacore.kit.use            # /kit <name>
 foliacore.team.create        # /team create
 foliacore.team.invite        # /team invite
@@ -308,12 +304,18 @@ foliacore.admin.gps              # /gps
 | `/mute <player>` | `foliacore.admin.mute` | Mute player chat |
 | `/unmute <player>` | `foliacore.admin.unmute` | Unmute player |
 
-### Economy & Kit Commands
+### Kit Commands
 | Command | Permission | Description |
 |---------|------------|-------------|
-| `/balance [player]` | `foliacore.economy.balance` | Check player balance |
-| `/pay <player> <amount>` | `foliacore.economy.pay` | Send currency to player |
 | `/kit [name]` | `foliacore.kit.use` | Claim kit (respects cooldown) |
+
+### QoL/Admin Commands
+| Command | Permission | Description |
+|---------|------------|-------------|
+| `/trash` | `foliacore.trash` | Open temporary trash inventory |
+| `/dispose` | `foliacore.trash` | Alias for `/trash` |
+| `/repair [all]` | `foliacore.repair` / `foliacore.repair.all` | Repair held item or full inventory |
+| `/repair <player> [all]` | `foliacore.repair.others` / `foliacore.repair.others.all` | Repair another player's gear |
 
 ### Moderation Commands
 | Command | Permission | Description |
@@ -353,7 +355,6 @@ FoliaCore (Main)
 ├── KitManager            → Kit persistence and distribution
 ├── WarpManager           → Warp persistence and navigation
 ├── MarkerManager         → Waypoint markers
-├── EconomyManager        → Currency tracking, Vault integration
 ├── BanManager            → Ban list and enforcement
 ├── VanishManager         → Player visibility state
 ├── SocialSpyManager      → Staff monitoring
@@ -377,11 +378,11 @@ FoliaCore (Main)
 ### AJA RETRO Startup Banner
 ```
 ════════════════════════════════════════════════════════════════════════════════════
-   ✦ FOLIACORE v2.6.2 HOTFIX ✦
+   ✦ FOLIACORE v3 NIGHTINGALE ✦
    Folia-Native Essentials Suite
 
    ⟶ Regionalized ThreadPool | Modular Architecture | Real-time Telemetry
-   ⟶ 60+ Commands | bStats Metrics | Vault Economy Ready
+   ⟶ 60+ Commands | bStats Metrics | QoL/Admin Upgrades
 
   ┌────────────────────────────────────────────────────────────────────────────────────┐
   │ AJARETRO │ Your Server Name │
@@ -491,11 +492,11 @@ A: Yes! Visit the GitHub repository for contributing guidelines.
 **Developed by:** AJARETRO  
 **Architecture:** Modular manager pattern, inspired by modern Folia best practices  
 **Metrics:** bStats (plugin ID 28430)  
-**Dependencies:** Paper API, Vault API (optional)
+**Dependencies:** Paper API
 
 **Proudly Folia-Native. Built for the future of Minecraft servers.**
 
 ---
 
-*Last Updated: May 2026 | FoliaCore v2.6.2 Hotfix - Overdrive Overhauled | Java 21+ | Folia 26.1.2+*  
+*Last Updated: May 2026 | FoliaCore v-3 Nightingale | Java 21+ | Folia 26.1.2+*  
 *Assisted by AI*

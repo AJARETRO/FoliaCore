@@ -6,13 +6,10 @@ import dev.ajaretro.foliaCore.commands.*;
 import dev.ajaretro.foliaCore.listeners.*;
 import dev.ajaretro.foliaCore.managers.*;
 import dev.ajaretro.foliaCore.utils.Messenger;
-import dev.ajaretro.foliaCore.economy.FoliaEconomy;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bstats.charts.SimplePie;
 
@@ -29,13 +26,13 @@ import java.util.concurrent.ConcurrentHashMap;
  * Key Features:
  * - Async command handling and scheduling
  * - Thread-safe data management with ConcurrentHashMap
- * - Vault economy integration
+ * - QoL and admin utility toolkit
  * - bStats metrics integration
  * - Modular configuration system
  * - Staff utilities and performance monitoring
  * 
  * @author AJARETRO
- * @version v2.6.2-hotfix
+ * @version v-3 Nightingale
  */
 public final class FoliaCore extends JavaPlugin {
 
@@ -52,7 +49,6 @@ public final class FoliaCore extends JavaPlugin {
     private KitManager kitManager;
     private WarpManager warpManager;
     private MarkerManager markerManager;
-    private EconomyManager economyManager;
     private BanManager banManager;
 
     // Staff & system managers
@@ -78,6 +74,7 @@ public final class FoliaCore extends JavaPlugin {
         this.configManager.load();
 
         this.messenger = new Messenger("&l[ &4AJA_RETRO/&3FoliaCore&f ]");
+        this.updateChecker = new ModrinthUpdateChecker(this);
 
         // Setup metrics
         int pluginId = 28430;
@@ -96,25 +93,6 @@ public final class FoliaCore extends JavaPlugin {
             getLogger().severe("This plugin requires Folia! Disabling...");
             getServer().getPluginManager().disablePlugin(this);
             return;
-        }
-
-        // Setup Vault economy
-        try {
-            if (getServer().getPluginManager().getPlugin("Vault") != null) {
-                getServer().getServicesManager().register(
-                        Economy.class,
-                        new FoliaEconomy(),
-                        this,
-                        ServicePriority.Highest
-                );
-                Bukkit.getConsoleSender().sendMessage(
-                        LegacyComponentSerializer.legacyAmpersand().deserialize("&l&4[FoliaCore] &aVault found! Economy Provider registered.")
-                );
-            } else {
-                getLogger().warning("Vault NOT found! Economy features will be disabled.");
-            }
-        } catch (NoClassDefFoundError error) {
-            getLogger().warning("Vault API is missing from the runtime classpath. Economy features will be disabled.");
         }
 
         // Initialize core managers (always available)
@@ -141,9 +119,6 @@ public final class FoliaCore extends JavaPlugin {
             this.warpManager = new WarpManager(this);
             this.markerManager = new MarkerManager(this);
         }
-        if (configManager.economyEnabled) {
-            this.economyManager = new EconomyManager(this);
-        }
 
         loadSubsystems();
         registerListeners();
@@ -162,6 +137,10 @@ public final class FoliaCore extends JavaPlugin {
 
         printStartupBanner();
 
+        if (this.updateChecker != null) {
+            this.updateChecker.checkForUpdates();
+        }
+
         Bukkit.getConsoleSender().sendMessage(
                 LegacyComponentSerializer.legacyAmpersand().deserialize("&l&4[FoliaCore] &aPlugin initialized successfully! &7(Backend: REGIONIZED)")
         );
@@ -177,7 +156,6 @@ public final class FoliaCore extends JavaPlugin {
             if (warpManager != null) warpManager.saveData();
             if (markerManager != null) markerManager.saveData();
         }
-        if (configManager.economyEnabled && economyManager != null) economyManager.saveData();
         if (banManager != null) banManager.saveData();
         if (antiRaidManager != null) antiRaidManager.saveData();
         if (spawnManager != null) spawnManager.saveData();
@@ -194,7 +172,6 @@ public final class FoliaCore extends JavaPlugin {
             if (warpManager != null) warpManager.load();
             if (markerManager != null) markerManager.load();
         }
-        if (configManager.economyEnabled && economyManager != null) economyManager.load();
         if (antiRaidManager != null) antiRaidManager.load();
         if (banManager != null) banManager.load();
         if (spawnManager != null) spawnManager.load();
@@ -267,12 +244,6 @@ public final class FoliaCore extends JavaPlugin {
             registerCommandSafe("warps", new WarpsCommand(this));
         }
 
-        if (configManager.economyEnabled) {
-            registerCommandSafe("balance", new BalanceCommand(this));
-            registerCommandSafe("pay", new PayCommand(this));
-            registerCommandSafe("eco", new EcoCommand(this));
-        }
-
         registerCommandSafe("nick", new NickCommand(this));
         registerCommandSafe("realname", new RealNameCommand(this));
         registerCommandSafe("ban", new BanCommand(this));
@@ -295,6 +266,9 @@ public final class FoliaCore extends JavaPlugin {
         registerCommandSafe("ec", new EnderchestCommand(this));
         registerCommandSafe("workbench", new WorkbenchCommand(this));
         registerCommandSafe("wb", new WorkbenchCommand(this));
+        registerCommandSafe("trash", new TrashCommand(this));
+        registerCommandSafe("dispose", new TrashCommand(this));
+        registerCommandSafe("repair", new RepairCommand(this));
         registerCommandSafe("hat", new HatCommand(this));
         registerCommandSafe("broadcast", new BroadcastCommand(this));
         registerCommandSafe("time", new TimeCommand(this));
@@ -356,7 +330,7 @@ public final class FoliaCore extends JavaPlugin {
                 LegacyComponentSerializer.legacyAmpersand().deserialize("")
         );
         Bukkit.getConsoleSender().sendMessage(
-                LegacyComponentSerializer.legacyAmpersand().deserialize("&l&6   ✦ &e&lFOLIACORE &6v2.6.2&e&l OVERDRIVE OVERHAULED &6✦")
+            LegacyComponentSerializer.legacyAmpersand().deserialize("&l&6   ✦ &e&lFOLIACORE &6v3&e&l NIGHTINGALE &6✦")
         );
         Bukkit.getConsoleSender().sendMessage(
                 LegacyComponentSerializer.legacyAmpersand().deserialize("&f   Folia-Native Essentials Suite")
@@ -368,7 +342,7 @@ public final class FoliaCore extends JavaPlugin {
                 LegacyComponentSerializer.legacyAmpersand().deserialize("&7   ⟶ &aRegionalized ThreadPool &7| &aModular Architecture &7| &aReal-time Telemetry")
         );
         Bukkit.getConsoleSender().sendMessage(
-                LegacyComponentSerializer.legacyAmpersand().deserialize("&7   ⟶ &a60+ Commands &7| &abStats Metrics &7| &aVault Economy Ready")
+            LegacyComponentSerializer.legacyAmpersand().deserialize("&7   ⟶ &aQoL Utilities &7| &aAdmin Control Suite &7| &abStats Metrics")
         );
         Bukkit.getConsoleSender().sendMessage(
                 LegacyComponentSerializer.legacyAmpersand().deserialize("")
@@ -403,7 +377,6 @@ public final class FoliaCore extends JavaPlugin {
     public WarpManager getWarpManager() { return warpManager; }
     public MarkerManager getMarkerManager() { return markerManager; }
     public Messenger getMessenger() { return messenger; }
-    public EconomyManager getEconomyManager() { return economyManager; }
     public BanManager getBanManager() { return banManager; }
     public VanishManager getVanishManager() { return vanishManager; }
     public SocialSpyManager getSocialSpyManager() { return socialSpyManager; }
