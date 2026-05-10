@@ -1,6 +1,7 @@
 dev/ajaretro/foliaCore/commands/NickCommand.class
 dev/ajaretro/foliaCore/commands/SetWarpCommand.class
 dev/ajaretro/foliaCore/commands/TpaCommand.class
+dev/ajaretro/foliaCore/FoliaCore$1.class
 dev/ajaretro/foliaCore/listeners/ChatListener.class
 dev/ajaretro/foliaCore/commands/UnblockCommand.class
 dev/ajaretro/foliaCore/commands/PayCommand.class

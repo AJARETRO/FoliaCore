@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * - Staff utilities and performance monitoring
  * 
  * @author AJARETRO
- * @version 2.0-alpha
+ * @version 2.1-alpha
  */
 public final class FoliaCore extends JavaPlugin {
 
@@ -312,12 +312,18 @@ public final class FoliaCore extends JavaPlugin {
     }
 
     private void registerCommandSafe(String name, org.bukkit.command.CommandExecutor executor) {
-        // For Paper plugins, use Bukkit.getCommandMap() and cast to PluginCommand
-        var cmd = Bukkit.getCommandMap().getCommand(name);
-        if (cmd instanceof org.bukkit.command.PluginCommand pluginCmd) {
-            pluginCmd.setExecutor(executor);
-        } else {
-            getLogger().warning("Command '" + name + "' not found or is not a PluginCommand!");
+        // Modern Paper API: use registerCommand() with BasicCommand wrapper
+        try {
+            var basicCmd = new io.papermc.paper.command.brigadier.BasicCommand() {
+                @Override
+                public void execute(io.papermc.paper.command.brigadier.CommandSourceStack commandSourceStack, 
+                                   String[] args) {
+                    executor.onCommand(commandSourceStack.getSender(), null, name, args);
+                }
+            };
+            this.registerCommand(name, basicCmd);
+        } catch (Exception e) {
+            getLogger().warning("Failed to register command '" + name + "': " + e.getMessage());
         }
     }
 
