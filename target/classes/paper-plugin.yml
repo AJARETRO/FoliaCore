@@ -1,5 +1,5 @@
 name: FoliaCore
-version: 'FoliaCore-V2-Reinforced'
+version: 'v2.0-Overhauled'
 main: dev.ajaretro.foliaCore.FoliaCore
 api-version: '1.21'
 prefix: "AJA_R3TR0_FoliaCore"
