@@ -1,0 +1,10 @@
+# Auto Broadcast Messages
+# Messages are sent in order, one every X seconds (configured in config.yml)
+
+messages:
+  - "&6Welcome to our Folia-powered server!"
+  - "&eCheck /warps for all available teleport locations."
+  - "&eDon't forget to set your first home with /sethome"
+  - "&eUse /help for a list of all available commands."
+  - "&eHave fun and respect other players!"
+  - "&eReport any bugs or issues to the staff."

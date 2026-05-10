@@ -37,7 +37,9 @@ public class TeleportManager {
     private final Map<UUID, Map<String, Home>> playerHomes = new ConcurrentHashMap<>();
     private final Map<UUID, ScheduledTask> pendingTeleports = new ConcurrentHashMap<>();
     private final Map<UUID, TeleportRequest> pendingTpaRequests = new ConcurrentHashMap<>();
+    private final Map<UUID, Location> playerLastLocations = new ConcurrentHashMap<>();
     private volatile Location spawnLocation;
+    private volatile Location firstSpawnLocation;
     private final File dataFile;
     private FileConfiguration dataConfig;
 
@@ -59,6 +61,7 @@ public class TeleportManager {
         dataConfig = YamlConfiguration.loadConfiguration(dataFile);
         loadHomes();
         loadSpawn();
+        loadFirstSpawn();
     }
 
     public void startTeleport(@NotNull Player player, @NotNull Location location, String successMessage) {
@@ -67,12 +70,19 @@ public class TeleportManager {
             return;
         }
 
+        // Check if location is safe before teleporting
+        Location safeLocation = findSafeLocation(location);
+        if (safeLocation == null) {
+            plugin.getMessenger().sendError(player, "Destination is not safe for teleportation. No solid ground found.");
+            return;
+        }
+
         plugin.getMessenger().sendMessage(player, "Teleporting... Stand still for 3 seconds.");
 
         ScheduledTask task = player.getScheduler().runDelayed(plugin, (scheduledTask) -> {
             pendingTeleports.remove(player.getUniqueId());
 
-            player.teleportAsync(location).thenAccept(result -> {
+            player.teleportAsync(safeLocation).thenAccept(result -> {
                 if (result) {
                     plugin.getMessenger().sendSuccess(player, successMessage);
                 } else {
@@ -125,18 +135,17 @@ public class TeleportManager {
     public void saveData() {
         final var homesSnapshot = new java.util.HashMap<>(this.playerHomes);
         final var spawnSnapshot = this.spawnLocation;
-
+        final var firstSpawnSnapshot = this.firstSpawnLocation;
         if (!plugin.isEnabled()) {
-            saveDataSync(homesSnapshot, spawnSnapshot);
+            saveDataSync(homesSnapshot, spawnSnapshot, firstSpawnSnapshot);
             return;
         }
-
         Bukkit.getAsyncScheduler().runNow(plugin, (task) -> {
-            saveDataSync(homesSnapshot, spawnSnapshot);
+            saveDataSync(homesSnapshot, spawnSnapshot, firstSpawnSnapshot);
         });
     }
 
-    private void saveDataSync(Map<UUID, Map<String, Home>> homesSnapshot, Location spawnSnapshot) {
+    private void saveDataSync(Map<UUID, Map<String, Home>> homesSnapshot, Location spawnSnapshot, Location firstSpawnSnapshot) {
         try {
             YamlConfiguration tempConfig = new YamlConfiguration();
 
@@ -149,6 +158,9 @@ public class TeleportManager {
 
             if (spawnSnapshot != null) {
                 tempConfig.set("spawn", spawnSnapshot.serialize());
+            }
+            if (firstSpawnSnapshot != null) {
+                tempConfig.set("first_spawn", firstSpawnSnapshot.serialize());
             }
 
             tempConfig.save(dataFile);
@@ -192,6 +204,17 @@ public class TeleportManager {
         }
     }
 
+    private void loadFirstSpawn() {
+        ConfigurationSection firstSpawnSection = dataConfig.getConfigurationSection("first_spawn");
+        if (firstSpawnSection != null) {
+            try {
+                this.firstSpawnLocation = Location.deserialize(firstSpawnSection.getValues(false));
+            } catch (Exception e) {
+                plugin.getLogger().warning("Failed to deserialize first spawn location.");
+            }
+        }
+    }
+
     public void setHome(UUID playerUUID, String homeName, Location location) {
         playerHomes.computeIfAbsent(playerUUID, k -> new ConcurrentHashMap<>())
                 .put(homeName.toLowerCase(), new Home(location));
@@ -230,6 +253,16 @@ public class TeleportManager {
         return this.spawnLocation != null ? this.spawnLocation : Bukkit.getWorlds().get(0).getSpawnLocation();
     }
 
+    public void setFirstSpawn(Location location) {
+        this.firstSpawnLocation = location;
+        saveData();
+    }
+
+    @Nullable
+    public Location getFirstSpawn() {
+        return this.firstSpawnLocation;
+    }
+
     public int getMaxHomes(Player player) {
         if (player.hasPermission("foliacore.homes.unlimited")) return Integer.MAX_VALUE;
 
@@ -244,5 +277,70 @@ public class TeleportManager {
             }
         }
         return (max == 0 && player.hasPermission("foliacore.homes.default")) ? 1 : max;
+    }
+
+    public void setLastLocation(UUID playerUUID, Location location) {
+        if (location != null) {
+            playerLastLocations.put(playerUUID, location);
+        }
+    }
+
+    @Nullable
+    public Location getLastLocation(UUID playerUUID) {
+        return playerLastLocations.get(playerUUID);
+    }
+
+    public void clearLastLocation(UUID playerUUID) {
+        playerLastLocations.remove(playerUUID);
+    }
+
+    /**
+     * Checks if a location is safe for teleportation.
+     * Verifies that target block and block above are AIR, and block below is SOLID.
+     */
+    public boolean isSafeLocation(@NotNull Location location) {
+        org.bukkit.block.Block targetBlock = location.getBlock();
+        org.bukkit.block.Block blockAbove = targetBlock.getRelative(org.bukkit.block.BlockFace.UP);
+        org.bukkit.block.Block blockBelow = targetBlock.getRelative(org.bukkit.block.BlockFace.DOWN);
+
+        // Check if target and above are air
+        if (!targetBlock.isPassable() || !blockAbove.isPassable()) {
+            return false;
+        }
+
+        // Check if below is solid
+        return blockBelow.getType().isSolid();
+    }
+
+    /**
+     * Finds a safe location near the target location if it's unsafe.
+     * Searches upward and nearby chunks.
+     */
+    @Nullable
+    public Location findSafeLocation(@NotNull Location location) {
+        if (isSafeLocation(location)) {
+            return location;
+        }
+
+        // Try nearby locations (up to 5 blocks away)
+        for (int y = 0; y <= 5; y++) {
+            Location testLoc = location.clone().add(0, y, 0);
+            if (isSafeLocation(testLoc)) {
+                return testLoc;
+            }
+        }
+
+        // Try side locations
+        int[] offsets = {-1, 1};
+        for (int dx : offsets) {
+            for (int dz : offsets) {
+                Location testLoc = location.clone().add(dx, 1, dz);
+                if (isSafeLocation(testLoc)) {
+                    return testLoc;
+                }
+            }
+        }
+
+        return null;
     }
 }

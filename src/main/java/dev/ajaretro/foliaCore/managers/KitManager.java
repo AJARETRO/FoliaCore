@@ -130,7 +130,7 @@ public class KitManager {
             return false;
         }
 
-        Long expiration = cooldowns.get(kit.name().toLowerCase());
+        Long expiration = cooldowns.get(kit.getName().toLowerCase());
         if (expiration == null) {
             return false;
         }
@@ -138,21 +138,21 @@ public class KitManager {
         if (System.currentTimeMillis() < expiration) {
             return true;
         } else {
-            cooldowns.remove(kit.name().toLowerCase());
+            cooldowns.remove(kit.getName().toLowerCase());
             return false;
         }
     }
 
     public void setOnCooldown(UUID playerUUID, Kit kit) {
-        long expirationTime = System.currentTimeMillis() + (kit.cooldown() * 1000);
-        kitCooldowns.computeIfAbsent(playerUUID, k -> new ConcurrentHashMap<>()).put(kit.name().toLowerCase(), expirationTime);
+        long expirationTime = System.currentTimeMillis() + (kit.getCooldown() * 1000);
+        kitCooldowns.computeIfAbsent(playerUUID, k -> new ConcurrentHashMap<>()).put(kit.getName().toLowerCase(), expirationTime);
     }
 
     public long getRemainingCooldown(UUID playerUUID, Kit kit) {
         Map<String, Long> cooldowns = kitCooldowns.get(playerUUID);
         if (cooldowns == null) return 0;
 
-        Long expiration = cooldowns.get(kit.name().toLowerCase());
+        Long expiration = cooldowns.get(kit.getName().toLowerCase());
         if (expiration == null) return 0;
 
         long remaining = expiration - System.currentTimeMillis();
@@ -160,7 +160,7 @@ public class KitManager {
     }
 
     public boolean giveKit(Player player, Kit kit) {
-        if (!player.hasPermission(kit.permission())) {
+        if (!player.hasPermission(kit.getPermission())) {
             plugin.getMessenger().sendError(player, "You do not have permission to use this kit.");
             return false;
         }
@@ -182,7 +182,7 @@ public class KitManager {
         }
 
         setOnCooldown(player.getUniqueId(), kit);
-        plugin.getMessenger().sendSuccess(player, "You have redeemed the " + ChatColor.GOLD + kit.name() + ChatColor.GREEN + " kit.");
+        plugin.getMessenger().sendSuccess(player, "You have redeemed the " + ChatColor.GOLD + kit.getName() + ChatColor.GREEN + " kit.");
         return true;
     }
 }

@@ -18,10 +18,11 @@ public class ChatCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
+        if (!(sender instanceof Player)) {
             plugin.getMessenger().sendError(sender, "This command can only be run by a player.");
             return true;
         }
+        Player player = (Player) sender;
 
         if (args.length == 0) {
             ChatMode currentMode = plugin.getChatManager().getPlayerChatMode(player.getUniqueId());

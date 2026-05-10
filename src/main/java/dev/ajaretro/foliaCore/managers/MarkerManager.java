@@ -142,12 +142,12 @@ public class MarkerManager {
             return;
         }
 
-        plugin.getMessenger().sendSuccess(player, "Starting GPS to " + marker.name() + ". Look at your action bar. Type /gps off to stop.");
+        plugin.getMessenger().sendSuccess(player, "Starting GPS to " + marker.getName() + ". Look at your action bar. Type /gps off to stop.");
 
-        ScheduledTask task = player.getScheduler().runAtFixedRate(plugin, (scheduledTask) -> {
-
+        final int[] taskId = new int[1];
+        taskId[0] = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
             if (!player.isOnline()) {
-                scheduledTask.cancel();
+                Bukkit.getScheduler().cancelTask(taskId[0]);
                 activeGpsTasks.remove(player.getUniqueId());
                 return;
             }
@@ -155,14 +155,14 @@ public class MarkerManager {
             Location playerLoc = player.getLocation();
 
             if (!playerLoc.getWorld().equals(targetLocation.getWorld())) {
-                player.sendActionBar(Component.text("Wrong World! Target is in " + marker.worldName(), NamedTextColor.RED));
+                player.sendActionBar(Component.text("Wrong World! Target is in " + marker.getWorldName(), NamedTextColor.RED));
                 return;
             }
 
             double distance = playerLoc.distance(targetLocation);
             if (distance < 5.0) {
-                player.sendActionBar(Component.text("You have arrived at " + marker.name() + "!", NamedTextColor.GREEN));
-                scheduledTask.cancel();
+                player.sendActionBar(Component.text("You have arrived at " + marker.getName() + "!", NamedTextColor.GREEN));
+                Bukkit.getScheduler().cancelTask(taskId[0]);
                 activeGpsTasks.remove(player.getUniqueId());
                 return;
             }
@@ -173,15 +173,14 @@ public class MarkerManager {
             String distanceString = String.format("%,.0f", distance) + "m";
             Component message = Component.text()
                     .append(Component.text(arrow, NamedTextColor.GOLD))
-                    .append(Component.text(" " + marker.name() + " | ", NamedTextColor.WHITE))
+                    .append(Component.text(" " + marker.getName() + " | ", NamedTextColor.WHITE))
                     .append(Component.text(distanceString, NamedTextColor.GOLD))
                     .build();
 
             player.sendActionBar(message);
+        }, 50L, 50L);
 
-        }, null, 1L, 20L);
-
-        activeGpsTasks.put(player.getUniqueId(), task);
+        activeGpsTasks.put(player.getUniqueId(), null);
     }
 
     private String getArrow(float playerYaw, Vector direction) {

@@ -17,10 +17,11 @@ public class SpawnCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
+        if (!(sender instanceof Player)) {
             plugin.getMessenger().sendError(sender, "This command can only be run by a player.");
             return true;
         }
+        Player player = (Player) sender;
 
         if (!player.hasPermission("foliacore.spawn")) {
             plugin.getMessenger().sendError(player, "You do not have permission to use this command.");

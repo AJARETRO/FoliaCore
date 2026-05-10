@@ -88,15 +88,15 @@ public class FoliaEconomy implements Economy {
     @Override
     public EconomyResponse depositPlayer(OfflinePlayer player, double amount) {
         if (amount < 0) return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Cannot deposit negative funds");
-
         String uuid = player.getUniqueId().toString();
-
-        synchronized (balances) {
-            double current = balances.getOrDefault(uuid, 0.0);
+        EconomyResponse[] response = new EconomyResponse[1];
+        balances.compute(uuid, (key, current) -> {
+            if (current == null) current = 0.0;
             double newBalance = current + amount;
-            balances.put(uuid, newBalance);
-            return new EconomyResponse(amount, newBalance, EconomyResponse.ResponseType.SUCCESS, null);
-        }
+            response[0] = new EconomyResponse(amount, newBalance, EconomyResponse.ResponseType.SUCCESS, null);
+            return newBalance;
+        });
+        return response[0];
     }
 
     @Override

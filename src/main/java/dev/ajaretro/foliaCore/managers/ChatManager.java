@@ -122,7 +122,9 @@ public class ChatManager {
                 List<?> mailList = dataConfig.getList("mail." + key);
                 List<Mail> loadedMail = new ArrayList<>();
                 for (Object obj : mailList) {
-                    if (obj instanceof Map<?,?> map) {
+                    if (obj instanceof Map) {
+                        @SuppressWarnings("unchecked")
+                        Map<String, Object> map = (Map<String, Object>) obj;
                         loadedMail.add(new Mail(
                                 UUID.fromString((String) map.get("sender")),
                                 (long) map.get("timestamp"),
@@ -173,9 +175,9 @@ public class ChatManager {
                 synchronized (mailList) {
                     for (Mail mail : mailList) {
                         Map<String, Object> mailMap = new LinkedHashMap<>();
-                        mailMap.put("sender", mail.sender().toString());
-                        mailMap.put("timestamp", mail.timestamp());
-                        mailMap.put("message", mail.message());
+                        mailMap.put("sender", mail.getSender().toString());
+                        mailMap.put("timestamp", mail.getTimestamp());
+                        mailMap.put("message", mail.getMessage());
                         serializedMail.add(mailMap);
                     }
                 }

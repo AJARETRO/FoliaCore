@@ -28,11 +28,12 @@ public class BalanceCommand implements CommandExecutor {
         }
 
         if (args.length == 0) {
-            if (!(sender instanceof Player player)) {
-                plugin.getMessenger().sendError(sender, "Only players can check their own balance.");
-                return true;
-            }
-            if (!player.hasPermission("foliacore.balance.self")) {
+            if (!(sender instanceof Player)) {
+            plugin.getMessenger().sendError(sender, "This command can only be run by a player.");
+            return true;
+        }
+        Player player = (Player) sender;
+        if (!player.hasPermission("foliacore.balance.self")) {
                 plugin.getMessenger().sendError(player, "You do not have permission to check your balance.");
                 return true;
             }

@@ -1,0 +1,223 @@
+package dev.ajaretro.foliaCore.managers;
+
+import dev.ajaretro.foliaCore.FoliaCore;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.io.File;
+import java.io.IOException;
+
+/**
+ * Central configuration manager for FoliaCore.
+ * Handles all module toggles and server settings with thread-safe access.
+ */
+public class ConfigManager {
+
+    private final FoliaCore plugin;
+    private File configFile;
+    private File securityFile;
+    private FileConfiguration config;
+    public FileConfiguration securityConfig;
+
+    // Module toggles
+    public boolean economyEnabled;
+    public boolean teleportEnabled;
+    public boolean kitsEnabled;
+    public boolean chatEnabled;
+    public boolean markersEnabled;
+    public boolean teamsEnabled;
+    public boolean staffEnabled;
+    public boolean systemEnabled;
+    public boolean utilityEnabled;
+    public boolean antiRaidEnabled;
+    public boolean securityEnabled;
+
+    // System settings
+    public boolean maintenanceMode;
+    public String maintenanceKickMessage;
+    public boolean firstSpawnEnabled;
+    public boolean entityCleanupEnabled;
+    public int entityCleanupInterval;
+    public int minimumTpsThreshold;
+    public boolean autoBroadcasterEnabled;
+    public int autoBroadcastInterval;
+
+    public ConfigManager(FoliaCore plugin) {
+        this.plugin = plugin;
+    }
+
+    public void load() {
+        configFile = new File(plugin.getDataFolder(), "config.yml");
+        securityFile = new File(plugin.getDataFolder(), "security.yml");
+        
+        if (!configFile.exists()) {
+            createDefaultConfig();
+        }
+
+        config = YamlConfiguration.loadConfiguration(configFile);
+        
+        if (!securityFile.exists()) {
+            createDefaultSecurityConfig();
+        }
+        
+        securityConfig = YamlConfiguration.loadConfiguration(securityFile);
+        
+        loadModuleToggles();
+        loadSystemSettings();
+
+        plugin.getLogger().info("ConfigManager loaded successfully.");
+    }
+
+    private void createDefaultConfig() {
+        try {
+            plugin.saveResource("config.yml", false);
+        } catch (Exception e) {
+            plugin.getLogger().warning("Could not save default config.yml");
+            createConfigProgrammatically();
+        }
+    }
+
+    private void createConfigProgrammatically() {
+        try {
+            if (!configFile.exists()) {
+                configFile.createNewFile();
+            }
+
+            config = new YamlConfiguration();
+
+            // Module toggles
+            config.set("modules.economy", true);
+            config.set("modules.teleport", true);
+            config.set("modules.kits", true);
+            config.set("modules.chat", true);
+            config.set("modules.markers", true);
+            config.set("modules.teams", true);
+            config.set("modules.staff", true);
+            config.set("modules.system", true);
+            config.set("modules.utility", true);
+            config.set("modules.antiraid", true);
+            config.set("modules.security", true);
+
+            // System settings
+            config.set("system.maintenance-mode", false);
+            config.set("system.maintenance-kick-message", "&cServer is in maintenance mode. Admins only.");
+            config.set("system.first-spawn-enabled", true);
+            config.set("system.entity-cleanup-enabled", true);
+            config.set("system.entity-cleanup-interval", 300);
+            config.set("system.minimum-tps-threshold", 16);
+            config.set("system.auto-broadcaster-enabled", true);
+            config.set("system.auto-broadcast-interval", 600);
+            
+            // Anti-raid settings
+            config.set("antiraid.enabled", true);
+            config.set("antiraid.threshold-per-second", 50);
+            config.set("antiraid.auto-lockdown", true);
+            config.set("antiraid.notify-staff", true);
+            
+            // Security settings
+            config.set("security.enabled", true);
+            config.set("security.staff-ip-lock", true);
+            config.set("security.require-console-for-unlock", true);
+
+            config.save(configFile);
+        } catch (IOException e) {
+            plugin.getLogger().severe("Failed to create config.yml programmatically!");
+            e.printStackTrace();
+        }
+    }
+
+    private void createDefaultSecurityConfig() {
+        try {
+            if (!securityFile.exists()) {
+                securityFile.createNewFile();
+            }
+
+            securityConfig = new YamlConfiguration();
+            
+            // Trusted IPs for staff members
+            securityConfig.set("staff-ip-lock.enabled", true);
+            securityConfig.set("trusted_ips.ExampleStaff", java.util.Arrays.asList("127.0.0.1", "192.168.1.100"));
+            
+            securityConfig.save(securityFile);
+        } catch (IOException e) {
+            plugin.getLogger().warning("Could not create security.yml!");
+        }
+    }
+
+    private void loadModuleToggles() {
+        economyEnabled = config.getBoolean("modules.economy", true);
+        teleportEnabled = config.getBoolean("modules.teleport", true);
+        kitsEnabled = config.getBoolean("modules.kits", true);
+        chatEnabled = config.getBoolean("modules.chat", true);
+        markersEnabled = config.getBoolean("modules.markers", true);
+        teamsEnabled = config.getBoolean("modules.teams", true);
+        staffEnabled = config.getBoolean("modules.staff", true);
+        systemEnabled = config.getBoolean("modules.system", true);
+        utilityEnabled = config.getBoolean("modules.utility", true);
+        antiRaidEnabled = config.getBoolean("modules.antiraid", true);
+        securityEnabled = config.getBoolean("modules.security", true);
+    }
+
+    private void loadSystemSettings() {
+        maintenanceMode = config.getBoolean("system.maintenance-mode", false);
+        maintenanceKickMessage = config.getString("system.maintenance-kick-message", "&cServer is in maintenance mode. Admins only.");
+        firstSpawnEnabled = config.getBoolean("system.first-spawn-enabled", true);
+        entityCleanupEnabled = config.getBoolean("system.entity-cleanup-enabled", true);
+        entityCleanupInterval = config.getInt("system.entity-cleanup-interval", 300);
+        minimumTpsThreshold = config.getInt("system.minimum-tps-threshold", 16);
+        autoBroadcasterEnabled = config.getBoolean("system.auto-broadcaster-enabled", true);
+        autoBroadcastInterval = config.getInt("system.auto-broadcast-interval", 600);
+    }
+
+    public void save() {
+        try {
+            config.save(configFile);
+        } catch (IOException e) {
+            plugin.getLogger().severe("Failed to save config.yml!");
+            e.printStackTrace();
+        }
+    }
+
+    // Access raw config if needed
+    public org.bukkit.configuration.file.FileConfiguration getConfig() { return config; }
+
+    // Module toggles
+    public boolean isEconomyEnabled() { return economyEnabled; }
+    public boolean isTeleportEnabled() { return teleportEnabled; }
+    public boolean isKitsEnabled() { return kitsEnabled; }
+    public boolean isChatEnabled() { return chatEnabled; }
+    public boolean isMarkersEnabled() { return markersEnabled; }
+    public boolean isTeamsEnabled() { return teamsEnabled; }
+    public boolean isStaffEnabled() { return staffEnabled; }
+    public boolean isSystemEnabled() { return systemEnabled; }
+    public boolean isUtilityEnabled() { return utilityEnabled; }
+
+    // System settings
+    public boolean isMaintenanceMode() { return maintenanceMode; }
+    public void setMaintenanceMode(boolean enabled) {
+        this.maintenanceMode = enabled;
+        config.set("system.maintenance-mode", enabled);
+        save();
+    }
+
+    public String getMaintenanceKickMessage() { return maintenanceKickMessage; }
+    public boolean isFirstSpawnEnabled() { return firstSpawnEnabled; }
+    public boolean isEntityCleanupEnabled() { return entityCleanupEnabled; }
+    public int getEntityCleanupInterval() { return entityCleanupInterval; }
+    public int getMinimumTpsThreshold() { return minimumTpsThreshold; }
+
+    public int getInt(String path, int def) {
+        return config.getInt(path, def);
+    }
+
+    public String getString(String path, String def) {
+        return config.getString(path, def);
+    }
+
+    public boolean getBoolean(String path, boolean def) {
+        return config.getBoolean(path, def);
+    }
+    public boolean isAutoBroadcasterEnabled() { return autoBroadcasterEnabled; }
+    public int getAutoBroadcastInterval() { return autoBroadcastInterval; }
+}

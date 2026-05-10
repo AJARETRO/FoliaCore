@@ -21,10 +21,11 @@ public class SetSpawnCommand implements CommandExecutor {
             return true;
         }
 
-        if (!(sender instanceof Player player)) {
+        if (!(sender instanceof Player)) {
             plugin.getMessenger().sendError(sender, "This command can only be run by a player.");
             return true;
         }
+        Player player = (Player) sender;
 
         plugin.getTeleportManager().setSpawn(player.getLocation());
         plugin.getMessenger().sendSuccess(sender, "Server spawn location has been set!");

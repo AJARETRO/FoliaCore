@@ -19,10 +19,11 @@ public class WarpCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
+        if (!(sender instanceof Player)) {
             plugin.getMessenger().sendError(sender, "This command can only be run by a player.");
             return true;
         }
+        Player player = (Player) sender;
 
         if (args.length == 0) {
             plugin.getMessenger().sendError(player, "Usage: /warp <name>");
@@ -38,7 +39,7 @@ public class WarpCommand implements CommandExecutor {
         }
 
         // Check for specific warp permission
-        String perm = "foliacore.warp." + warp.name().toLowerCase();
+        String perm = "foliacore.warp." + warp.getName().toLowerCase();
         if (!player.hasPermission("foliacore.warp.all") && !player.hasPermission(perm)) {
             plugin.getMessenger().sendError(player, "You do not have permission to use this warp.");
             return true;
@@ -51,7 +52,7 @@ public class WarpCommand implements CommandExecutor {
         }
 
         // We re-use our safe TeleportManager!
-        String successMsg = "Teleported to warp '" + ChatColor.GOLD + warp.name() + ChatColor.GREEN + "'.";
+        String successMsg = "Teleported to warp '" + ChatColor.GOLD + warp.getName() + ChatColor.GREEN + "'.";
         plugin.getTeleportManager().startTeleport(player, location, successMsg);
         return true;
     }

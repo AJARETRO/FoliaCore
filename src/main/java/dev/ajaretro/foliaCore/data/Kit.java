@@ -7,13 +7,40 @@ import org.bukkit.inventory.ItemStack;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public record Kit(
-        String name,
-        long cooldown,
-        String permission,
-        Material displayMaterial,
-        String itemsBase64
-) {
+public class Kit {
+    private final String name;
+    private final long cooldown;
+    private final String permission;
+    private final Material displayMaterial;
+    private final String itemsBase64;
+
+    public Kit(String name, long cooldown, String permission, Material displayMaterial, String itemsBase64) {
+        this.name = name;
+        this.cooldown = cooldown;
+        this.permission = permission;
+        this.displayMaterial = displayMaterial;
+        this.itemsBase64 = itemsBase64;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public long getCooldown() {
+        return cooldown;
+    }
+
+    public String getPermission() {
+        return permission;
+    }
+
+    public Material getDisplayMaterial() {
+        return displayMaterial;
+    }
+
+    public String getItemsBase64() {
+        return itemsBase64;
+    }
 
     public ItemStack[] getItems() {
         return ItemUtil.deserializeItems(itemsBase64);

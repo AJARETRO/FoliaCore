@@ -1,0 +1,31 @@
+# FoliaCore Configuration
+
+# Module Toggles - Set to false to disable entire subsystems
+modules:
+  economy: true
+  teleport: true
+  kits: true
+  chat: true
+  markers: true
+  teams: true
+  staff: true
+  system: true
+  utility: true
+
+# System Settings
+system:
+  # Maintenance Mode - Kicks players without foliacore.admin
+  maintenance-mode: false
+  maintenance-kick-message: "&cServer is in maintenance mode. Admins only."
+  
+  # First Spawn - Teleports new players to a configured location
+  first-spawn-enabled: true
+  
+  # Entity Cleanup - Removes items and excess mobs when regional TPS drops
+  entity-cleanup-enabled: true
+  entity-cleanup-interval: 300
+  minimum-tps-threshold: 16
+  
+  # Auto Broadcaster - Sends messages at intervals
+  auto-broadcaster-enabled: true
+  auto-broadcast-interval: 600

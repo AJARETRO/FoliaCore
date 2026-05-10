@@ -28,10 +28,11 @@ public class PayCommand implements CommandExecutor {
             return true;
         }
 
-        if (!(sender instanceof Player player)) {
+        if (!(sender instanceof Player)) {
             plugin.getMessenger().sendError(sender, "This command can only be run by a player.");
             return true;
         }
+        Player player = (Player) sender;
 
         if (!player.hasPermission("foliacore.pay")) {
             plugin.getMessenger().sendError(player, "You do not have permission to use this command.");

@@ -24,10 +24,18 @@ public class TimeUtil {
                 long value = Long.parseLong(matcher.group(1));
                 String unit = matcher.group(2);
                 switch (unit) {
-                    case "s" -> totalMillis += TimeUnit.SECONDS.toMillis(value);
-                    case "m" -> totalMillis += TimeUnit.MINUTES.toMillis(value);
-                    case "h" -> totalMillis += TimeUnit.HOURS.toMillis(value);
-                    case "d" -> totalMillis += TimeUnit.DAYS.toMillis(value);
+                    case "s":
+                        totalMillis += TimeUnit.SECONDS.toMillis(value);
+                        break;
+                    case "m":
+                        totalMillis += TimeUnit.MINUTES.toMillis(value);
+                        break;
+                    case "h":
+                        totalMillis += TimeUnit.HOURS.toMillis(value);
+                        break;
+                    case "d":
+                        totalMillis += TimeUnit.DAYS.toMillis(value);
+                        break;
                 }
             } catch (NumberFormatException e) {
                 return -1;

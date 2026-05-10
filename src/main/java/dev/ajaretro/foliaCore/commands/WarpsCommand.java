@@ -28,7 +28,7 @@ public class WarpsCommand implements CommandExecutor {
         boolean isAdmin = sender.hasPermission("foliacore.warp.all");
 
         String warpsList = plugin.getWarpManager().getAllWarps().stream()
-                .map(Warp::name)
+                .map(Warp::getName)
                 .filter(name -> isAdmin || sender.hasPermission("foliacore.warp." + name.toLowerCase()))
                 .sorted(String.CASE_INSENSITIVE_ORDER)
                 .collect(Collectors.joining(ChatColor.GRAY + ", " + ChatColor.WHITE));

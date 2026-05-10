@@ -7,13 +7,21 @@ import org.bukkit.World;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public record Marker(
-        String name,
-        String worldName,
-        double x,
-        double y,
-        double z
-) {
+public class Marker {
+    private final String name;
+    private final String worldName;
+    private final double x;
+    private final double y;
+    private final double z;
+
+    public Marker(String name, String worldName, double x, double y, double z) {
+        this.name = name;
+        this.worldName = worldName;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
     public Marker(String name, Location location) {
         this(
                 name,
@@ -22,6 +30,26 @@ public record Marker(
                 location.getY(),
                 location.getZ()
         );
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getWorldName() {
+        return worldName;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public double getZ() {
+        return z;
     }
 
     public Location toLocation() {

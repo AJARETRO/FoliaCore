@@ -40,18 +40,18 @@ public class KitGUI {
         NamespacedKey key = new NamespacedKey(plugin, "kit_key");
 
         for (Kit kit : kits) {
-            ItemStack item = new ItemStack(kit.displayMaterial());
+            ItemStack item = new ItemStack(kit.getDisplayMaterial());
             ItemMeta meta = item.getItemMeta();
 
             // 1. Set Visible Name
-            meta.setDisplayName(ChatColor.GOLD + kit.name());
+            meta.setDisplayName(ChatColor.GOLD + kit.getName());
 
             // 2. Set Hidden Data (The Fix)
             // We store the exact kit name inside the item's code.
-            meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, kit.name());
+            meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, kit.getName());
 
             List<String> lore = new ArrayList<>();
-            if (player.hasPermission(kit.permission())) {
+            if (player.hasPermission(kit.getPermission())) {
                 if (kitManager.isOnCooldown(player.getUniqueId(), kit)) {
                     long remaining = kitManager.getRemainingCooldown(player.getUniqueId(), kit);
                     lore.add(ChatColor.RED + "On Cooldown!");
@@ -62,7 +62,7 @@ public class KitGUI {
             } else {
                 lore.add(ChatColor.DARK_RED + "Locked");
                 lore.add(ChatColor.GRAY + "Requires permission:");
-                lore.add(ChatColor.GRAY + kit.permission());
+                lore.add(ChatColor.GRAY + kit.getPermission());
             }
 
             meta.setLore(lore);

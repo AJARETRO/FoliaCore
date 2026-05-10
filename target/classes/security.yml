@@ -1,0 +1,22 @@
+# Security Configuration for FoliaCore
+# Staff IP-Lock: Map staff usernames to their trusted IPs
+
+# Staff IP Whitelist
+# Format: username: [list of IP addresses]
+# Example:
+# trusted_ips:
+#   AdminName:
+#     - "203.0.113.42"
+#     - "198.51.100.88"
+#   ModeratorName:
+#     - "192.0.2.1"
+
+trusted_ips:
+  ExampleUsername:
+    - "127.0.0.1"
+    - "192.168.1.100"
+
+# Enable/disable IP locking
+staff-ip-lock:
+  enabled: true
+  kick-message: "&c&lUnauthorized Location\n&fYour IP is not registered as trusted for your account.\n&fContact an administrator."

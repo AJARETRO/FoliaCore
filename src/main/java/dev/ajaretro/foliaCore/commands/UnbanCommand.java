@@ -1,0 +1,45 @@
+package dev.ajaretro.foliaCore.commands;
+
+import dev.ajaretro.foliaCore.FoliaCore;
+import dev.ajaretro.foliaCore.data.Ban;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+
+public class UnbanCommand implements CommandExecutor {
+
+    private final FoliaCore plugin;
+
+    public UnbanCommand(FoliaCore plugin) {
+        this.plugin = plugin;
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!sender.hasPermission("foliacore.unban")) {
+            plugin.getMessenger().sendError(sender, "You do not have permission to use this command.");
+            return true;
+        }
+
+        if (args.length == 0) {
+            plugin.getMessenger().sendError(sender, "Usage: /unban <player>");
+            return true;
+        }
+
+        String playerName = args[0];
+        Ban ban = plugin.getBanManager().getBanByName(playerName);
+
+        if (ban == null) {
+            plugin.getMessenger().sendError(sender, "Player is not banned.");
+            return true;
+        }
+
+        plugin.getBanManager().unbanPlayer(ban.getPlayerUUID());
+        plugin.getMessenger().sendSuccess(sender, ChatColor.GOLD + ban.getPlayerName() + ChatColor.GREEN + " has been unbanned.");
+        Bukkit.broadcast(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand().deserialize(ChatColor.GREEN + "[Unban] " + ChatColor.GOLD + ban.getPlayerName() + ChatColor.GREEN + " has been unbanned."));
+
+        return true;
+    }
+}

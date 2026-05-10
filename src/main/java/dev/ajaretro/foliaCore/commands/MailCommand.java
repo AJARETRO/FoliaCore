@@ -25,10 +25,11 @@ public class MailCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
+        if (!(sender instanceof Player)) {
             plugin.getMessenger().sendError(sender, "This command can only be run by a player.");
             return true;
         }
+        Player player = (Player) sender;
 
         if (args.length == 0) {
             sendHelp(player);
@@ -123,12 +124,12 @@ public class MailCommand implements CommandExecutor {
         plugin.getMessenger().sendMessage(player, ChatColor.YELLOW + "--- Your Mailbox ---");
         for (int i = 0; i < mailbox.size(); i++) {
             Mail mail = mailbox.get(i);
-            OfflinePlayer sender = Bukkit.getOfflinePlayer(mail.sender());
+            OfflinePlayer sender = Bukkit.getOfflinePlayer(mail.getSender());
             String senderName = sender.getName() != null ? sender.getName() : "Unknown";
-            String date = dateFormat.format(new Date(mail.timestamp()));
+            String date = dateFormat.format(new Date(mail.getTimestamp()));
 
             player.sendMessage(ChatColor.GOLD + "Mail #" + (i + 1) + " From: " + ChatColor.WHITE + senderName + ChatColor.GRAY + " (" + date + ")");
-            player.sendMessage(ChatColor.GRAY + "  > " + ChatColor.WHITE + mail.message());
+            player.sendMessage(ChatColor.GRAY + "  > " + ChatColor.WHITE + mail.getMessage());
         }
     }
 
