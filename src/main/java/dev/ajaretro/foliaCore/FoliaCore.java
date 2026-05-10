@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * - Staff utilities and performance monitoring
  * 
  * @author AJARETRO
- * @version v2.5-Overhauled
+ * @version v2.6-Overhauled-Overdrive
  */
 public final class FoliaCore extends JavaPlugin {
 
@@ -67,6 +67,7 @@ public final class FoliaCore extends JavaPlugin {
     // Tasks
     private EntityCleanupTask entityCleanupTask;
     private AutoBroadcasterTask autoBroadcasterTask;
+    private ModrinthUpdateChecker updateChecker;
 
     @Override
     public void onEnable() {
@@ -351,7 +352,7 @@ public final class FoliaCore extends JavaPlugin {
                 LegacyComponentSerializer.legacyAmpersand().deserialize("")
         );
         Bukkit.getConsoleSender().sendMessage(
-                LegacyComponentSerializer.legacyAmpersand().deserialize("&l&6   ✦ &e&lFOLIACORE &6v2.5&e&l OVERHAULED &6✦")
+            LegacyComponentSerializer.legacyAmpersand().deserialize("&l&6   ✦ &e&lFOLIACORE &6v2.6&e&l OVERHAULED-OVERDRIVE &6✦")
         );
         Bukkit.getConsoleSender().sendMessage(
                 LegacyComponentSerializer.legacyAmpersand().deserialize("&f   Folia-Native Essentials Suite")
@@ -403,6 +404,7 @@ public final class FoliaCore extends JavaPlugin {
     public VanishManager getVanishManager() { return vanishManager; }
     public SocialSpyManager getSocialSpyManager() { return socialSpyManager; }
     public SpawnManager getSpawnManager() { return spawnManager; }
+    public ModrinthUpdateChecker getUpdateChecker() { return updateChecker; }
 
     public boolean toggleGodMode(UUID playerUUID) {
         return godModePlayers.compute(playerUUID, (k, v) -> v == null || !v);

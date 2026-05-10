@@ -26,5 +26,9 @@ public class ConnectionListener implements Listener {
             player.displayName(component);
             player.playerListName(component);
         }
+
+        if (plugin.getUpdateChecker() != null) {
+            plugin.getUpdateChecker().queueOpNotification(player);
+        }
     }
 }

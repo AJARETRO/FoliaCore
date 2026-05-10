@@ -64,6 +64,7 @@ dev/ajaretro/foliaCore/data/Team.class
 dev/ajaretro/foliaCore/listeners/KitGUIListener.class
 dev/ajaretro/foliaCore/managers/TeamManager.class
 dev/ajaretro/foliaCore/managers/EconomyManager.class
+dev/ajaretro/foliaCore/ModrinthUpdateChecker.class
 dev/ajaretro/foliaCore/commands/TpDenyCommand.class
 dev/ajaretro/foliaCore/commands/WarpCommand.class
 dev/ajaretro/foliaCore/listeners/BlockChangeListener.class
