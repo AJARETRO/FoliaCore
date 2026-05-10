@@ -99,6 +99,7 @@ public final class FoliaCore extends JavaPlugin {
         }
 
         // Setup Vault economy
+            try {
         if (getServer().getPluginManager().getPlugin("Vault") != null) {
             getServer().getServicesManager().register(
                     Economy.class,
@@ -112,6 +113,9 @@ public final class FoliaCore extends JavaPlugin {
         } else {
             getLogger().warning("Vault NOT found! Economy features will be disabled.");
         }
+            } catch (NoClassDefFoundError error) {
+                getLogger().warning("Vault API is missing from the runtime classpath. Economy features will be disabled.");
+            }
 
         // Initialize core managers (always available)
         this.vanishManager = new VanishManager(this);
@@ -352,7 +356,7 @@ public final class FoliaCore extends JavaPlugin {
                 LegacyComponentSerializer.legacyAmpersand().deserialize("")
         );
         Bukkit.getConsoleSender().sendMessage(
-            LegacyComponentSerializer.legacyAmpersand().deserialize("&l&6   ✦ &e&lFOLIACORE &6v2.6&e&l OVERHAULED-OVERDRIVE &6✦")
+                LegacyComponentSerializer.legacyAmpersand().deserialize("&l&6   ✦ &e&lFOLIACORE &6v2.6.1&e&l OVERDRIVE OVERHAULED &6✦")
         );
         Bukkit.getConsoleSender().sendMessage(
                 LegacyComponentSerializer.legacyAmpersand().deserialize("&f   Folia-Native Essentials Suite")

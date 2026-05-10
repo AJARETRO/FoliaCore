@@ -6,7 +6,7 @@
 
     <groupId>dev.ajaretro</groupId>
     <artifactId>folia_core</artifactId>
-    <version>v2.6-Overhauled-Overdrive</version>
+    <version>v2.6.1-hotfix</version>
     <packaging>jar</packaging>
 
     <name>folia_core</name>

@@ -1,9 +1,9 @@
-# ⚡ FoliaCore v2.6 Overhauled-Overdrive
+# ⚡ FoliaCore v2.6.1 Hotfix - Overdrive Overhauled
 > **The Folia-Native Essentials Suite** — Built for Regionalized Servers from the Ground Up
 
 ![Platform](https://img.shields.io/badge/platform-Folia%2026.1%2B-brightgreen?style=for-the-badge&logo=paper&logoColor=white)
 ![Java](https://img.shields.io/badge/Java-21+-orangered?style=for-the-badge)
-![Version](https://img.shields.io/badge/release-v2.6--Overhauled--Overdrive-blue?style=for-the-badge)
+![Version](https://img.shields.io/badge/release-v2.6.1--hotfix-blue?style=for-the-badge)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey?style=for-the-badge)
 ![bStats](https://img.shields.io/badge/metrics-bStats%20%2328430-purple?style=for-the-badge)
 
@@ -48,7 +48,7 @@ Folia introduced **regionalized multi-threading** to Minecraft servers. Existing
 | **Region-Aware Logic** | ✅ Yes | ❌ No | ❌ No | ❌ No |
 | **bStats Integration** | ✅ Included (ID 28430) | ✅ Included | ✅ Included | ✅ Included |
 | **Vault Economy** | ✅ Supported | ✅ Supported | ✅ Supported | ✅ Supported |
-| **Active Folia Maintenance** | ✅ Yes (v2.6) | ❌ EOL for Folia | ❌ Minimal | ❌ Minimal |
+| **Active Folia Maintenance** | ✅ Yes (v2.6.1) | ❌ EOL for Folia | ❌ Minimal | ❌ Minimal |
 
 **The Core Difference:** FoliaCore is built *for* Folia; others are adapted *to* Folia. It shows in startup time, memory footprint, and permission handling.
 
@@ -155,11 +155,11 @@ Folia introduced **regionalized multi-threading** to Minecraft servers. Existing
 ### Installation Steps
 
 1. **Download the JAR**
-   - Grab `folia_core-v2.6-Overhauled-Overdrive.jar` from [GitHub Releases](https://github.com/AJARETRO/FoliaCore/releases)
+   - Grab `folia_core-v2.6.1-hotfix.jar` from [GitHub Releases](https://github.com/AJARETRO/FoliaCore/releases)
 
 2. **Place in Plugins Folder**
    ```bash
-   cp folia_core-v2.6-Overhauled-Overdrive.jar /path/to/server/plugins/
+   cp folia_core-v2.6.1-hotfix.jar /path/to/server/plugins/
    ```
 
 3. **Start Server**
@@ -377,7 +377,7 @@ FoliaCore (Main)
 ### AJA RETRO Startup Banner
 ```
 ════════════════════════════════════════════════════════════════════════════════════
-   ✦ FOLIACORE v2.6 OVERHAULED-OVERDRIVE ✦
+   ✦ FOLIACORE v2.6.1 HOTFIX ✦
    Folia-Native Essentials Suite
 
    ⟶ Regionalized ThreadPool | Modular Architecture | Real-time Telemetry
@@ -497,5 +497,5 @@ A: Yes! Visit the GitHub repository for contributing guidelines.
 
 ---
 
-*Last Updated: May 2026 | FoliaCore v2.6 Overhauled-Overdrive | Java 21+ | Folia 26.1.2+*  
+*Last Updated: May 2026 | FoliaCore v2.6.1 Hotfix - Overdrive Overhauled | Java 21+ | Folia 26.1.2+*  
 *Assisted by AI*
