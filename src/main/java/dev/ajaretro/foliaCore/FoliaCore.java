@@ -312,11 +312,12 @@ public final class FoliaCore extends JavaPlugin {
     }
 
     private void registerCommandSafe(String name, org.bukkit.command.CommandExecutor executor) {
-        var cmd = getCommand(name);
-        if (cmd != null) {
-            cmd.setExecutor(executor);
+        // For Paper plugins, use Bukkit.getCommandMap() and cast to PluginCommand
+        var cmd = Bukkit.getCommandMap().getCommand(name);
+        if (cmd instanceof org.bukkit.command.PluginCommand pluginCmd) {
+            pluginCmd.setExecutor(executor);
         } else {
-            getLogger().warning("Command '" + name + "' not found in paper-plugin.yml!");
+            getLogger().warning("Command '" + name + "' not found or is not a PluginCommand!");
         }
     }
 
