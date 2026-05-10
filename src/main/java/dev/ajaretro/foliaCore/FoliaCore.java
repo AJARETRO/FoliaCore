@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * - Staff utilities and performance monitoring
  * 
  * @author AJARETRO
- * @version v2.6-Overhauled-Overdrive
+ * @version v2.6.2-hotfix
  */
 public final class FoliaCore extends JavaPlugin {
 
@@ -99,23 +99,23 @@ public final class FoliaCore extends JavaPlugin {
         }
 
         // Setup Vault economy
-            try {
-        if (getServer().getPluginManager().getPlugin("Vault") != null) {
-            getServer().getServicesManager().register(
-                    Economy.class,
-                    new FoliaEconomy(),
-                    this,
-                    ServicePriority.Highest
-            );
-            Bukkit.getConsoleSender().sendMessage(
-                    LegacyComponentSerializer.legacyAmpersand().deserialize("&l&4[FoliaCore] &aVault found! Economy Provider registered.")
-            );
-        } else {
-            getLogger().warning("Vault NOT found! Economy features will be disabled.");
-        }
-            } catch (NoClassDefFoundError error) {
-                getLogger().warning("Vault API is missing from the runtime classpath. Economy features will be disabled.");
+        try {
+            if (getServer().getPluginManager().getPlugin("Vault") != null) {
+                getServer().getServicesManager().register(
+                        Economy.class,
+                        new FoliaEconomy(),
+                        this,
+                        ServicePriority.Highest
+                );
+                Bukkit.getConsoleSender().sendMessage(
+                        LegacyComponentSerializer.legacyAmpersand().deserialize("&l&4[FoliaCore] &aVault found! Economy Provider registered.")
+                );
+            } else {
+                getLogger().warning("Vault NOT found! Economy features will be disabled.");
             }
+        } catch (NoClassDefFoundError error) {
+            getLogger().warning("Vault API is missing from the runtime classpath. Economy features will be disabled.");
+        }
 
         // Initialize core managers (always available)
         this.vanishManager = new VanishManager(this);
@@ -356,7 +356,7 @@ public final class FoliaCore extends JavaPlugin {
                 LegacyComponentSerializer.legacyAmpersand().deserialize("")
         );
         Bukkit.getConsoleSender().sendMessage(
-                LegacyComponentSerializer.legacyAmpersand().deserialize("&l&6   ✦ &e&lFOLIACORE &6v2.6.1&e&l OVERDRIVE OVERHAULED &6✦")
+                LegacyComponentSerializer.legacyAmpersand().deserialize("&l&6   ✦ &e&lFOLIACORE &6v2.6.2&e&l OVERDRIVE OVERHAULED &6✦")
         );
         Bukkit.getConsoleSender().sendMessage(
                 LegacyComponentSerializer.legacyAmpersand().deserialize("&f   Folia-Native Essentials Suite")
