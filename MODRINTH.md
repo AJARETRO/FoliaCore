@@ -1,39 +1,64 @@
 FoliaCore
 
 Summary
-FoliaCore is a Folia-native administration and quality-of-life plugin for modern Minecraft servers. It provides moderation tools, utility commands, animated tab and sidebar displays, and operational status tools with a lightweight architecture.
+FoliaCore is a Folia-native essentials and administration plugin built for regionalized Minecraft servers. It combines moderation, teleportation, staff tools, utility commands, animated displays, and status output in one configurable package.
 
 Description
-FoliaCore is built specifically for Folia and focuses on reliable server administration, practical player utilities, and configurable visual presentation.
+FoliaCore is designed for Folia first, not adapted to it later.
 
-The plugin includes command-based tools for staff and players, including moderation, teleport workflows, communication systems, and utility actions.
+Most servers do not need a pile of separate plugins for chat, teleports, staff moderation, display animation, repair/trash utilities, and update checks. FoliaCore packages those into one smaller, Folia-safe codebase with a cleaner configuration model.
 
-Version 3 Nightingale adds animated tab and sidebar systems with configurable methods and frame lists. Method names are user-defined in config, and each frame line scrolls automatically in sequence. Placeholder output is supported with built-in placeholders and optional PlaceholderAPI integration.
+Version v-3.1 Frozen Nightingale focuses on modular control. Major systems can be enabled or disabled through `config.yml`, the tab and sidebar displays can animate through configurable frame methods, and PlaceholderAPI is supported when installed.
 
-Version 3.1 Frozen Nightingale refines configuration: all major systems can be toggled on/off via `config.yml` flags. The plugin preserves Nightingale's tab/sidebar animations and QoL features while making them fully optional for server operators.
-
-Version 3 also removes the economy subsystem and Vault integration to reduce dependency surface and keep operations focused on moderation and utility workflows.
+Compared with many paid essentials plugins, FoliaCore aims to deliver stronger native Folia behavior, less dependency bloat, and a more operator-friendly workflow.
 
 Core Features
-- Folia-safe scheduling and command handling.
-- Animated tab header and footer from configurable frame methods.
-- Animated sidebar title and line methods from configurable frame methods.
-- Optional PlaceholderAPI support for tab and sidebar text.
-- Utility additions: calculator command, trash inventory command, repair commands.
-- Existing moderation and utility command suite.
-- Async update checking against Modrinth.
+- Folia-safe scheduling and player updates.
+- Native Paper command registration.
+- Modular feature toggles for major systems.
+- Animated tab header and footer.
+- Animated sidebar title and lines.
+- Optional PlaceholderAPI support for display text.
+- Calculator command for quick math.
+- Trash and dispose commands.
+- Repair commands for items and inventories.
+- Moderation, teleportation, staff, and utility command suites.
+- Async Modrinth update checking.
 
-Accessibility and Language
-This description is provided in English plain text and is readable as text-only content.
+Feature Highlights
+- Chat and social tools: `/msg`, `/reply`, `/mail`, `/nick`, `/realname`, `/mute`, `/unmute`, `/block`, `/unblock`, `/chat`.
+- Teleport tools: `/home`, `/sethome`, `/homes`, `/delhome`, `/warp`, `/setwarp`, `/warps`, `/delwarp`, `/tpa`, `/tpahere`, `/tpaccept`, `/tpdeny`, `/spawn`, `/setspawn`, `/back`.
+- Staff and utility tools: `/status`, `/ping`, `/clearchat`, `/fly`, `/heal`, `/feed`, `/god`, `/give`, `/clear`, `/invsee`, `/enderchest`, `/workbench`, `/hat`, `/broadcast`, `/time`, `/weather`, `/antiraid`, `/vanish`, `/socialspy`, `/staffchat`, `/sc`.
+- Quality-of-life additions: `/calc`, `/trash`, `/dispose`, `/repair`.
 
-Client and Server Scope
-FoliaCore is a server-side plugin intended for Folia servers.
+Configuration
+- Major modules can be toggled in `config.yml`.
+- Tab and sidebar methods use configurable frame lists.
+- Update intervals are configurable.
+- Built-in placeholders cover player, world, ping, TPS, coordinates, and online counts.
+- PlaceholderAPI placeholders are resolved automatically when the plugin is present.
 
-Security and Fair Play
-FoliaCore does not provide cheats, hacks, x-ray tools, movement exploits, combat automation, duplication exploits, or any hidden bypass system.
+Installation
+1. Download the latest release jar.
+2. Place it in your server `plugins/` folder.
+3. Start the server on Folia with Java 21 or newer.
+4. Edit `plugins/FoliaCore/config.yml` to choose modules and display styles.
+5. Restart the server.
 
-Copyright and Ownership
-FoliaCore is original work published by its maintainers. Only content that is owned or appropriately licensed should be distributed with releases.
+FAQ
+- Does it require Vault? No. The economy layer was removed.
+- Does it support PlaceholderAPI? Yes, for tab and sidebar text.
+- Is it only for Folia? Yes.
+- Can I turn features off? Yes, major systems are configurable.
+- Is it free? Yes.
 
-Metadata and Quality Notes
-Project metadata should remain accurate and consistent across release files, summary text, dependency declarations, and external links.
+Sponsor
+TrueCloud Hosting sponsors FoliaCore.
+
+South Asia hosting pricing: $0.50 per GB.
+
+WhatsApp: +8801989208751
+
+This description is plain text so it stays readable in Modrinth's fields.
+
+FoliaCore does not ship cheats, x-ray tools, combat automation, duplication features, or hidden bypass systems.
