@@ -1,0 +1,270 @@
+# FoliaCore Blue Nightingale Visual Blueprint
+#
+# This file is a premium-style visual system template for servers that want a
+# dedicated tab/sidebar configuration surface. It is written as a blueprint for
+# an advanced manager such as AdvancedDisplayManager.
+
+version: "v-3.2-Blue-Nightingale"
+
+database:
+  mysql-enabled: true
+  host: "127.0.0.1"
+  port: 3306
+  database: "foliacore"
+  username: "foliacore"
+  password: "change-me"
+  use-ssl: false
+  pool-size: 8
+  table-prefix: "fc_"
+
+settings:
+  debug-level: 1 # 0 = OFF, 1 = ERRORS, 2 = PACKETS, 3 = TRACE
+  save-user-toggles: true
+  use-placeholderapi: true
+  use-mini-message: true
+  use-legacy-hex: true
+  use-gradient-fonts: true
+  use-custom-sprites: true
+  placeholder-output-replacements:
+    "TRUE": "&aEnabled"
+    "FALSE": "&cDisabled"
+    "NONE": "&7None"
+
+animations:
+  global-update-interval-ticks: 20
+  tab-animation:
+    enabled: true
+    update-interval-ticks: 20
+  sidebar-animation:
+    enabled: true
+    update-interval-ticks: 20
+  nametag-animation:
+    enabled: true
+    update-interval-ticks: 40
+  bossbar-animation:
+    enabled: true
+    update-interval-ticks: 40
+
+placeholders:
+  conditional-format:
+    enabled: true
+    syntax: "%if_<placeholder>_<operator>_<value>%_<true>%_<false>%"
+    examples:
+      ping-high: "%if_ping_>_100%_&cHigh%_&aGood%"
+      ping-warning: "%if_ping_>_150%_&cLaggy%_&eFine%"
+      world-nether: "%if_world_name_==_world_nether%_&cNether%_&7Overworld%"
+  papi:
+    enabled: true
+    fallback-to-builtins: true
+
+tablist:
+  enabled: true
+  global-playerlist: true
+  per-world-playerlist: false
+  spectator-fix: true
+  sort:
+    enabled: true
+    type: WEIGHT # WEIGHT, PERMISSION, ALPHABETICAL
+    tie-breaker: UUID
+    weights:
+      owner: 1
+      admin: 2
+      moderator: 3
+      builder: 4
+      helper: 5
+      default: 10
+  objective:
+    enabled: true
+    type: PING # PING, HEALTH, NONE
+    right-side-display: true
+    show-in-spectator: false
+  names:
+    format: "<gray>[</gray><gradient:#00B4FF:#77D9FF><bold>FoliaCore</bold></gradient><gray>]</gray> <white>%player_name%</white>"
+    prefix-suffix:
+      enabled: true
+      use-vault-style-ranks: true
+      fallback-prefix: "&7"
+      fallback-suffix: ""
+  header-footer:
+    enabled: true
+    header-method: "header_wave"
+    footer-method: "footer_wave"
+    methods:
+      header_wave:
+        - "<gradient:#00B4FF:#005BFF><bold>FoliaCore Blue Nightingale</bold></gradient>"
+        - "<white>Powered for regionalized servers</white>"
+        - "<gray>Native Folia systems. No adapter nonsense.</gray>"
+      footer_wave:
+        - "<gray>Online: <aqua>%online_players%</aqua>/<green>%max_players%</green></gray>"
+        - "<gray>TPS: <gold>%server_tps%</gold> | MSPT: <gold>%server_mspt%</gold></gray>"
+        - "<gray>Ping: <yellow>%player_ping%ms</yellow> | World: <white>%world_name%</white></gray>"
+  playerlist:
+    global-header: true
+    per-world-names: false
+    ping-objective: true
+    health-objective: false
+
+sidebar:
+  enabled: true
+  default-state: true
+  multiple-sidebars: true
+  allow-player-toggle: true
+  update-interval-ticks: 20
+  line-support: 15
+  flickerless-rendering: true
+  active-layout: "default"
+  layouts:
+    default:
+      title-method: "sidebar_title"
+      lines:
+        - "sidebar_line_1"
+        - "sidebar_line_2"
+        - "sidebar_line_3"
+        - "sidebar_line_4"
+        - "sidebar_line_5"
+        - "sidebar_line_6"
+        - "sidebar_line_7"
+        - "sidebar_line_8"
+        - "sidebar_line_9"
+        - "sidebar_line_10"
+        - "sidebar_line_11"
+        - "sidebar_line_12"
+        - "sidebar_line_13"
+        - "sidebar_line_14"
+        - "sidebar_line_15"
+    compact:
+      title-method: "compact_title"
+      lines:
+        - "sidebar_compact_1"
+        - "sidebar_compact_2"
+        - "sidebar_compact_3"
+        - "sidebar_compact_4"
+        - "sidebar_compact_5"
+        - "sidebar_compact_6"
+        - "sidebar_compact_7"
+        - "sidebar_compact_8"
+        - "sidebar_compact_9"
+        - "sidebar_compact_10"
+        - "sidebar_compact_11"
+        - "sidebar_compact_12"
+        - "sidebar_compact_13"
+        - "sidebar_compact_14"
+        - "sidebar_compact_15"
+  methods:
+    sidebar_title:
+      - "<gradient:#00B4FF:#77D9FF><bold>FoliaCore</bold></gradient>"
+      - "<white>Blue Nightingale</white>"
+      - "<gray>Regionalized Essentials Suite</gray>"
+    compact_title:
+      - "<gradient:#00B4FF:#77D9FF><bold>Blue Nightingale</bold></gradient>"
+      - "<gray>Compact HUD</gray>"
+    sidebar_line_1:
+      - "<gray>Player: <white>%player_name%</white></gray>"
+    sidebar_line_2:
+      - "<gray>Rank: <white>%if_vault_rank_==_none%_&7None%_%vault_rank%%</white></gray>"
+    sidebar_line_3:
+      - "<gray>Ping: <yellow>%if_ping_>_100%_&c%player_ping%ms%_&a%player_ping%ms%</yellow></gray>"
+    sidebar_line_4:
+      - "<gray>TPS: <gold>%server_tps%</gold></gray>"
+    sidebar_line_5:
+      - "<gray>MSPT: <gold>%server_mspt%ms</gold></gray>"
+    sidebar_line_6:
+      - "<gray>World: <white>%world_name%</white></gray>"
+    sidebar_line_7:
+      - "<gray>Online: <aqua>%online_players%</aqua>/<green>%max_players%</green></gray>"
+    sidebar_line_8:
+      - "<gray>Mode: <white>%player_gamemode%</white></gray>"
+    sidebar_line_9:
+      - "<gray>Coords: <white>%x%, %y%, %z%</white></gray>"
+    sidebar_line_10:
+      - "<gray>Server: <white>%server_name%</white></gray>"
+    sidebar_line_11:
+      - "<gray>Discord: <aqua>discord.gg/yourlink</aqua></gray>"
+    sidebar_line_12:
+      - "<gray>Website: <white>ajaretro.dev</white></gray>"
+    sidebar_line_13:
+      - "<gray>Status: <green>%if_online_players_>_0%_&aLive%_&7Idle%</green></gray>"
+    sidebar_line_14:
+      - "<gray>Tab: <white>%if_tab_enabled%_&aTRUE%_&cFALSE%</white></gray>"
+    sidebar_line_15:
+      - "<gradient:#00B4FF:#77D9FF>ajaretro.dev</gradient>"
+
+entities:
+  nametags:
+    enabled: true
+    format: "<prefix><white>%player_name%</white><suffix>"
+    prefix-source: "vault"
+    suffix-source: "vault"
+    hide-spectators: true
+    per-world-overrides: false
+  belowname:
+    enabled: true
+    format: "<red>❤</red> <white>%player_health%</white>"
+    show-armor: false
+    show-ping: false
+  bossbar:
+    enabled: true
+    title: "<gradient:#00B4FF:#77D9FF><bold>FoliaCore</bold></gradient> <gray>•</gray> <white>%server_name%</white>"
+    color: BLUE # PINK, BLUE, RED, GREEN, YELLOW, PURPLE, WHITE
+    style: SOLID # SOLID, SEGMENTED_6, SEGMENTED_10, SEGMENTED_12, SEGMENTED_20
+    progress:
+      mode: STATIC # STATIC, DYNAMIC
+      value: 1.0
+      dynamic-placeholder: "%server_tps%"
+  ping-spoof:
+    enabled: false
+    mode: PERMISSION # PERMISSION, WORLD, PLAYER, SERVER
+    fallback-ping: 0
+    overrides:
+      foliacore.ping.fake:
+        value: 999
+        reason: "Testing only"
+
+multiserver:
+  enabled: true
+  backend: VELOCITY # BUNGEE, VELOCITY, NONE
+  global-playerlist: true
+  proxy-placeholder-prefix: "proxy"
+  placeholders:
+    global-online: "%proxy_online_players%"
+    network-max: "%proxy_max_players%"
+    server-name: "%proxy_server_name%"
+    fallback: "Local"
+
+output:
+  replacement-rules:
+    - from: "TRUE"
+      to: "&aEnabled"
+    - from: "FALSE"
+      to: "&cDisabled"
+    - from: "NONE"
+      to: "&7None"
+    - from: "&7&lN/A"
+      to: "&8Not available"
+
+fonts:
+  enabled: true
+  default-font: "minecraft:default"
+  custom-fonts:
+    title:
+      provider: "minecraft:uniform"
+      characters: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    icons:
+      provider: "resourcepack:sprites"
+      characters: "❤⚡★"
+
+sprites:
+  enabled: true
+  pack-id: "foliacore-visuals"
+  texture-prefix: "custom/"
+  examples:
+    ping-high: "<sprite:icon/ping_high>"
+    tps-good: "<sprite:icon/tps_good>"
+    tps-low: "<sprite:icon/tps_low>"
+
+debug:
+  log-packets: true
+  log-updates: false
+  log-conditions: true
+  log-placeholder-resolution: false
+  log-database: false

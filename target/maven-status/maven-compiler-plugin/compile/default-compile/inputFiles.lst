@@ -51,6 +51,7 @@
 /workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/commands/HomesCommand.java
 /workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/commands/BroadcastCommand.java
 /workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/listeners/MaintenanceListener.java
+/workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/managers/AdvancedDisplayManager.java
 /workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/commands/FeedCommand.java
 /workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/commands/UnbanCommand.java
 /workspaces/FoliaCore/src/main/java/dev/ajaretro/foliaCore/commands/HomeCommand.java

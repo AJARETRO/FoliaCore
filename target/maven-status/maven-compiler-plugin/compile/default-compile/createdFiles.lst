@@ -22,6 +22,7 @@ dev/ajaretro/foliaCore/commands/TpaHereCommand.class
 dev/ajaretro/foliaCore/commands/WeatherCommand.class
 dev/ajaretro/foliaCore/commands/PingCommand.class
 dev/ajaretro/foliaCore/listeners/SpawnListener.class
+dev/ajaretro/foliaCore/managers/AdvancedDisplayManager.class
 dev/ajaretro/foliaCore/commands/VanishCommand.class
 dev/ajaretro/foliaCore/data/ChatMode.class
 dev/ajaretro/foliaCore/data/Ban.class
