@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * - Staff utilities and performance monitoring
  * 
  * @author AJARETRO
- * @version v-3.2 Blue Nightingale
+ * @version v-3.3 Dark Angel
  */
 public final class FoliaCore extends JavaPlugin {
 
@@ -311,6 +311,9 @@ public final class FoliaCore extends JavaPlugin {
             registerCommandSafe("staffchat", new StaffChatCommand(this));
             registerCommandSafe("sc", new StaffChatCommand(this));
         }
+
+        registerCommandSafe("scoreboard", new ScoreboardToggleCommand(this));
+        registerCommandSafe("sidebar", new ScoreboardToggleCommand(this));
     }
 
     private void registerCommandSafe(String name, org.bukkit.command.CommandExecutor executor) {
