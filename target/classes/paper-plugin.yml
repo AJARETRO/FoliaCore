@@ -1,5 +1,5 @@
 name: FoliaCore
-version: 'v-3-Nightingale'
+version: 'v-3.1-Frozen-Nightingale'
 main: dev.ajaretro.foliaCore.FoliaCore
 api-version: '1.21'
 prefix: "AJA_R3TR0_FoliaCore"

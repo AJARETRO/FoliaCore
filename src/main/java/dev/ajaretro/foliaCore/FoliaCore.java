@@ -185,13 +185,27 @@ public final class FoliaCore extends JavaPlugin {
 
     private void registerListeners() {
         var pm = getServer().getPluginManager();
-        pm.registerEvents(new ChatListener(this), this);
-        pm.registerEvents(new MailListener(this), this);
-        pm.registerEvents(new PlayerMoveListener(this), this);
-        pm.registerEvents(new KitGUIListener(this), this);
-        pm.registerEvents(new PlayerGpsListener(this), this);
+        if (configManager.chatEnabled) {
+            pm.registerEvents(new ChatListener(this), this);
+            pm.registerEvents(new MailListener(this), this);
+        }
+
+        if (configManager.teleportEnabled) {
+            pm.registerEvents(new PlayerMoveListener(this), this);
+            pm.registerEvents(new SpawnListener(this), this);
+        }
+
+        if (configManager.kitsEnabled) {
+            pm.registerEvents(new KitGUIListener(this), this);
+        }
+
+        if (configManager.utilityEnabled) {
+            pm.registerEvents(new PlayerGpsListener(this), this);
+        }
+
+        // ConnectionListener handles update notifications and display; register always but guard internally
         pm.registerEvents(new ConnectionListener(this), this);
-        
+
         if (configManager.antiRaidEnabled) {
             pm.registerEvents(new BlockChangeListener(this), this);
         }

@@ -10,6 +10,8 @@ The plugin includes command-based tools for staff and players, including moderat
 
 Version 3 Nightingale adds animated tab and sidebar systems with configurable methods and frame lists. Method names are user-defined in config, and each frame line scrolls automatically in sequence. Placeholder output is supported with built-in placeholders and optional PlaceholderAPI integration.
 
+Version 3.1 Frozen Nightingale refines configuration: all major systems can be toggled on/off via `config.yml` flags. The plugin preserves Nightingale's tab/sidebar animations and QoL features while making them fully optional for server operators.
+
 Version 3 also removes the economy subsystem and Vault integration to reduce dependency surface and keep operations focused on moderation and utility workflows.
 
 Core Features

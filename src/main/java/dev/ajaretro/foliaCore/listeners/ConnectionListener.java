@@ -20,12 +20,13 @@ public class ConnectionListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        String nick = plugin.getChatManager().getNickname(player.getUniqueId());
-
-        if (nick != null) {
-            var component = LegacyComponentSerializer.legacyAmpersand().deserialize(nick);
-            player.displayName(component);
-            player.playerListName(component);
+        if (plugin.getConfigManager().isChatEnabled() && plugin.getChatManager() != null) {
+            String nick = plugin.getChatManager().getNickname(player.getUniqueId());
+            if (nick != null) {
+                var component = LegacyComponentSerializer.legacyAmpersand().deserialize(nick);
+                player.displayName(component);
+                player.playerListName(component);
+            }
         }
 
         if (plugin.getUpdateChecker() != null) {

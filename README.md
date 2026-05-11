@@ -1,4 +1,4 @@
-# FoliaCore v-3 Nightingale
+# FoliaCore v-3.1 Frozen Nightingale
 
 FoliaCore is a Folia-native utility and administration plugin focused on performance, moderation workflow, and clean server operations.
 
@@ -38,6 +38,8 @@ Built-in placeholders include:
 - `%x%`, `%y%`, `%z%`
 
 If PlaceholderAPI is present, PAPI placeholders are also resolved in tab and sidebar output.
+
+Release: v-3.1 Frozen Nightingale
 
 ## Installation
 1. Download the latest v-3 Nightingale jar from Releases.
