@@ -6,7 +6,7 @@
 
     <groupId>dev.ajaretro</groupId>
     <artifactId>folia_core</artifactId>
-    <version>v-3.1-Frozen-Nightingale</version>
+    <version>v-3.2-Blue-Nightingale</version>
     <packaging>jar</packaging>
 
     <name>folia_core</name>

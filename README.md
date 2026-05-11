@@ -1,28 +1,22 @@
-⚡ FoliaCore v-3.1 Frozen Nightingale
+⚡ FoliaCore v-3.2 Blue Nightingale
 
 The Folia-Native Essentials Suite - Built for regionalized servers from the ground up.
 
-FoliaCore is built for Folia first, not adapted to it later. The result is a cleaner essentials stack for modern servers: native Paper command registration, modular feature toggles, Folia-safe scheduling, animated displays, and a smaller dependency surface than the usual all-in-one plugins.
+FoliaCore is built for Folia first, not adapted to it later. Blue Nightingale adds the advanced visual-system blueprint on top of the existing core so server owners can run a tighter essentials stack with native Paper command registration, modular feature toggles, Folia-safe scheduling, and a dedicated tab/sidebar design surface.
 
 ## 🎯 The FoliaCore Advantage
 
 ### Why FoliaCore Exists
 
-Folia introduced regionalized multi-threading to Minecraft servers. Most legacy essentials frameworks were designed for older single-threaded Bukkit assumptions, then retrofitted later. That usually causes the same problems:
-
-- Brittle command startup that assumes legacy registration paths.
-- Fake or incomplete status reporting instead of actual server data.
-- Race-condition-prone teleport and data management.
-- Bloated monoliths with a long list of commands and dependencies you cannot meaningfully trim.
-- GUI and inventory logic that ignores region-safe execution.
+Folia introduced regionalized multi-threading to Minecraft servers. Older essentials plugins were built for single-threaded Bukkit assumptions, then patched for Folia later. That usually shows up as brittle command startup, fake status reporting, unsafe shared state, bloated monoliths, and inventory logic that does not belong in a regioned runtime.
 
 ### What FoliaCore Does Differently
 
-- Modern Paper command registration through the Paper command bridge instead of old startup-only patterns.
+- Modern Paper command registration instead of legacy startup-only patterns.
 - Real Folia-safe scheduling and player scheduling.
 - Thread-safe managers and defensive null checks around optional modules.
 - Modular configuration so major systems can be enabled or disabled in `config.yml`.
-- Animated tab and sidebar presentation with configurable frame methods.
+- An advanced visual blueprint in `tab-sidebar.yml` for tablist, sidebar, nametags, belowname, bossbar, and proxy-aware data.
 - Optional PlaceholderAPI support for display text.
 - No Vault economy layer, so the runtime stays focused on administration and quality-of-life.
 
@@ -30,29 +24,31 @@ Result: one plugin that is easier to maintain than a pile of separate essentials
 
 ## 📊 Market Comparison
 
-| Feature | FoliaCore | Legacy Essentials Stacks | Typical Paid All-in-One Plugins |
-| --- | --- | --- | --- |
-| Folia 26+ support | Native | Usually adapted later | Often partial or adapter-based |
-| Command registration | Modern Paper bridge | Legacy Bukkit assumptions | Usually legacy or mixed |
-| Module toggles | Major systems configurable | Usually all-or-nothing | Varies, often limited |
-| Tab and sidebar animation | Configurable frame methods | Usually basic or separate plugin | Sometimes present, often paywalled |
-| PlaceholderAPI support | Optional | Common | Common |
-| Thread-safe state design | ConcurrentHashMap and guarded managers | Mixed | Mixed |
-| Dependency surface | Kept lean | Usually larger | Often larger |
-| Economy/Vault layer | Removed by design | Common | Common |
-| Update checks | Modrinth-based | Varies | Varies |
-| Maintenance style | Single focused release track | Fragmented | Fragmented |
+| Feature | FoliaCore | EssentialsX | Essentials-Folia | Typical Premium Suite |
+| --- | --- | --- | --- | --- |
+| Folia 26+ support | Native | Adapter-based | Partial | Varies |
+| Command registration | Modern Paper bridge | Legacy Bukkit | Mixed | Mixed |
+| Module toggles | Major systems configurable | Mostly all-or-nothing | Limited | Varies |
+| Tab/sidebar blueprint | Dedicated visual config | Minimal | Limited | Sometimes paywalled |
+| PlaceholderAPI support | Optional | Common | Common | Common |
+| Thread-safe state design | ConcurrentHashMap and guarded managers | Mixed | Mixed | Mixed |
+| Dependency surface | Kept lean | Larger | Larger | Usually larger |
+| Economy/Vault layer | Removed by design | Common | Common | Common |
+| Update checks | Modrinth-based | Varies | Varies | Varies |
+| Maintenance style | Single focused release track | Fragmented | Fragmented | Fragmented |
 
-The difference is simple: FoliaCore is built for Folia, while most alternatives are adapted around Folia.
+The difference is simple: FoliaCore is built for Folia, while the others are usually adapted around Folia.
 
 ## 📚 Table of Contents
 
 - The FoliaCore Advantage
 - Market Comparison
 - Core Features
+- Visual Blueprint
 - Installation
 - Configuration Reference
 - Command Reference
+- Architecture Overview
 - FAQ
 - Sponsor & Support
 
@@ -70,12 +66,9 @@ The difference is simple: FoliaCore is built for Folia, while most alternatives 
 
 ### Chat & Social
 
-- `/msg <player> <message>` and `/reply <message>`.
-- `/mail` - mailbox workflow.
-- `/mute` and `/unmute`.
-- `/nick` and `/realname`.
-- `/block` and `/unblock`.
-- `/chat` - chat mode control.
+- `/msg`, `/reply`, `/mail`, `/nick`, `/realname`.
+- `/mute`, `/unmute`, `/block`, `/unblock`.
+- `/chat` for mode switching.
 - Social spy for staff monitoring.
 
 ### Teleportation & Movement
@@ -84,19 +77,19 @@ The difference is simple: FoliaCore is built for Folia, while most alternatives 
 - `/tpa`, `/tpahere`, `/tpaccept`, `/tpdeny`.
 - `/setwarp`, `/warp`, `/warps`, `/delwarp`.
 - `/setspawn`, `/spawn`, `/setfirstspawn`.
-- `/back` - return to the previous location.
+- `/back` for return-teleport support.
 
 ### Teams & Kits
 
-- `/team` - team management.
+- `/team` for team management.
 - `/kit`, `/createkit`, `/delkit`.
 - Thread-safe persistence for saved team, kit, and travel data.
 
 ### Utility & Staff Tools
 
-- `/calc` - quick math expression evaluation.
-- `/trash` and `/dispose` - disposable inventory access.
-- `/repair` - repair held item, full inventory, or another player.
+- `/calc` for expression evaluation.
+- `/trash` and `/dispose` for disposable inventory access.
+- `/repair` for held item, full inventory, or another player.
 - `/fly`, `/heal`, `/feed`, `/god`.
 - `/give`, `/clear`, `/invsee`, `/enderchest`, `/workbench`, `/hat`.
 - `/broadcast`, `/time`, `/weather`.
@@ -111,6 +104,35 @@ The difference is simple: FoliaCore is built for Folia, while most alternatives 
 - Built-in placeholders for player name, world, ping, TPS, coordinates, and online counts.
 - PlaceholderAPI integration when the plugin is installed.
 
+## 🧩 Visual Blueprint
+
+Blue Nightingale includes a dedicated `tab-sidebar.yml` blueprint for premium-style visual systems. It is structured around these areas:
+
+- `database` for MySQL-backed toggle persistence.
+- `settings` for debug levels, PlaceholderAPI, MiniMessage, hex, gradients, fonts, and sprites.
+- `animations` for frame update intervals.
+- `placeholders` for conditional expressions and output replacements.
+- `tablist` for sorting, objective display, tab names, spectator handling, and header/footer animation.
+- `sidebar` for multiple layouts, 15-line rendering, and flickerless updates.
+- `entities` for nametags, belowname, bossbar, and ping spoofing.
+- `multiserver` for Bungee/Velocity-aware placeholders.
+- `output` for text replacement rules.
+- `fonts` and `sprites` for custom rendering support.
+- `debug` for logging controls.
+
+The full template lives in [src/main/resources/tab-sidebar.yml](src/main/resources/tab-sidebar.yml).
+
+### Example Concepts
+
+- Global playerlist or per-world playerlist.
+- Sorting by weight, permission, or alphabetic order.
+- Playerlist objective for ping or health.
+- Sidebar layouts with up to 15 lines and no flicker.
+- Conditional placeholder expressions such as `%if_ping_>_100%_&cHigh_&aGood%`.
+- Output replacement rules such as `TRUE -> &aEnabled`.
+- Bossbar color and style control.
+- Persistent per-player visual toggles stored in MySQL.
+
 ## ⚙ Installation & Setup
 
 ### Requirements
@@ -121,24 +143,25 @@ The difference is simple: FoliaCore is built for Folia, while most alternatives 
 
 ### Installation Steps
 
-1. Download the latest `folia_core-v-3.1-Frozen-Nightingale.jar` from Releases.
+1. Download the latest `folia_core-v-3.2-Blue-Nightingale.jar` from Releases.
 2. Place the jar in your server `plugins/` folder.
 3. Start the server.
-4. Edit `plugins/FoliaCore/config.yml` to choose which modules you want and how tab/sidebar frames should look.
-5. Restart the server to apply changes.
+4. Edit `plugins/FoliaCore/config.yml` for core modules.
+5. Edit `plugins/FoliaCore/tab-sidebar.yml` for the advanced visual stack.
+6. Restart the server to apply changes.
 
 ### Verify Installation
 
 - Check the startup banner in console.
 - Run `/status`.
 - Test `/calc 10*4`, `/trash`, and `/repair`.
-- If PlaceholderAPI is installed, confirm placeholders resolve in tab and sidebar output.
+- Confirm your visual settings load from `tab-sidebar.yml`.
 
 ## 📋 Configuration Reference
 
-Create or edit `plugins/FoliaCore/config.yml`.
+### Core Config
 
-### Module Toggles
+`config.yml` controls the general plugin modules:
 
 - `modules.chat`
 - `modules.teleport`
@@ -151,29 +174,25 @@ Create or edit `plugins/FoliaCore/config.yml`.
 - `modules.antiraid`
 - `modules.security`
 
-### Branding and System Settings
+### Visual Config
 
-- `branding.startup-banner-enabled`
-- `branding.owner-display`
-- `system.maintenance-mode`
-- `system.maintenance-kick-message`
-- `system.entity-cleanup-enabled`
-- `system.entity-cleanup-interval`
-- `system.auto-broadcaster-enabled`
-- `system.auto-broadcast-interval`
+`tab-sidebar.yml` handles the advanced visual surface:
 
-### Animated Display Settings
-
-- `tab.enabled`
-- `tab.update-interval-ticks`
-- `tab.header-method`
-- `tab.footer-method`
-- `tab.methods.*`
-- `sidebar.enabled`
-- `sidebar.update-interval-ticks`
-- `sidebar.title-method`
-- `sidebar.line-methods`
-- `sidebar.methods.*`
+- `database.mysql-enabled`
+- `settings.debug-level`
+- `settings.save-user-toggles`
+- `animations.global-update-interval-ticks`
+- `tablist.sort.*`
+- `tablist.objective.*`
+- `tablist.names.format`
+- `tablist.header-footer.methods.*`
+- `sidebar.layouts.*`
+- `entities.nametags.*`
+- `entities.belowname.*`
+- `entities.bossbar.*`
+- `multiserver.*`
+- `fonts.*`
+- `sprites.*`
 
 ### Built-in Placeholders
 
@@ -183,6 +202,7 @@ Create or edit `plugins/FoliaCore/config.yml`.
 - `%max_players%`
 - `%player_ping%`
 - `%server_tps%`
+- `%server_mspt%`
 - `%x%`, `%y%`, `%z%`
 
 ## 📖 Command Reference
@@ -264,7 +284,7 @@ Create or edit `plugins/FoliaCore/config.yml`.
 
 ## 🏗 Architecture Overview
 
-FoliaCore uses a manager-based design:
+FoliaCore uses a manager-based design, and Blue Nightingale adds a dedicated visual manager skeleton to that structure:
 
 - `ConfigManager` loads module toggles and runtime settings.
 - `ChatManager` handles messages, nicknames, and mail.
@@ -277,7 +297,8 @@ FoliaCore uses a manager-based design:
 - `VanishManager` handles vanish state.
 - `SocialSpyManager` handles staff spy.
 - `SpawnManager` handles spawn data.
-- `DisplayManager` handles animated tab and sidebar updates.
+- `DisplayManager` handles the current animated tab and sidebar logic.
+- `AdvancedDisplayManager` is the advanced blueprinted surface for tablist, sidebar, nametags, bossbar, and toggles.
 
 Managers are loaded from the plugin bootstrap and then used by listeners and commands through constructor injection.
 
@@ -293,19 +314,19 @@ On startup, FoliaCore:
 - Prints the branded AJA RETRO startup banner.
 - Runs the Modrinth update check.
 
-If the startup banner is enabled, console output is intentionally bold and branded to make the plugin visible immediately on boot.
+The startup banner is intentionally loud because Blue Nightingale is meant to be noticed instantly on boot.
 
 ## 💪 Performance Notes
 
-FoliaCore is intentionally lightweight in the places that matter:
+FoliaCore is intentionally lightweight where it matters:
 
 - No Vault economy layer.
-- No extra economy manager stack.
 - Thread-safe state containers for shared data.
 - Async update checking.
 - Folia-safe player scheduling for display and notification work.
+- A dedicated visual blueprint so the tab/sidebar logic can stay organized instead of growing into a monolith.
 
-The goal is not to cram in every possible feature. The goal is to keep the server lean while still covering the essentials that most operators actually use.
+The goal is to keep the server lean while still covering the essentials that operators actually use.
 
 ## 🆘 Troubleshooting
 
@@ -315,10 +336,10 @@ The goal is not to cram in every possible feature. The goal is to keep the serve
 - Check console output during startup.
 - Make sure you are running Folia with Java 21.
 
-### Tab or Sidebar Looks Empty
+### Visuals Look Empty
 
-- Confirm `modules.tab` or `modules.sidebar` is enabled.
-- Check the frame lists under `tab.methods.*` and `sidebar.methods.*`.
+- Confirm the visual module is enabled.
+- Check `tab-sidebar.yml` for the correct layout and method names.
 - Verify PlaceholderAPI if you are using placeholders from another plugin.
 
 ### Teleport or Chat Features Seem Disabled
@@ -342,7 +363,7 @@ It is designed to cover a lot of the same day-to-day server work, but with a Fol
 For Folia servers, that is the point. FoliaCore aims to provide a stronger native experience, less dependency bloat, and a cleaner operator workflow than many paid all-in-one bundles.
 
 ### Does it support PlaceholderAPI?
-Yes, for tab and sidebar text.
+Yes, for display text and the visual blueprint surface.
 
 ### Does it require Vault?
 No. The economy stack was removed.
