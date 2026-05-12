@@ -1,156 +1,184 @@
-FoliaCore
+# FoliaCore v3.4 Blue Nightingale
 
-## Summary
+FoliaCore is a Folia-first essentials and administration plugin for Minecraft servers that want one clean toolkit instead of many separate add-ons. It blends player convenience, staff utilities, teleports, moderation, visual polish, and permission control into a single package that feels intentionally built for regionalized servers.
 
-FoliaCore is a Folia-first essentials and administration plugin for Minecraft servers that want one clean toolkit instead of many separate add-ons. It combines moderation, teleportation, staff tools, utility commands, animated displays, and update checks in a single configurable package.
+## Why server owners choose it
 
-## What It Is
+FoliaCore is made for servers that want the essentials experience without the usual clutter.
 
-FoliaCore is built for Folia first, not patched onto it later.
+- Built for Folia from the ground up.
+- Modern Paper command registration.
+- Modular feature toggles in `config.yml`.
+- Separate permission nodes for nearly every command.
+- Dynamic per-warp and per-kit access control.
+- A visually rich tab/sidebar blueprint in `tab-sidebar.yml`.
+- Modrinth update checks for easy release tracking.
+- No Vault economy layer, so the focus stays on gameplay, administration, and polish.
 
-If you run a regionalized server, you usually want essentials commands, staff tools, and display systems that behave correctly under Folia's threading model. FoliaCore is meant to reduce plugin clutter while keeping the runtime safe, lightweight, and easier to manage.
+## Why it feels better to use
 
-This release, v-3.2 Blue Nightingale, focuses on a stronger visual stack and clearer configuration. Major systems can be turned on or off in `config.yml`, while the advanced tab and sidebar blueprint lives in `tab-sidebar.yml`.
+The difference is not just technical. It is practical.
 
-## Why Server Owners Install It
+Players get fast access to homes, warps, kits, chat tools, mail, teleport requests, and small quality-of-life commands that reduce friction without turning the server into a plugin maze.
 
-- One plugin instead of many separate essentials add-ons.
-- Folia-safe scheduling and player updates.
-- Clean command registration through Paper APIs.
-- Animated tab and sidebar text.
-- Optional PlaceholderAPI support for richer server text.
-- Modrinth update checks so operators can see when a new release is available.
-- No Vault economy layer, so the plugin stays focused on administration and quality of life.
-- Clear configuration files for fast setup and easier maintenance.
+Staff get moderation, vanish, social spy, inventory tools, repair tools, time and weather control, anti-raid support, and clean access to the tools they actually need.
 
-## Core Features
+Developers and operators get something even more important: permission nodes that are easy to audit, easy to grant, and easy to document.
 
-- Modular feature toggles for major systems.
-- Animated tab header and footer.
-- Animated sidebar title and lines.
-- Chat, teleportation, staff, and utility command suites.
-- Calculator command for quick math.
-- Trash and dispose commands for item cleanup.
-- Repair commands for items and inventories.
-- Async Modrinth update checking.
+## What is new in v3.4
 
-## Feature Guide
+This release updates the plugin branding to v3.4 Blue Nightingale and formalizes the permission tree in the plugin metadata. The result is a cleaner release story and a more complete server-side permission setup.
 
-### Chat and Social Tools
+Notable changes:
 
-- `/msg`, `/reply`, `/mail`, `/nick`, `/realname`.
-- `/mute`, `/unmute`, `/block`, `/unblock`, `/chat`.
-- Useful for player communication, moderation, and name management.
-- Good for SMPs, community servers, and staff-managed networks.
+- Added a permission gate for `/kit`.
+- Declared all core permission defaults in `paper-plugin.yml`.
+- Updated the runtime banner to v3.4.
+- Standardized the release version across the build files.
+- Reworked the docs so operators and developers can scan them quickly.
 
-### Teleportation Tools
+## Installation
 
-- `/home`, `/sethome`, `/homes`, `/delhome`.
-- `/warp`, `/setwarp`, `/warps`, `/delwarp`.
-- `/tpa`, `/tpahere`, `/tpaccept`, `/tpdeny`.
-- `/spawn`, `/setspawn`, `/setfirstspawn`, `/back`.
-- Useful for survival, SMP, and community servers.
-- Keeps common travel commands in one place instead of scattered across plugins.
+1. Download the release jar.
+2. Put it in `plugins/`.
+3. Start the server once on Folia with Java 21.
+4. Edit `plugins/FoliaCore/config.yml` to enable or disable the systems you want.
+5. Edit `plugins/FoliaCore/tab-sidebar.yml` if you want the animated visual stack.
+6. Assign permissions per group or per player.
 
-### Staff and Utility Tools
+## Permission design
 
-- `/status`, `/ping`, `/clearchat`, `/fly`, `/heal`, `/feed`, `/god`.
-- `/give`, `/clear`, `/invsee`, `/enderchest`, `/workbench`, `/hat`.
-- `/broadcast`, `/time`, `/weather`, `/antiraid`.
-- `/vanish`, `/socialspy`, `/staffchat`, `/sc`.
-- Useful for moderation, support, event management, and fast operator actions.
-- Designed to keep everyday admin actions quick without adding extra dependencies.
+The plugin follows a simple rule set.
 
-### Quality-of-Life Tools
+- Player-friendly commands default to `true`.
+- Staff, admin, destructive, or high-impact commands default to `false`.
+- Warp and kit access can be narrowed further with individual nodes.
 
-- `/calc` for expressions like `10*4` or `(15+5)/2`.
-- `/trash` and `/dispose` for deleting unwanted items safely.
-- `/repair` for held items, full inventories, or other players.
-- Small commands like these reduce friction for staff and players alike.
+### Important patterns
 
-## Configuration
+- `/warp` can be granted globally with `foliacore.warp.all`.
+- Specific warps can be granted with `foliacore.warp.<warpname>`.
+- `/kit` uses `foliacore.kit`.
+- Kits created by staff generate their own node, such as `foliacore.kit.<kitname>`.
+- Kit creation and deletion stay on `foliacore.kit.admin`.
 
-- Major modules can be toggled in `config.yml`.
-- Tab and sidebar animation methods use configurable frame lists.
-- Update intervals are configurable.
-- Built-in placeholders cover player, world, ping, TPS, coordinates, and online counts.
-- PlaceholderAPI placeholders are resolved automatically when the plugin is installed.
-- The design goal is simple: keep the essentials flexible without making the file layout hard to read.
+## Command and permission reference
 
-## Visual Blueprint
+### Social and chat
 
-`tab-sidebar.yml` is the advanced visual configuration file.
+| Command | Permission node(s) | Default |
+| --- | --- | --- |
+| `/msg` | `foliacore.msg` | `true` |
+| `/reply` | `foliacore.reply` | `true` |
+| `/mail` | `foliacore.mail.send`, `foliacore.mail.read`, `foliacore.mail.clear` | mixed |
+| `/nick` | `foliacore.nick`, `foliacore.nick.color` | mixed |
+| `/realname` | `foliacore.realname` | `true` |
+| `/block` | `foliacore.block` | `true` |
+| `/unblock` | `foliacore.unblock` | `true` |
+| `/chat` | `foliacore.chat.global`, `foliacore.chat.world`, `foliacore.chat.regional` | `true` |
+| `/mute` | `foliacore.mute` | `false` |
+| `/unmute` | `foliacore.unmute` | `false` |
+| `/socialspy` | `foliacore.socialspy` | `false` |
+| `/staffchat`, `/sc` | `foliacore.staffchat` | `false` |
 
-It supports:
+### Teleport and travel
 
-- Tab sorting, objectives, spectator handling, and header/footer animation.
-- Animated sidebars with 15-line layouts and flickerless rendering.
-- Nametags, belowname text, bossbars, ping spoof, fonts, and sprites.
-- Bungee and Velocity placeholder fields, conditional expressions, and persistence options.
+| Command | Permission node(s) | Default |
+| --- | --- | --- |
+| `/sethome` | `foliacore.sethome` | `true` |
+| `/home` | `foliacore.home` | `true` |
+| `/homes` | `foliacore.homes.list` | `true` |
+| `/delhome` | `foliacore.delhome` | `true` |
+| `/tpa` | `foliacore.tpa` | `true` |
+| `/tpahere` | `foliacore.tpahere` | `true` |
+| `/tpaccept` | `foliacore.tpaccept` | `true` |
+| `/tpdeny` | `foliacore.tpdeny` | `true` |
+| `/spawn` | `foliacore.spawn` | `true` |
+| `/back` | `foliacore.back` | `true` |
+| `/warp` | `foliacore.warp.all`, `foliacore.warp.<warpname>` | mixed |
+| `/warps` | `foliacore.warps.list` | `true` |
+| `/setwarp` | `foliacore.setwarp` | `false` |
+| `/delwarp` | `foliacore.delwarp` | `false` |
+| `/setspawn` | `foliacore.setspawn` | `false` |
+| `/setfirstspawn` | `foliacore.setfirstspawn` | `false` |
+| `/tp` | `foliacore.tp`, `foliacore.tp.others` | `false` |
+| `/tphere` | `foliacore.tphere` | `false` |
+| `/gps` | `foliacore.gps` | `true` |
 
-This file exists for server owners who want a polished look without having to chain together multiple visual plugins.
+### Teams and kits
 
-## Example Setup Flow
+| Command | Permission node(s) | Default |
+| --- | --- | --- |
+| `/team` | `foliacore.team.create`, `foliacore.team.disband`, `foliacore.team.invite`, `foliacore.team.accept`, `foliacore.team.leave`, `foliacore.team.kick` | `true` |
+| `/kit` | `foliacore.kit` | `true` |
+| `/createkit` | `foliacore.kit.admin` | `false` |
+| `/delkit` | `foliacore.kit.admin` | `false` |
 
-1. Download the latest release jar.
-2. Place it in your server `plugins/` folder.
-3. Start the server on Folia with Java 21 or newer.
-4. Edit `plugins/FoliaCore/config.yml` for the main modules.
-5. Edit `plugins/FoliaCore/tab-sidebar.yml` for the advanced visual system.
-6. Restart the server.
+### Utility and staff tools
 
-If you want a minimal setup, start with the default config and disable only the modules you do not need.
+| Command | Permission node(s) | Default |
+| --- | --- | --- |
+| `/calc` | `foliacore.calc` | `true` |
+| `/trash`, `/dispose` | `foliacore.trash` | `true` |
+| `/workbench`, `/wb` | `foliacore.workbench` | `true` |
+| `/hat` | `foliacore.hat` | `true` |
+| `/enderchest`, `/ec` | `foliacore.enderchest`, `foliacore.enderchest.others` | mixed |
+| `/ping` | `foliacore.ping`, `foliacore.ping.others` | mixed |
+| `/scoreboard`, `/sidebar` | `foliacore.scoreboard.toggle` | `true` |
+| `/feed` | `foliacore.feed`, `foliacore.feed.others` | mixed |
+| `/fly` | `foliacore.fly`, `foliacore.fly.others` | mixed |
+| `/heal` | `foliacore.heal`, `foliacore.heal.others` | mixed |
+| `/god` | `foliacore.god`, `foliacore.god.others` | mixed |
+| `/repair` | `foliacore.repair`, `foliacore.repair.all`, `foliacore.repair.others`, `foliacore.repair.others.all` | mixed |
+| `/give` | `foliacore.give` | `false` |
+| `/clear` | `foliacore.clear`, `foliacore.clear.others` | mixed |
+| `/invsee` | `foliacore.invsee` | `false` |
+| `/gamemode`, `/gms`, `/gmc`, `/gma`, `/gmsp` | `foliacore.gamemode`, `foliacore.gamemode.others` | mixed |
 
-## Compatibility
+### Administration and control
 
-- Folia support is native.
-- Paper command registration is used.
-- PlaceholderAPI is optional.
-- Vault is not required.
-- The economy layer was removed intentionally.
-- The plugin is designed for operators who want administration, QoL, and visual polish in one install.
+| Command | Permission node(s) | Default |
+| --- | --- | --- |
+| `/broadcast` | `foliacore.broadcast` | `false` |
+| `/time` | `foliacore.time` | `false` |
+| `/weather` | `foliacore.weather` | `false` |
+| `/status` | `foliacore.status` | `false` |
+| `/clearchat` | `foliacore.clearchat`, `foliacore.clearchat.bypass` | mixed |
+| `/vanish` | `foliacore.vanish` | `false` |
+| `/antiraid` | `foliacore.admin.antiraid` | `false` |
+| `/ban` | `foliacore.ban`, `foliacore.ban.exempt` | mixed |
+| `/tempban` | `foliacore.tempban`, `foliacore.ban.exempt` | mixed |
+| `/unban` | `foliacore.unban` | `false` |
+| `/kick` | `foliacore.kick`, `foliacore.kick.exempt` | mixed |
+| `/mute` | `foliacore.mute` | `false` |
+| `/unmute` | `foliacore.unmute` | `false` |
+| `/marker` | `foliacore.marker.set`, `foliacore.marker.delete`, `foliacore.marker.list` | `false` |
 
-## FAQ
+## Visual systems
 
-### Does it require Vault?
+`tab-sidebar.yml` is the optional visual blueprint for server owners who want more than plain text.
 
-No. The economy layer was removed.
+It covers:
 
-### Does it support PlaceholderAPI?
+- Tab header and footer animation.
+- Sidebar layouts and line control.
+- Nametags, belowname, bossbars, and ping spoofing.
+- Fonts, sprites, placeholders, and output formatting.
+- Toggle persistence for per-player visual settings.
 
-Yes, for tab and sidebar text.
+## For developers and server admins
 
-### Is it only for Folia?
+FoliaCore is clean to reason about because the code is split across clear surfaces:
 
-Yes.
+- `FoliaCore.java` handles registration.
+- Command classes enforce permission checks.
+- Managers handle persistence and runtime logic.
+- The plugin descriptor now publishes the permission defaults directly.
 
-### Can I turn features off?
+That makes the plugin easier to audit, easier to document, and easier to grant to the right people.
 
-Yes, the major systems are configurable.
+## Final note
 
-### Is it free?
+If you want a Folia-friendly essentials suite that is practical first and polished second, FoliaCore is built for exactly that space.
 
-Yes.
-
-### Does it have update checks?
-
-Yes. It checks Modrinth asynchronously and can notify operators when updates are available.
-
-## bStats
-
-- bStats plugin ID: 28430.
-- This is the analytics ID used by the plugin's bStats integration.
-
-## Sponsor
-
-TrueCloud Hosting sponsors FoliaCore.
-
-South Asia hosting pricing: $0.50 per GB.
-
-WhatsApp: +8801989208751
-
-## Notes
-
-This description is plain text so it stays readable in Modrinth's fields and easy for users to scan.
-
-FoliaCore does not ship cheats, x-ray tools, combat automation, duplication features, or hidden bypass systems.
+Enjoy the release, and shape the server around it.

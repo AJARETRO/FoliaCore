@@ -1,5 +1,5 @@
 name: FoliaCore
-version: 'v-3.3-Dark-Angel'
+version: 'v3.4'
 main: dev.ajaretro.foliaCore.FoliaCore
 api-version: '1.21'
 prefix: "AJA_R3TR0_FoliaCore"
@@ -10,3 +10,269 @@ folia-supported: true
 
 # Commands are registered programmatically in FoliaCore.java
 # See registerCommands() method for runtime command registration
+
+permissions:
+  foliacore.msg:
+    description: Send private messages.
+    default: true
+  foliacore.reply:
+    description: Reply to the last private message.
+    default: true
+  foliacore.mail.send:
+    description: Send mail to offline players.
+    default: true
+  foliacore.mail.read:
+    description: Read your mailbox.
+    default: true
+  foliacore.mail.clear:
+    description: Clear your mailbox.
+    default: false
+  foliacore.nick:
+    description: Change your nickname.
+    default: true
+  foliacore.nick.color:
+    description: Use color codes in nicknames.
+    default: false
+  foliacore.realname:
+    description: Resolve a nickname to a real player name.
+    default: true
+  foliacore.block:
+    description: Block a player from chatting or mailing you.
+    default: true
+  foliacore.unblock:
+    description: Remove a chat or mail block.
+    default: true
+  foliacore.chat.global:
+    description: Switch to global chat.
+    default: true
+  foliacore.chat.world:
+    description: Switch to world chat.
+    default: true
+  foliacore.chat.regional:
+    description: Switch to regional chat.
+    default: true
+  foliacore.sethome:
+    description: Set a home location.
+    default: true
+  foliacore.home:
+    description: Teleport to your home.
+    default: true
+  foliacore.delhome:
+    description: Delete one of your homes.
+    default: true
+  foliacore.homes.list:
+    description: List your homes.
+    default: true
+  foliacore.tpa:
+    description: Send a teleport request.
+    default: true
+  foliacore.tpahere:
+    description: Request another player to teleport to you.
+    default: true
+  foliacore.tpaccept:
+    description: Accept a teleport request.
+    default: true
+  foliacore.tpdeny:
+    description: Deny a teleport request.
+    default: true
+  foliacore.spawn:
+    description: Teleport to the server spawn.
+    default: true
+  foliacore.back:
+    description: Return to your previous location.
+    default: true
+  foliacore.warps.list:
+    description: List available warps.
+    default: true
+  foliacore.warp.all:
+    description: Use every warp.
+    default: false
+  foliacore.kit:
+    description: Open the kit menu or claim kits you can access.
+    default: true
+  foliacore.team.create:
+    description: Create a team.
+    default: true
+  foliacore.team.disband:
+    description: Disband your team.
+    default: true
+  foliacore.team.invite:
+    description: Invite a player to your team.
+    default: true
+  foliacore.team.accept:
+    description: Accept a team invitation.
+    default: true
+  foliacore.team.leave:
+    description: Leave your team.
+    default: true
+  foliacore.team.kick:
+    description: Remove a player from your team.
+    default: true
+  foliacore.scoreboard.toggle:
+    description: Toggle the scoreboard sidebar.
+    default: true
+  foliacore.calc:
+    description: Run the calculator command.
+    default: true
+  foliacore.trash:
+    description: Open the trash inventory.
+    default: true
+  foliacore.workbench:
+    description: Open a crafting table anywhere.
+    default: true
+  foliacore.hat:
+    description: Wear the item in your hand as a hat.
+    default: true
+  foliacore.ping:
+    description: Check ping for yourself.
+    default: true
+  foliacore.gps:
+    description: Use the GPS helper.
+    default: true
+  foliacore.enderchest:
+    description: Open your ender chest.
+    default: true
+  foliacore.feed:
+    description: Feed yourself.
+    default: true
+  foliacore.fly:
+    description: Toggle your own flight.
+    default: true
+  foliacore.heal:
+    description: Heal yourself.
+    default: true
+  foliacore.god:
+    description: Toggle your own god mode.
+    default: true
+  foliacore.repair:
+    description: Repair your held item or inventory.
+    default: true
+  foliacore.give:
+    description: Give items to a player.
+    default: false
+  foliacore.clear:
+    description: Clear a player's inventory.
+    default: false
+  foliacore.invsee:
+    description: Inspect another player's inventory.
+    default: false
+  foliacore.gamemode:
+    description: Change your gamemode.
+    default: false
+  foliacore.tp:
+    description: Teleport yourself to another target.
+    default: false
+  foliacore.tphere:
+    description: Bring a player to you.
+    default: false
+  foliacore.ban:
+    description: Ban a player.
+    default: false
+  foliacore.tempban:
+    description: Temporarily ban a player.
+    default: false
+  foliacore.unban:
+    description: Remove a ban.
+    default: false
+  foliacore.kick:
+    description: Kick a player.
+    default: false
+  foliacore.mute:
+    description: Mute a player.
+    default: false
+  foliacore.unmute:
+    description: Unmute a player.
+    default: false
+  foliacore.broadcast:
+    description: Broadcast a server-wide announcement.
+    default: false
+  foliacore.time:
+    description: Change the server time.
+    default: false
+  foliacore.weather:
+    description: Change the server weather.
+    default: false
+  foliacore.status:
+    description: View plugin status information.
+    default: false
+  foliacore.clearchat:
+    description: Clear the public chat.
+    default: false
+  foliacore.vanish:
+    description: Toggle vanish mode.
+    default: false
+  foliacore.socialspy:
+    description: View private social messages.
+    default: false
+  foliacore.staffchat:
+    description: Use staff chat.
+    default: false
+  foliacore.admin.antiraid:
+    description: Access anti-raid tools.
+    default: false
+  foliacore.setwarp:
+    description: Create a warp.
+    default: false
+  foliacore.delwarp:
+    description: Delete a warp.
+    default: false
+  foliacore.setspawn:
+    description: Set the server spawn.
+    default: false
+  foliacore.setfirstspawn:
+    description: Set the first spawn location.
+    default: false
+  foliacore.marker.set:
+    description: Set a marker.
+    default: false
+  foliacore.marker.delete:
+    description: Delete a marker.
+    default: false
+  foliacore.marker.list:
+    description: List markers.
+    default: false
+  foliacore.enderchest.others:
+    description: Open another player's ender chest.
+    default: false
+  foliacore.feed.others:
+    description: Feed another player.
+    default: false
+  foliacore.fly.others:
+    description: Toggle flight for another player.
+    default: false
+  foliacore.heal.others:
+    description: Heal another player.
+    default: false
+  foliacore.god.others:
+    description: Toggle god mode for another player.
+    default: false
+  foliacore.repair.all:
+    description: Repair your entire inventory.
+    default: false
+  foliacore.repair.others:
+    description: Repair another player's items.
+    default: false
+  foliacore.repair.others.all:
+    description: Repair another player's entire inventory.
+    default: false
+  foliacore.clear.others:
+    description: Clear another player's inventory.
+    default: false
+  foliacore.ping.others:
+    description: Check another player's ping.
+    default: false
+  foliacore.tp.others:
+    description: Teleport other players.
+    default: false
+  foliacore.gamemode.others:
+    description: Change another player's gamemode.
+    default: false
+  foliacore.kick.exempt:
+    description: Exempt a player from kicks.
+    default: false
+  foliacore.ban.exempt:
+    description: Exempt a player from bans.
+    default: false
+  foliacore.clearchat.bypass:
+    description: Bypass chat clearing.
+    default: false

@@ -25,6 +25,11 @@ public class KitCommand implements CommandExecutor {
         }
         Player player = (Player) sender;
 
+        if (!player.hasPermission("foliacore.kit")) {
+            plugin.getMessenger().sendError(player, "You do not have permission to use this command.");
+            return true;
+        }
+
         if (args.length == 0) {
             KitGUI gui = new KitGUI(plugin, player);
             gui.openGUI();
