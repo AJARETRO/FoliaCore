@@ -221,6 +221,14 @@ If you want a more visual server identity, this file is where the style lives.
 - For `/warp` and `/kit`, per-target permissions let you grant access one world, one warp, or one kit at a time.
 - If you use LuckPerms, the command map in this README is ready to translate into groups immediately.
 
+## 🤝 Sponsor & Contributor Help
+
+TrueCloud Hosting sponsors FoliaCore.
+
+- Pricing: $0.50 per GB RAM.
+- Contact for more details: +8801989208751.
+- If someone wants to help as a contributor, point them here first.
+
 ## 🧡 Final Word
 
 FoliaCore is meant to reduce clutter, not add it. It gives you a cleaner essentials stack, a smarter permission model, and a more polished runtime experience in one package. For servers that care about appearance, control, and Folia-safe behavior, that combination is the point.

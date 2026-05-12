@@ -177,6 +177,14 @@ FoliaCore is clean to reason about because the code is split across clear surfac
 
 That makes the plugin easier to audit, easier to document, and easier to grant to the right people.
 
+## Sponsor & Contributor Help
+
+TrueCloud Hosting sponsors FoliaCore.
+
+- Pricing: $0.50 per GB RAM.
+- Contact for more details: +8801989208751.
+- If someone wants to help as a contributor, send them here.
+
 ## Final note
 
 If you want a Folia-friendly essentials suite that is practical first and polished second, FoliaCore is built for exactly that space.
