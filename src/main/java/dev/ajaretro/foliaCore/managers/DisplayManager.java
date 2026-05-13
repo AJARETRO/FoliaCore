@@ -36,6 +36,7 @@ public class DisplayManager {
     private final FoliaCore plugin;
     private final Map<String, Integer> frameIndices = new ConcurrentHashMap<>();
     private final Map<UUID, Scoreboard> playerBoards = new ConcurrentHashMap<>();
+    private final Map<UUID, Boolean> sidebarToggles = new ConcurrentHashMap<>();
 
     private boolean placeholderApiAvailable;
     private Method setPlaceholdersMethod;
@@ -68,6 +69,19 @@ public class DisplayManager {
 
     public void onPlayerQuit(UUID playerId) {
         playerBoards.remove(playerId);
+        sidebarToggles.remove(playerId);
+    }
+
+    public void setSidebarEnabled(UUID playerId, boolean enabled) {
+        sidebarToggles.put(playerId, enabled);
+    }
+
+    public boolean isSidebarEnabled(UUID playerId) {
+        return sidebarToggles.getOrDefault(playerId, true);
+    }
+
+    public void refreshPlayer(Player player) {
+        updateForPlayer(player);
     }
 
     private void tickDisplays() {
@@ -116,13 +130,63 @@ public class DisplayManager {
 
     private void updateSidebar(Player player) {
         FileConfiguration config = plugin.getConfigManager().getConfig();
-        if (!plugin.getConfigManager().isSidebarEnabled() || !config.getBoolean("sidebar.enabled", true)) {
-            playerBoards.remove(player.getUniqueId());
-            player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+        UUID playerId = player.getUniqueId();
+        if (!plugin.getConfigManager().isSidebarEnabled() || !config.getBoolean("sidebar.enabled", true) || !isSidebarEnabled(playerId)) {
+            Bukkit.getGlobalRegionScheduler().run(plugin, task -> clearSidebar(playerId));
             return;
         }
 
-        Scoreboard board = playerBoards.computeIfAbsent(player.getUniqueId(), id -> Bukkit.getScoreboardManager().getNewScoreboard());
+        String titleMethod = config.getString("sidebar.title-method", "method-1");
+        String title = applyPlaceholders(player, resolveFrame(SIDEBAR_METHODS_PATH, titleMethod));
+
+        List<String> lineMethods = config.getStringList("sidebar.line-methods");
+        if (lineMethods == null || lineMethods.isEmpty()) {
+            lineMethods = List.of("method-1", "method-2", "method-3");
+        }
+
+        List<String> renderedLines = new ArrayList<>();
+        for (String lineMethod : lineMethods) {
+            if (renderedLines.size() >= 15) {
+                break;
+            }
+
+            renderedLines.add(applyPlaceholders(player, resolveFrame(SIDEBAR_METHODS_PATH, lineMethod)));
+        }
+
+        Bukkit.getGlobalRegionScheduler().run(plugin, task -> applySidebar(playerId, title, renderedLines));
+    }
+
+    private void applySidebar(UUID playerId, String title, List<String> renderedLines) {
+        if (!plugin.getConfigManager().isSidebarEnabled() || !isSidebarEnabled(playerId)) {
+            clearSidebar(playerId);
+            return;
+        }
+
+        Player player = Bukkit.getPlayer(playerId);
+        if (player == null || !player.isOnline()) {
+            clearSidebar(playerId);
+            return;
+        }
+
+        FileConfiguration config = plugin.getConfigManager().getConfig();
+        if (!config.getBoolean("sidebar.enabled", true)) {
+            clearSidebar(playerId);
+            return;
+        }
+
+        org.bukkit.scoreboard.ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
+        if (scoreboardManager == null) {
+            return;
+        }
+
+        Scoreboard board;
+        try {
+            board = playerBoards.computeIfAbsent(playerId, id -> scoreboardManager.getNewScoreboard());
+        } catch (UnsupportedOperationException ex) {
+            plugin.getLogger().warning("Sidebar scoreboards are unavailable on this Folia build; disabling sidebar updates for " + player.getName() + ".");
+            clearSidebar(playerId);
+            return;
+        }
         Objective objective = board.getObjective("foliaSidebar");
 
         if (objective == null) {
@@ -130,25 +194,13 @@ public class DisplayManager {
             objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         }
 
-        String titleMethod = config.getString("sidebar.title-method", "method-1");
-        String title = applyPlaceholders(player, resolveFrame(SIDEBAR_METHODS_PATH, titleMethod));
         objective.setDisplayName(color(title));
 
         clearSidebarTeams(board);
 
-        List<String> lineMethods = config.getStringList("sidebar.line-methods");
-        if (lineMethods == null || lineMethods.isEmpty()) {
-            lineMethods = List.of("method-1", "method-2", "method-3");
-        }
-
-        int score = Math.min(15, lineMethods.size());
         int entryIndex = 0;
-        for (String lineMethod : lineMethods) {
-            if (score <= 0) {
-                break;
-            }
-
-            String line = applyPlaceholders(player, resolveFrame(SIDEBAR_METHODS_PATH, lineMethod));
+        int score = Math.min(15, renderedLines.size());
+        for (String line : renderedLines) {
             String entry = uniqueEntry(entryIndex++);
             Team lineTeam = board.registerNewTeam("line_" + entryIndex);
             lineTeam.addEntry(entry);
@@ -157,6 +209,20 @@ public class DisplayManager {
         }
 
         player.setScoreboard(board);
+    }
+
+    private void clearSidebar(UUID playerId) {
+        playerBoards.remove(playerId);
+
+        Player player = Bukkit.getPlayer(playerId);
+        if (player == null || !player.isOnline()) {
+            return;
+        }
+
+        org.bukkit.scoreboard.ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
+        if (scoreboardManager != null) {
+            player.setScoreboard(scoreboardManager.getMainScoreboard());
+        }
     }
 
     private void clearSidebarTeams(Scoreboard board) {

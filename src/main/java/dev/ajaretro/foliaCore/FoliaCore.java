@@ -10,9 +10,12 @@ import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bstats.charts.SimplePie;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -32,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * - Staff utilities and performance monitoring
  * 
  * @author AJARETRO
- * @version v3.4 Blue Nightingale
+ * @version v5.6 Blue Nightingale
  */
 public final class FoliaCore extends JavaPlugin {
 
@@ -65,6 +68,8 @@ public final class FoliaCore extends JavaPlugin {
     private EntityCleanupTask entityCleanupTask;
     private AutoBroadcasterTask autoBroadcasterTask;
     private ModrinthUpdateChecker updateChecker;
+
+    private final ThreadLocal<Integer> commandActionDepth = ThreadLocal.withInitial(() -> 0);
 
     @Override
     public void onEnable() {
@@ -312,6 +317,7 @@ public final class FoliaCore extends JavaPlugin {
             registerCommandSafe("sc", new StaffChatCommand(this));
         }
 
+        registerCommandSafe("foliacore", new FoliaCoreCommand(this));
         registerCommandSafe("scoreboard", new ScoreboardToggleCommand(this));
         registerCommandSafe("sidebar", new ScoreboardToggleCommand(this));
     }
@@ -322,20 +328,135 @@ public final class FoliaCore extends JavaPlugin {
             final org.bukkit.command.Command bridgeCommand = new org.bukkit.command.Command(name) {
                 @Override
                 public boolean execute(org.bukkit.command.CommandSender sender, String commandLabel, String[] args) {
-                    return executor.onCommand(sender, this, commandLabel, args);
+                    return executeRegisteredCommand(name, executor, sender, this, commandLabel, args);
                 }
             };
             var basicCmd = new io.papermc.paper.command.brigadier.BasicCommand() {
                 @Override
                 public void execute(io.papermc.paper.command.brigadier.CommandSourceStack commandSourceStack, 
                                    String[] args) {
-                    executor.onCommand(commandSourceStack.getSender(), bridgeCommand, name, args);
+                    executeRegisteredCommand(name, executor, commandSourceStack.getSender(), bridgeCommand, name, args);
                 }
             };
             this.registerCommand(name, basicCmd);
         } catch (Exception e) {
             getLogger().warning("Failed to register command '" + name + "': " + e.getMessage());
         }
+    }
+
+    private boolean executeRegisteredCommand(String commandName,
+                                             org.bukkit.command.CommandExecutor executor,
+                                             CommandSender sender,
+                                             org.bukkit.command.Command command,
+                                             String label,
+                                             String[] args) {
+        if (!configManager.isCommandEnabled(commandName)) {
+            messenger.sendError(sender, "This command is disabled by the server.");
+            return true;
+        }
+
+        boolean handled;
+        try {
+            handled = executor.onCommand(sender, command, label, args);
+        } catch (Exception exception) {
+            getLogger().severe("Command '/" + commandName + "' failed: " + exception.getMessage());
+            exception.printStackTrace();
+            messenger.sendError(sender, "An error occurred while running this command.");
+            return true;
+        }
+
+        if (handled && commandActionDepth.get() == 0) {
+            runCommandActions(commandName, sender, args);
+        }
+
+        return handled;
+    }
+
+    private void runCommandActions(String commandName, CommandSender sender, String[] args) {
+        List<String> playerActions = configManager.getCommandPlayerDone(commandName);
+        List<String> consoleActions = configManager.getCommandConsoleDone(commandName);
+
+        if (sender instanceof Player player && !playerActions.isEmpty()) {
+            player.getScheduler().run(this, task -> {
+                executePlayerActions(player, commandName, playerActions, args);
+                if (!consoleActions.isEmpty()) {
+                    Bukkit.getGlobalRegionScheduler().run(this, scheduledTask -> executeConsoleActions(sender, commandName, consoleActions, args));
+                }
+            }, null);
+            return;
+        }
+
+        if (!consoleActions.isEmpty()) {
+            Bukkit.getGlobalRegionScheduler().run(this, task -> executeConsoleActions(sender, commandName, consoleActions, args));
+        }
+    }
+
+    private void executePlayerActions(Player player, String commandName, List<String> actions, String[] args) {
+        runActionBatch(() -> {
+            for (String action : actions) {
+                dispatchActionCommand(player, commandName, action, args, true);
+            }
+        });
+    }
+
+    private void executeConsoleActions(CommandSender sender, String commandName, List<String> actions, String[] args) {
+        runActionBatch(() -> {
+            for (String action : actions) {
+                dispatchActionCommand(sender, commandName, action, args, false);
+            }
+        });
+    }
+
+    private void dispatchActionCommand(CommandSender sender,
+                                       String commandName,
+                                       String action,
+                                       String[] args,
+                                       boolean runAsPlayer) {
+        String prepared = prepareActionCommand(action, sender, commandName, args);
+        if (prepared.isBlank()) {
+            return;
+        }
+
+        if (runAsPlayer && sender instanceof Player player) {
+            player.performCommand(prepared);
+            return;
+        }
+
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), prepared);
+    }
+
+    private void runActionBatch(Runnable runnable) {
+        commandActionDepth.set(commandActionDepth.get() + 1);
+        try {
+            runnable.run();
+        } finally {
+            commandActionDepth.set(Math.max(0, commandActionDepth.get() - 1));
+        }
+    }
+
+    private String prepareActionCommand(String action,
+                                        CommandSender sender,
+                                        String commandName,
+                                        String[] args) {
+        String value = action == null ? "" : action.trim();
+        if (value.startsWith("/")) {
+            value = value.substring(1);
+        }
+
+        Player player = sender instanceof Player ? (Player) sender : null;
+        String joinedArgs = args == null || args.length == 0 ? "" : String.join(" ", args);
+        value = value.replace("%command%", commandName)
+                .replace("%label%", commandName)
+                .replace("%args%", joinedArgs)
+                .replace("%sender%", sender.getName());
+
+        if (player != null) {
+            value = value.replace("%player%", player.getName())
+                    .replace("%player_name%", player.getName())
+                    .replace("%player_uuid%", player.getUniqueId().toString());
+        }
+
+        return value;
     }
 
     private void printStartupBanner() {
@@ -354,7 +475,7 @@ public final class FoliaCore extends JavaPlugin {
                 LegacyComponentSerializer.legacyAmpersand().deserialize("")
         );
         Bukkit.getConsoleSender().sendMessage(
-            LegacyComponentSerializer.legacyAmpersand().deserialize("&l&6   ✦ &b&lFOLIACORE &3v3.4&b&l BLUE NIGHTINGALE &6✦")
+            LegacyComponentSerializer.legacyAmpersand().deserialize("&l&6   ✦ &b&lFOLIACORE &3v5.6&b&l BLUE NIGHTINGALE &6✦")
         );
         Bukkit.getConsoleSender().sendMessage(
                 LegacyComponentSerializer.legacyAmpersand().deserialize("&f   Folia-Native Essentials Suite")

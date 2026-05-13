@@ -8,7 +8,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.ChatColor;
 
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Toggles scoreboard (sidebar) visibility for players.
@@ -17,7 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ScoreboardToggleCommand implements CommandExecutor {
 
     private final FoliaCore plugin;
-    private final ConcurrentHashMap<UUID, Boolean> scoreboardState = new ConcurrentHashMap<>();
 
     public ScoreboardToggleCommand(FoliaCore plugin) {
         this.plugin = plugin;
@@ -30,7 +28,6 @@ public class ScoreboardToggleCommand implements CommandExecutor {
             return true;
         }
         Player player = (Player) sender;
-        UUID playerUuid = player.getUniqueId();
 
         if (!player.hasPermission("foliacore.scoreboard.toggle")) {
             plugin.getMessenger().sendError(player, "You do not have permission to use this command.");
@@ -38,8 +35,9 @@ public class ScoreboardToggleCommand implements CommandExecutor {
         }
 
         // Toggle the state
-        boolean newState = !scoreboardState.getOrDefault(playerUuid, true);
-        scoreboardState.put(playerUuid, newState);
+        boolean newState = !plugin.getDisplayManager().isSidebarEnabled(player.getUniqueId());
+        plugin.getDisplayManager().setSidebarEnabled(player.getUniqueId(), newState);
+        plugin.getDisplayManager().refreshPlayer(player);
 
         if (newState) {
             plugin.getMessenger().sendSuccess(player, ChatColor.GOLD + "Scoreboard is now " + ChatColor.GREEN + "visible.");
@@ -56,7 +54,7 @@ public class ScoreboardToggleCommand implements CommandExecutor {
      * @return true if scoreboard is enabled (visible), false if hidden
      */
     public boolean isScoreboardEnabled(UUID playerUuid) {
-        return scoreboardState.getOrDefault(playerUuid, true);
+        return plugin.getDisplayManager().isSidebarEnabled(playerUuid);
     }
 
     /**
@@ -65,6 +63,6 @@ public class ScoreboardToggleCommand implements CommandExecutor {
      * @param enabled true to show, false to hide
      */
     public void setScoreboardEnabled(UUID playerUuid, boolean enabled) {
-        scoreboardState.put(playerUuid, enabled);
+        plugin.getDisplayManager().setSidebarEnabled(playerUuid, enabled);
     }
 }

@@ -7,12 +7,32 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Central configuration manager for FoliaCore.
  * Handles all module toggles and server settings with thread-safe access.
  */
 public class ConfigManager {
+
+    private static final String[] REGISTERED_COMMANDS = {
+            "foliacore",
+            "mute", "unmute", "msg", "reply", "block", "unblock", "mail", "chat",
+            "sethome", "home", "delhome", "homes", "tpa", "tpahere", "tpaccept", "tpdeny",
+            "setspawn", "spawn", "tp", "tphere", "back", "setfirstspawn",
+            "team",
+            "kit", "createkit", "delkit",
+            "marker", "gps", "setwarp", "delwarp", "warp", "warps",
+            "nick", "realname", "ban", "tempban", "unban", "kick", "fly", "heal", "feed",
+            "god", "gamemode", "gms", "gmc", "gma", "gmsp", "give", "clear", "invsee",
+            "enderchest", "ec", "workbench", "wb", "trash", "dispose", "repair", "hat",
+            "broadcast", "time", "weather", "calc",
+            "status", "ping", "clearchat",
+            "antiraid",
+            "vanish", "socialspy", "staffchat", "sc",
+            "scoreboard", "sidebar"
+    };
 
     private final FoliaCore plugin;
     private File configFile;
@@ -72,6 +92,7 @@ public class ConfigManager {
         
         loadModuleToggles();
         loadSystemSettings();
+        ensureCommandDefaults();
 
         plugin.getLogger().info("ConfigManager loaded successfully.");
     }
@@ -126,6 +147,9 @@ public class ConfigManager {
             config.set("status.show-region-details", true);
             config.set("status.max-regions", 12);
             config.set("status.region-chunk-span", 8);
+
+            // Per-command toggles and post-command action chains
+            createCommandDefaults(config);
 
                 // Animated TAB defaults
                 config.set("tab.enabled", true);
@@ -229,6 +253,52 @@ public class ConfigManager {
         statusRegionChunkSpan = Math.max(1, config.getInt("status.region-chunk-span", 8));
     }
 
+    private void ensureCommandDefaults() {
+        if (config == null) {
+            return;
+        }
+
+        boolean changed = false;
+        if (!config.isConfigurationSection("commands")) {
+            config.createSection("commands");
+            changed = true;
+        }
+
+        for (String commandName : REGISTERED_COMMANDS) {
+            String commandPath = commandPath(commandName);
+            if (!config.isSet(commandPath + ".enabled")) {
+                config.set(commandPath + ".enabled", true);
+                changed = true;
+            }
+            if (!config.isSet(commandPath + ".playerdone")) {
+                config.set(commandPath + ".playerdone", List.of());
+                changed = true;
+            }
+            if (!config.isSet(commandPath + ".consoledone")) {
+                config.set(commandPath + ".consoledone", List.of());
+                changed = true;
+            }
+        }
+
+        if (changed) {
+            save();
+        }
+    }
+
+    private void createCommandDefaults(FileConfiguration configuration) {
+        configuration.createSection("commands");
+        for (String commandName : REGISTERED_COMMANDS) {
+            String commandPath = commandPath(commandName);
+            configuration.set(commandPath + ".enabled", true);
+            configuration.set(commandPath + ".playerdone", List.of());
+            configuration.set(commandPath + ".consoledone", List.of());
+        }
+    }
+
+    private String commandPath(String commandName) {
+        return "commands." + commandName.toLowerCase(Locale.ROOT);
+    }
+
     public void save() {
         try {
             config.save(configFile);
@@ -277,6 +347,19 @@ public class ConfigManager {
 
     public boolean getBoolean(String path, boolean def) {
         return config.getBoolean(path, def);
+    }
+    public boolean isCommandEnabled(String commandName) {
+        return config.getBoolean(commandPath(commandName) + ".enabled", true);
+    }
+
+    public List<String> getCommandPlayerDone(String commandName) {
+        List<String> commands = config.getStringList(commandPath(commandName) + ".playerdone");
+        return commands == null ? List.of() : commands;
+    }
+
+    public List<String> getCommandConsoleDone(String commandName) {
+        List<String> commands = config.getStringList(commandPath(commandName) + ".consoledone");
+        return commands == null ? List.of() : commands;
     }
     public boolean isAutoBroadcasterEnabled() { return autoBroadcasterEnabled; }
     public int getAutoBroadcastInterval() { return autoBroadcastInterval; }

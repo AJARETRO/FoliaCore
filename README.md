@@ -1,8 +1,8 @@
-# ✨ FoliaCore v3.4 Blue Nightingale
+# ✨ FoliaCore v5.6 Blue Nightingale
 
 FoliaCore is a Folia-first essentials and administration suite for servers that want one polished toolkit instead of a pile of separate plugins. It is built for regionalized runtime behavior, command safety, visual flair, and day-to-day convenience without dragging in a heavy dependency stack.
 
-If you want something that feels native to Folia, reads cleanly in config, and gives staff and players a smarter command set, FoliaCore is the kind of plugin that keeps the server tidy and the experience smooth. This release, v3.4, also ships with a full permission map so every command can be controlled per player instead of being locked behind one all-or-nothing switch.
+If you want something that feels native to Folia, reads cleanly in config, and gives staff and players a smarter command set, FoliaCore is the kind of plugin that keeps the server tidy and the experience smooth. This release, v5.6, also ships with a full permission map so every command can be controlled per player instead of being locked behind one all-or-nothing switch.
 
 ## 💙 Why Use FoliaCore
 
@@ -13,6 +13,8 @@ FoliaCore exists because modern servers need more than a bunch of legacy Bukkit 
 - Folia-native scheduling and thread-aware data handling.
 - Clean command registration through Paper's modern APIs.
 - Modular feature toggles in `config.yml` so you only load what you want.
+- A permission-aware `/foliacore help` command for quick command discovery.
+- A `/foliacore reload` command for reloading configuration without a full restart.
 - Separate permission nodes for almost every action, with sane defaults for common player tools.
 - Dynamic per-warp and per-kit permissions for fine-grained access control.
 - Staff utilities for moderation, world control, teleportation, and support tasks.
@@ -25,21 +27,21 @@ FoliaCore exists because modern servers need more than a bunch of legacy Bukkit 
 - Staff get moderation, vanish, social spy, inventory inspection, and anti-raid tools.
 - Developers get a cleaner command map that is easier to document, grant, and audit.
 
-## 🌈 What Changed in v3.4
+## 🌈 What Changed in v5.6
 
-This release refreshes the versioning to v3.4 Blue Nightingale and formalizes the permissions tree in the plugin metadata. That means server owners can now assign or remove command access more precisely, and the documentation below matches the actual runtime behavior.
+This release refreshes the versioning to v5.6 Blue Nightingale and formalizes the permissions tree in the plugin metadata. That means server owners can now assign or remove command access more precisely, and the documentation below matches the actual runtime behavior.
 
 Highlights:
 
 - Added a missing permission gate for `/kit`.
 - Declared the permission tree in `paper-plugin.yml`.
-- Standardized the release version to `v3.4`.
+- Standardized the release version to `v5.6`.
 - Refreshed the startup banner and release branding.
 - Rewrote the docs so the command and permission model is easy to scan.
 
 ## 🚀 Quick Start
 
-1. Download the v3.4 jar from your release source.
+1. Download the v5.6 jar from your release source.
 2. Place it in your server `plugins/` folder.
 3. Start the server on Folia with Java 21.
 4. Review `plugins/FoliaCore/config.yml` for module toggles.
@@ -87,6 +89,14 @@ That keeps the plugin friendly for normal players while still letting you grant 
 - Kit administration stays on `foliacore.kit.admin`.
 
 ## 📚 Command Reference
+
+### Core and Information
+
+| Command | Permission node(s) | Default | Notes |
+| --- | --- | --- | --- |
+| `/foliacore`, `/foliacore help` | `foliacore.help` | `true` | Show the command list filtered by your permissions. |
+| `/foliacore reload` | `foliacore.reload` | `false` | Reload the plugin configuration. |
+| `/foliacore version` | `foliacore.version` | `true` | Show the plugin version information. |
 
 ### Social and Chat
 

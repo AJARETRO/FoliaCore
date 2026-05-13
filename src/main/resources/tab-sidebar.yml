@@ -4,7 +4,7 @@
 # dedicated tab/sidebar configuration surface. It is written as a blueprint for
 # an advanced manager such as AdvancedDisplayManager.
 
-version: "v-3.2-Blue-Nightingale"
+version: "v5.6-Blue-Nightingale"
 
 database:
   mysql-enabled: true

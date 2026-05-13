@@ -1,4 +1,4 @@
-# FoliaCore v3.4 Blue Nightingale
+# FoliaCore v5.6 Blue Nightingale
 
 FoliaCore is a Folia-first essentials and administration plugin for Minecraft servers that want one clean toolkit instead of many separate add-ons. It blends player convenience, staff utilities, teleports, moderation, visual polish, and permission control into a single package that feels intentionally built for regionalized servers.
 
@@ -25,15 +25,20 @@ Staff get moderation, vanish, social spy, inventory tools, repair tools, time an
 
 Developers and operators get something even more important: permission nodes that are easy to audit, easy to grant, and easy to document.
 
-## What is new in v3.4
+The new `/foliacore help` command also filters the command list by your permissions so staff and players can discover the tools they actually have.
+The `/foliacore reload` command is included for operators who want to refresh configuration without restarting.
 
-This release updates the plugin branding to v3.4 Blue Nightingale and formalizes the permission tree in the plugin metadata. The result is a cleaner release story and a more complete server-side permission setup.
+## What is new in v5.6
+
+This release updates the plugin branding to v5.6 Blue Nightingale and formalizes the permission tree in the plugin metadata. The result is a cleaner release story and a more complete server-side permission setup.
 
 Notable changes:
 
 - Added a permission gate for `/kit`.
+- Added a permission-aware `/foliacore help` command and a `/foliacore version` command.
+- Added a `/foliacore reload` command for quick configuration refreshes.
 - Declared all core permission defaults in `paper-plugin.yml`.
-- Updated the runtime banner to v3.4.
+- Updated the runtime banner to v5.6.
 - Standardized the release version across the build files.
 - Reworked the docs so operators and developers can scan them quickly.
 
@@ -63,6 +68,14 @@ The plugin follows a simple rule set.
 - Kit creation and deletion stay on `foliacore.kit.admin`.
 
 ## Command and permission reference
+
+### Core and information
+
+| Command | Permission node(s) | Default |
+| --- | --- | --- |
+| `/foliacore`, `/foliacore help` | `foliacore.help` | `true` |
+| `/foliacore reload` | `foliacore.reload` | `false` |
+| `/foliacore version` | `foliacore.version` | `true` |
 
 ### Social and chat
 

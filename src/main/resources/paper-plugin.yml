@@ -1,5 +1,5 @@
 name: FoliaCore
-version: 'v3.4'
+version: 'v5.6'
 main: dev.ajaretro.foliaCore.FoliaCore
 api-version: '1.21'
 prefix: "AJA_R3TR0_FoliaCore"
@@ -29,9 +29,18 @@ permissions:
     default: false
   foliacore.nick:
     description: Change your nickname.
-    default: true
+    default: false
   foliacore.nick.color:
     description: Use color codes in nicknames.
+    default: false
+  foliacore.help:
+    description: View the command help list.
+    default: true
+  foliacore.version:
+    description: View plugin version information.
+    default: true
+  foliacore.reload:
+    description: Reload plugin configuration.
     default: false
   foliacore.realname:
     description: Resolve a nickname to a real player name.
