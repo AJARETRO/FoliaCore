@@ -144,10 +144,9 @@ public class MarkerManager {
 
         plugin.getMessenger().sendSuccess(player, "Starting GPS to " + marker.getName() + ". Look at your action bar. Type /gps off to stop.");
 
-        final int[] taskId = new int[1];
-        taskId[0] = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
+        ScheduledTask task = player.getScheduler().runAtFixedRate(plugin, (scheduledTask) -> {
             if (!player.isOnline()) {
-                Bukkit.getScheduler().cancelTask(taskId[0]);
+                scheduledTask.cancel();
                 activeGpsTasks.remove(player.getUniqueId());
                 return;
             }
@@ -162,7 +161,7 @@ public class MarkerManager {
             double distance = playerLoc.distance(targetLocation);
             if (distance < 5.0) {
                 player.sendActionBar(Component.text("You have arrived at " + marker.getName() + "!", NamedTextColor.GREEN));
-                Bukkit.getScheduler().cancelTask(taskId[0]);
+                scheduledTask.cancel();
                 activeGpsTasks.remove(player.getUniqueId());
                 return;
             }
@@ -178,9 +177,9 @@ public class MarkerManager {
                     .build();
 
             player.sendActionBar(message);
-        }, 50L, 50L);
+        }, null, 1L, 20L);
 
-        activeGpsTasks.put(player.getUniqueId(), null);
+        activeGpsTasks.put(player.getUniqueId(), task);
     }
 
     private String getArrow(float playerYaw, Vector direction) {

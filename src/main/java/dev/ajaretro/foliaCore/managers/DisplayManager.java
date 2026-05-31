@@ -37,6 +37,7 @@ public class DisplayManager {
     private final Map<String, Integer> frameIndices = new ConcurrentHashMap<>();
     private final Map<UUID, Scoreboard> playerBoards = new ConcurrentHashMap<>();
     private final Map<UUID, Boolean> sidebarToggles = new ConcurrentHashMap<>();
+    private boolean sidebarSupported = true;
 
     private boolean placeholderApiAvailable;
     private Method setPlaceholdersMethod;
@@ -129,6 +130,9 @@ public class DisplayManager {
     }
 
     private void updateSidebar(Player player) {
+        if (!sidebarSupported) {
+            return;
+        }
         FileConfiguration config = plugin.getConfigManager().getConfig();
         UUID playerId = player.getUniqueId();
         if (!plugin.getConfigManager().isSidebarEnabled() || !config.getBoolean("sidebar.enabled", true) || !isSidebarEnabled(playerId)) {
@@ -183,7 +187,8 @@ public class DisplayManager {
         try {
             board = playerBoards.computeIfAbsent(playerId, id -> scoreboardManager.getNewScoreboard());
         } catch (UnsupportedOperationException ex) {
-            plugin.getLogger().warning("Sidebar scoreboards are unavailable on this Folia build; disabling sidebar updates for " + player.getName() + ".");
+            sidebarSupported = false;
+            plugin.getLogger().warning("Sidebar scoreboards are unavailable on this Folia build; disabling sidebar updates globally.");
             clearSidebar(playerId);
             return;
         }
@@ -208,7 +213,13 @@ public class DisplayManager {
             objective.getScore(entry).setScore(score--);
         }
 
-        player.setScoreboard(board);
+        try {
+            player.setScoreboard(board);
+        } catch (UnsupportedOperationException ex) {
+            sidebarSupported = false;
+            plugin.getLogger().warning("Sidebar scoreboards are unsupported on this Folia build. Disabling sidebar display globally.");
+            clearSidebar(playerId);
+        }
     }
 
     private void clearSidebar(UUID playerId) {
@@ -221,7 +232,11 @@ public class DisplayManager {
 
         org.bukkit.scoreboard.ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
         if (scoreboardManager != null) {
-            player.setScoreboard(scoreboardManager.getMainScoreboard());
+            try {
+                player.setScoreboard(scoreboardManager.getMainScoreboard());
+            } catch (UnsupportedOperationException ex) {
+                // Ignore, setting scoreboard is not supported on this Folia build
+            }
         }
     }
 
@@ -277,7 +292,13 @@ public class DisplayManager {
                 .replace("%y%", String.valueOf(player.getLocation().getBlockY()))
                 .replace("%z%", String.valueOf(player.getLocation().getBlockZ()));
 
-        double tps = Bukkit.getTPS().length > 0 ? Bukkit.getTPS()[0] : 20.0;
+        double tps = 20.0;
+        try {
+            double[] tpsArr = Bukkit.getTPS();
+            if (tpsArr != null && tpsArr.length > 0) {
+                tps = tpsArr[0];
+            }
+        } catch (Throwable ignored) {}
         value = value.replace("%server_tps%", String.format("%.2f", tps));
 
         if (placeholderApiAvailable && setPlaceholdersMethod != null) {

@@ -6,7 +6,7 @@
 
     <groupId>dev.ajaretro</groupId>
     <artifactId>folia_core</artifactId>
-    <version>v5.6</version>
+    <version>v5.7-deathwish</version>
     <packaging>jar</packaging>
 
     <name>folia_core</name>

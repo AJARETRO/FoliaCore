@@ -1,5 +1,5 @@
 name: FoliaCore
-version: 'v5.6'
+version: 'v5.7-deathwish'
 main: dev.ajaretro.foliaCore.FoliaCore
 api-version: '1.21'
 prefix: "AJA_R3TR0_FoliaCore"

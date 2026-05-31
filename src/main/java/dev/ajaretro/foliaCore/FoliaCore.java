@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * - Staff utilities and performance monitoring
  * 
  * @author AJARETRO
- * @version v5.6 Blue Nightingale
+ * @version v5.7 Deathwish
  */
 public final class FoliaCore extends JavaPlugin {
 
@@ -475,7 +475,7 @@ public final class FoliaCore extends JavaPlugin {
                 LegacyComponentSerializer.legacyAmpersand().deserialize("")
         );
         Bukkit.getConsoleSender().sendMessage(
-            LegacyComponentSerializer.legacyAmpersand().deserialize("&l&6   ✦ &b&lFOLIACORE &3v5.6&b&l BLUE NIGHTINGALE &6✦")
+            LegacyComponentSerializer.legacyAmpersand().deserialize("&l&6   ✦ &b&lFOLIACORE &3v5.7-deathwish&b&l DEATHWISH &6✦")
         );
         Bukkit.getConsoleSender().sendMessage(
                 LegacyComponentSerializer.legacyAmpersand().deserialize("&f   Folia-Native Essentials Suite")

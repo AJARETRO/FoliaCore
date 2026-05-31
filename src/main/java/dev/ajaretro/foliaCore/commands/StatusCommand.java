@@ -99,8 +99,8 @@ public class StatusCommand implements CommandExecutor {
         Map<String, RegionSnapshot> byRegion = new HashMap<>();
 
         Bukkit.getOnlinePlayers().forEach(player -> {
-            int chunkX = player.getLocation().getChunk().getX();
-            int chunkZ = player.getLocation().getChunk().getZ();
+            int chunkX = player.getLocation().getBlockX() >> 4;
+            int chunkZ = player.getLocation().getBlockZ() >> 4;
             int regionX = Math.floorDiv(chunkX, span);
             int regionZ = Math.floorDiv(chunkZ, span);
             String key = player.getWorld().getName() + ":" + regionX + ":" + regionZ;
