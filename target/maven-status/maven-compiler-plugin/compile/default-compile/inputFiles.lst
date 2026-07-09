@@ -72,6 +72,7 @@
 /root/FoliaCore/src/main/java/dev/ajaretro/foliaCore/commands/HomeCommand.java
 /root/FoliaCore/src/main/java/dev/ajaretro/foliaCore/commands/FoliaCoreCommand.java
 /root/FoliaCore/src/main/java/dev/ajaretro/foliaCore/commands/GodCommand.java
+/root/FoliaCore/src/main/java/dev/ajaretro/foliaCore/commands/GenericFoliaCoreCommand.java
 /root/FoliaCore/src/main/java/dev/ajaretro/foliaCore/commands/RulesCommand.java
 /root/FoliaCore/src/main/java/dev/ajaretro/foliaCore/listeners/PlayerGpsListener.java
 /root/FoliaCore/src/main/java/dev/ajaretro/foliaCore/data/Kit.java

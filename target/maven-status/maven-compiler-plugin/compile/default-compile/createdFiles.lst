@@ -65,6 +65,7 @@ dev/ajaretro/foliaCore/listeners/SecurityListener.class
 dev/ajaretro/foliaCore/commands/KitCommand.class
 dev/ajaretro/foliaCore/commands/TphereCommand.class
 dev/ajaretro/foliaCore/commands/PTimeCommand.class
+dev/ajaretro/foliaCore/commands/GenericFoliaCoreCommand.class
 dev/ajaretro/foliaCore/commands/GodCommand.class
 dev/ajaretro/foliaCore/data/Warp.class
 dev/ajaretro/foliaCore/managers/AntiRaidManager$LockdownState.class
