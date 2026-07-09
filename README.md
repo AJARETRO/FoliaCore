@@ -100,3 +100,11 @@ FoliaCore exists because modern servers need more than a bunch of legacy Spigot/
 | `/banip` | `foliacore.banip` | `false` | IP bans a player. |
 | `/tempbanip` | `foliacore.tempbanip` | `false` | Temporarily IP bans a player. |
 | `/unbanip` | `foliacore.unbanip` | `false` | Revokes an IP ban. |
+
+
+---
+
+## 📞 Contact & Support
+
+For support, custom developments, or other inquiries, contact AJA RETRO:
+*   **WhatsApp:** +8801989208751
