@@ -2,7 +2,7 @@
 
 FoliaCore is a Folia-first essentials and administration suite for Minecraft servers that want a single polished toolkit instead of a pile of separate plugins. It is built from the ground up for regionalized runtime behavior, multi-threaded safety, visual flair, and day-to-day convenience without dragging in a heavy dependency stack.
 
-This release, **v5.8 BloodyMary**, is a massive expansion that upgrades the plugin into a complete, native Essentials suite, adding 70+ commands, a unified flat-file/MySQL storage layer, a lightweight built-in Discord Bot gateway, and full integration with the **VaultUnlocked** economy API fork.
+This release, **v5.8 BloodyMary**, is a massive expansion that upgrades the plugin into a complete, native Essentials suite, featuring a total of 160 commands, a unified flat-file/MySQL storage layer, a lightweight built-in Discord Bot gateway, and full integration with the **VaultUnlocked** economy API fork.
 
 ---
 
