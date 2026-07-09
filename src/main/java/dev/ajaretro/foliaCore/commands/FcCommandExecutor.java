@@ -12,7 +12,7 @@ import java.util.Locale;
  * Command proxy executor routing /fc <command> to their respective
  * FoliaCore command execution handlers.
  */
-public class FcCommandExecutor implements CommandExecutor {
+public class FcCommandExecutor implements CommandExecutor, org.bukkit.command.TabCompleter {
 
     private final FoliaCore plugin;
 
@@ -41,5 +41,22 @@ public class FcCommandExecutor implements CommandExecutor {
 
         // Execute proxy command
         return plugin.executeCommandProxy(subCommandName, executor, sender, subArgs);
+    }
+
+    @Override
+    public java.util.List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        if (args.length == 1) {
+            java.util.List<String> completions = new java.util.ArrayList<>();
+            for (String cmd : plugin.getConfigManager().getRegisteredCommands()) {
+                if (plugin.getConfigManager().isCommandEnabled(cmd)) {
+                    completions.add(cmd);
+                }
+            }
+            java.util.List<String> suggestions = new java.util.ArrayList<>();
+            org.bukkit.util.StringUtil.copyPartialMatches(args[0], completions, suggestions);
+            java.util.Collections.sort(suggestions);
+            return suggestions;
+        }
+        return java.util.Collections.emptyList();
     }
 }

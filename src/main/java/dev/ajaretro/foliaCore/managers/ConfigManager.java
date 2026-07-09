@@ -413,6 +413,10 @@ public class ConfigManager {
         return config.getBoolean(commandPath(commandName) + ".enabled", true);
     }
 
+    public String[] getRegisteredCommands() {
+        return REGISTERED_COMMANDS;
+    }
+
     public List<String> getCommandPlayerDone(String commandName) {
         List<String> commands = config.getStringList(commandPath(commandName) + ".playerdone");
         return commands == null ? List.of() : commands;
