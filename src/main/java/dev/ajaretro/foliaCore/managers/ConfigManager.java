@@ -45,7 +45,7 @@ public class ConfigManager {
             "msgtoggle", "rtoggle",
             "jailedplayers",
             "afk", "compass", "enchant", "exp", "ext", "firework", "jump", "kickall", "kittycannon", "list", "me", "more", "motd", "near", "tpoffline", "playtime", "potion", "recipe", "remove", "renamehome", "rest", "seen", "settpr", "showkit", "editsign", "skull", "speed", "sudo", "suicide", "tempbanip", "banip", "unbanip", "thunder", "tpall", "tpauto", "tpacancel", "tpo", "tpohere", "tppos", "tpr", "tptoggle", "tree", "unlimited", "warpinfo", "toggleshout", "anvil", "grindstone", "loom", "smithingtable", "stonecutter", "cartographytable",
-            "fc", "cmi"
+            "fc"
     };
 
     private final FoliaCore plugin;

@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import java.util.Locale;
 
 /**
- * Command proxy executor routing /fc <command> and /cmi <command> to their respective
+ * Command proxy executor routing /fc <command> to their respective
  * FoliaCore command execution handlers.
  */
 public class FcCommandExecutor implements CommandExecutor {

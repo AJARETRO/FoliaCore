@@ -485,10 +485,9 @@ public final class FoliaCore extends JavaPlugin {
         registerCommandSafe("rest", miscAdminCmd);
         registerCommandSafe("warpinfo", miscAdminCmd);
 
-        // Command Proxies (FC & CMI)
+        // Command Proxies (FC)
         FcCommandExecutor fcExecutor = new FcCommandExecutor(this);
         registerCommandSafe("fc", fcExecutor);
-        registerCommandSafe("cmi", fcExecutor);
     }
 
     private void registerCommandSafe(String name, org.bukkit.command.CommandExecutor executor) {

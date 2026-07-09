@@ -175,7 +175,6 @@ FoliaCore exists because modern servers need more than a bunch of legacy Spigot/
 | `/calc` | `foliacore.calc` | Calculate math expression. | Entity Tick |
 | `/clear` | `foliacore.clear` | Clears inventory slots. | Entity Tick |
 | `/clearchat` | `foliacore.clearchat` | Clears server chat history. | Entity Tick |
-| `/cmi` | `foliacore.cmi` | Core administration or gameplay trigger for /cmi. | Entity Tick |
 | `/compass` | `foliacore.compass` | Check current bearing direction. | Entity Tick |
 | `/createkit` | `foliacore.createkit` | Core administration or gameplay trigger for /createkit. | Entity Tick |
 | `/delkit` | `foliacore.delkit` | Core administration or gameplay trigger for /delkit. | Entity Tick |
