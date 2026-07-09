@@ -148,7 +148,7 @@ public class ConfigManager {
             config.set("system.maintenance-mode", false);
             config.set("system.maintenance-kick-message", "&cServer is in maintenance mode. Admins only.");
             config.set("system.first-spawn-enabled", true);
-            config.set("system.entity-cleanup-enabled", true);
+            config.set("system.entity-cleanup-enabled", false);
             config.set("system.entity-cleanup-interval", 300);
             config.set("system.minimum-tps-threshold", 16);
             config.set("system.ignored-entity-types", java.util.Arrays.asList("VILLAGER", "IRON_GOLEM", "ARMOR_STAND", "WANDERING_TRADER"));
@@ -300,7 +300,7 @@ public class ConfigManager {
         maintenanceMode = config.getBoolean("system.maintenance-mode", false);
         maintenanceKickMessage = config.getString("system.maintenance-kick-message", "&cServer is in maintenance mode. Admins only.");
         firstSpawnEnabled = config.getBoolean("system.first-spawn-enabled", true);
-        entityCleanupEnabled = config.getBoolean("system.entity-cleanup-enabled", true);
+        entityCleanupEnabled = config.getBoolean("system.entity-cleanup-enabled", false);
         entityCleanupInterval = config.getInt("system.entity-cleanup-interval", 300);
         minimumTpsThreshold = config.getInt("system.minimum-tps-threshold", 16);
         ignoredEntityTypes = config.getStringList("system.ignored-entity-types");

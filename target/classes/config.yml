@@ -26,7 +26,7 @@ system:
   first-spawn-enabled: true
   
   # Entity Cleanup - Removes items and excess mobs when regional TPS drops
-  entity-cleanup-enabled: true
+  entity-cleanup-enabled: false
   entity-cleanup-interval: 300
   minimum-tps-threshold: 16
   # Entities that should NEVER be cleaned up (case-insensitive types)

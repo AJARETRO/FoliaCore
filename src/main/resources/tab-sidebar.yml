@@ -1,10 +1,10 @@
-# FoliaCore Valkyrie Visual Blueprint
+# FoliaCore Ragnarok Visual Blueprint
 #
 # This file is a premium-style visual system template for servers that want a
 # dedicated tab/sidebar configuration surface. It is written as a blueprint for
 # an advanced manager such as AdvancedDisplayManager.
 
-version: "v5.9-Valkyrie"
+version: "v6.0-Ragnarok"
 
 database:
   mysql-enabled: true
@@ -91,7 +91,7 @@ tablist:
     footer-method: "footer_wave"
     methods:
       header_wave:
-        - "<gradient:#00B4FF:#005BFF><bold>FoliaCore Blue Nightingale</bold></gradient>"
+        - "<gradient:#00B4FF:#005BFF><bold>FoliaCore Blue Ragnarok</bold></gradient>"
         - "<white>Powered for regionalized servers</white>"
         - "<gray>Native Folia systems. No adapter nonsense.</gray>"
       footer_wave:

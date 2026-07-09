@@ -6,7 +6,7 @@
 
     <groupId>dev.ajaretro</groupId>
     <artifactId>folia_core</artifactId>
-    <version>v5.9-Valkyrie</version>
+    <version>v6.0-Ragnarok</version>
     <packaging>jar</packaging>
 
     <name>folia_core</name>

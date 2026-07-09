@@ -1,8 +1,8 @@
-# ✨ FoliaCore v5.9 Valkyrie
+# ✨ FoliaCore v5.9 Ragnarok
 
 FoliaCore is a Folia-first essentials and administration suite for Minecraft servers that want a single polished toolkit instead of a pile of separate plugins. It is built from the ground up for regionalized runtime behavior, multi-threaded safety, visual flair, and day-to-day convenience without dragging in a heavy dependency stack.
 
-This release, **v5.9 Valkyrie**, is a massive expansion that upgrades the plugin into a complete, native Essentials suite, featuring 160+ commands, a unified flat-file/MySQL storage layer, a lightweight built-in Discord Bot gateway, and full integration with the **VaultUnlocked** economy API fork.
+This release, **v5.9 Ragnarok**, is a massive expansion that upgrades the plugin into a complete, native Essentials suite, featuring 160+ commands, a unified flat-file/MySQL storage layer, a lightweight built-in Discord Bot gateway, and full integration with the **VaultUnlocked** economy API fork.
 
 ---
 
@@ -22,7 +22,7 @@ FoliaCore exists because modern servers need more than a bunch of legacy Spigot/
 
 ## 🚀 Quick Start
 
-1. Put the `folia_core-v5.9-Valkyrie.jar` in your server `plugins/` folder.
+1. Put the `folia_core-v6.0-Ragnarok.jar` in your server `plugins/` folder.
 2. Start the server on Folia with Java 21.
 3. Configure `plugins/FoliaCore/config.yml` to specify your storage type (`yaml` or `mysql`) and toggle modules.
 4. Assign permissions to players or groups using your permission manager.

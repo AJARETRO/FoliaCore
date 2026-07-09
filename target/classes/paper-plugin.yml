@@ -1,5 +1,5 @@
 name: FoliaCore
-version: 'v5.9-Valkyrie'
+version: 'v6.0-Ragnarok'
 main: dev.ajaretro.foliaCore.FoliaCore
 api-version: '1.21'
 prefix: "AJA_R3TR0_FoliaCore"
