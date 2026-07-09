@@ -75,6 +75,7 @@ public class ConfigManager {
     public boolean entityCleanupEnabled;
     public int entityCleanupInterval;
     public int minimumTpsThreshold;
+    public List<String> ignoredEntityTypes;
     public boolean autoBroadcasterEnabled;
     public int autoBroadcastInterval;
     public boolean startupBannerEnabled;
@@ -150,6 +151,7 @@ public class ConfigManager {
             config.set("system.entity-cleanup-enabled", true);
             config.set("system.entity-cleanup-interval", 300);
             config.set("system.minimum-tps-threshold", 16);
+            config.set("system.ignored-entity-types", java.util.Arrays.asList("VILLAGER", "IRON_GOLEM", "ARMOR_STAND", "WANDERING_TRADER"));
             config.set("system.auto-broadcaster-enabled", true);
             config.set("system.auto-broadcast-interval", 600);
 
@@ -301,6 +303,10 @@ public class ConfigManager {
         entityCleanupEnabled = config.getBoolean("system.entity-cleanup-enabled", true);
         entityCleanupInterval = config.getInt("system.entity-cleanup-interval", 300);
         minimumTpsThreshold = config.getInt("system.minimum-tps-threshold", 16);
+        ignoredEntityTypes = config.getStringList("system.ignored-entity-types");
+        if (ignoredEntityTypes == null || ignoredEntityTypes.isEmpty()) {
+            ignoredEntityTypes = java.util.Arrays.asList("VILLAGER", "IRON_GOLEM", "ARMOR_STAND", "WANDERING_TRADER");
+        }
         autoBroadcasterEnabled = config.getBoolean("system.auto-broadcaster-enabled", true);
         autoBroadcastInterval = config.getInt("system.auto-broadcast-interval", 600);
         startupBannerEnabled = config.getBoolean("branding.startup-banner-enabled", true);
@@ -397,6 +403,7 @@ public class ConfigManager {
     public boolean isEntityCleanupEnabled() { return entityCleanupEnabled; }
     public int getEntityCleanupInterval() { return entityCleanupInterval; }
     public int getMinimumTpsThreshold() { return minimumTpsThreshold; }
+    public List<String> getIgnoredEntityTypes() { return ignoredEntityTypes; }
 
     public int getInt(String path, int def) {
         return config.getInt(path, def);

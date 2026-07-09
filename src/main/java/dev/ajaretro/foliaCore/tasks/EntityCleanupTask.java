@@ -79,8 +79,11 @@ public class EntityCleanupTask {
                                         itemsRemoved++;
                                     }
                                 } else if (entity instanceof Monster) {
+                                    if (shouldKeepEntity(entity)) {
+                                        continue;
+                                    }
                                     long monsterCount = Arrays.stream(targetChunk.getEntities())
-                                            .filter(e -> e instanceof Monster)
+                                            .filter(e -> e instanceof Monster && !shouldKeepEntity(e))
                                             .count();
                                     if (monsterCount > 25) { // Prevent entity crowding in active region
                                         entity.remove();
@@ -97,6 +100,36 @@ public class EntityCleanupTask {
                 }
             }, null);
         }
+    }
+
+    private boolean shouldKeepEntity(Entity entity) {
+        if (entity instanceof Player) {
+            return true;
+        }
+        if (entity.getCustomName() != null || entity.isCustomNameVisible()) {
+            return true;
+        }
+        if (entity.isInsideVehicle()) {
+            return true;
+        }
+        if (entity instanceof org.bukkit.entity.Mob) {
+            org.bukkit.entity.Mob mob = (org.bukkit.entity.Mob) entity;
+            if (mob.isPersistent()) {
+                return true;
+            }
+        }
+        
+        java.util.List<String> ignored = plugin.getConfigManager().getIgnoredEntityTypes();
+        if (ignored != null) {
+            String typeName = entity.getType().name();
+            for (String type : ignored) {
+                if (type.equalsIgnoreCase(typeName)) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
     }
 
     private double calculateAverageTick(long[] tickTimes) {

@@ -29,6 +29,12 @@ system:
   entity-cleanup-enabled: true
   entity-cleanup-interval: 300
   minimum-tps-threshold: 16
+  # Entities that should NEVER be cleaned up (case-insensitive types)
+  ignored-entity-types:
+    - VILLAGER
+    - IRON_GOLEM
+    - ARMOR_STAND
+    - WANDERING_TRADER
   
   # Auto Broadcaster - Sends messages at intervals
   auto-broadcaster-enabled: true
