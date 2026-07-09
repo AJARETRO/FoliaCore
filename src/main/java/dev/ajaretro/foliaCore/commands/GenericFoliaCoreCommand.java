@@ -27,7 +27,7 @@ import org.bukkit.util.Vector;
 import java.util.Locale;
 
 /**
- * Native command dispatcher implementing all 300+ CMI commands natively.
+ * Native command dispatcher implementing all 300+ essentials commands natively.
  * Guarantees zero main-thread blockage and region safety under Folia's engine rules.
  */
 public class GenericFoliaCoreCommand implements CommandExecutor {

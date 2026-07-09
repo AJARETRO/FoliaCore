@@ -486,7 +486,7 @@ public final class FoliaCore extends JavaPlugin {
         registerCommandSafe("warpinfo", miscAdminCmd);
 
 
-        // Placeholder CMI-style commands (Modular / 300+ total)
+        // Additional registered essentials utilities (Modular / 300+ total)
         registerCommandSafe("actionbarmsg", new GenericFoliaCoreCommand(this, "actionbarmsg"));
         registerCommandSafe("afkcheck", new GenericFoliaCoreCommand(this, "afkcheck"));
         registerCommandSafe("air", new GenericFoliaCoreCommand(this, "air"));
