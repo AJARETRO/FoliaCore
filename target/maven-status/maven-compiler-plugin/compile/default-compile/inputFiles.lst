@@ -123,6 +123,7 @@
 /root/FoliaCore/src/main/java/dev/ajaretro/foliaCore/commands/HatCommand.java
 /root/FoliaCore/src/main/java/dev/ajaretro/foliaCore/commands/TpCommand.java
 /root/FoliaCore/src/main/java/dev/ajaretro/foliaCore/listeners/PowertoolListener.java
+/root/FoliaCore/src/main/java/dev/ajaretro/foliaCore/commands/FcCommandExecutor.java
 /root/FoliaCore/src/main/java/dev/ajaretro/foliaCore/commands/SetJailCommand.java
 /root/FoliaCore/src/main/java/dev/ajaretro/foliaCore/listeners/ConnectionListener.java
 /root/FoliaCore/src/main/java/dev/ajaretro/foliaCore/commands/TempbanCommand.java

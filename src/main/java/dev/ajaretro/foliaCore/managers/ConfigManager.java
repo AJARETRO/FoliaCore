@@ -44,7 +44,8 @@ public class ConfigManager {
             "balancetop", "paytoggle", "payconfirmtoggle", "setworth",
             "msgtoggle", "rtoggle",
             "jailedplayers",
-            "afk", "compass", "enchant", "exp", "ext", "firework", "jump", "kickall", "kittycannon", "list", "me", "more", "motd", "near", "tpoffline", "playtime", "potion", "recipe", "remove", "renamehome", "rest", "seen", "settpr", "showkit", "editsign", "skull", "speed", "sudo", "suicide", "tempbanip", "banip", "unbanip", "thunder", "tpall", "tpauto", "tpacancel", "tpo", "tpohere", "tppos", "tpr", "tptoggle", "tree", "unlimited", "warpinfo", "toggleshout", "anvil", "grindstone", "loom", "smithingtable", "stonecutter", "cartographytable"
+            "afk", "compass", "enchant", "exp", "ext", "firework", "jump", "kickall", "kittycannon", "list", "me", "more", "motd", "near", "tpoffline", "playtime", "potion", "recipe", "remove", "renamehome", "rest", "seen", "settpr", "showkit", "editsign", "skull", "speed", "sudo", "suicide", "tempbanip", "banip", "unbanip", "thunder", "tpall", "tpauto", "tpacancel", "tpo", "tpohere", "tppos", "tpr", "tptoggle", "tree", "unlimited", "warpinfo", "toggleshout", "anvil", "grindstone", "loom", "smithingtable", "stonecutter", "cartographytable",
+            "fc", "cmi"
     };
 
     private final FoliaCore plugin;
@@ -106,6 +107,7 @@ public class ConfigManager {
         
         securityConfig = YamlConfiguration.loadConfiguration(securityFile);
         
+        loadIndividualModuleConfigs();
         loadModuleToggles();
         loadSystemSettings();
         ensureCommandDefaults();
@@ -237,22 +239,62 @@ public class ConfigManager {
         }
     }
 
+    private final java.util.Map<String, FileConfiguration> moduleConfigs = new java.util.concurrent.ConcurrentHashMap<>();
+    private final java.util.Map<String, File> moduleFiles = new java.util.concurrent.ConcurrentHashMap<>();
+
+    private void loadIndividualModuleConfigs() {
+        File modulesDir = new File(plugin.getDataFolder(), "modules");
+        if (!modulesDir.exists()) {
+            modulesDir.mkdirs();
+        }
+
+        String[] modulesList = {
+            "teleport", "kits", "chat", "markers", "teams", "staff", "system",
+            "utility", "tab", "sidebar", "antiraid", "security", "economy", "jails", "discord"
+        };
+
+        for (String module : modulesList) {
+            File moduleFile = new File(modulesDir, module + ".yml");
+            if (!moduleFile.exists()) {
+                try {
+                    moduleFile.createNewFile();
+                    FileConfiguration cfg = YamlConfiguration.loadConfiguration(moduleFile);
+                    cfg.set("enabled", true);
+                    cfg.save(moduleFile);
+                } catch (IOException e) {
+                    plugin.getLogger().warning("Failed to create module file: " + moduleFile.getName());
+                }
+            }
+            FileConfiguration cfg = YamlConfiguration.loadConfiguration(moduleFile);
+            moduleConfigs.put(module, cfg);
+            moduleFiles.put(module, moduleFile);
+        }
+    }
+
+    private boolean isModuleEnabled(String moduleName) {
+        FileConfiguration cfg = moduleConfigs.get(moduleName.toLowerCase(Locale.ROOT));
+        if (cfg != null) {
+            return cfg.getBoolean("enabled", true);
+        }
+        return true;
+    }
+
     private void loadModuleToggles() {
-        teleportEnabled = config.getBoolean("modules.teleport", true);
-        kitsEnabled = config.getBoolean("modules.kits", true);
-        chatEnabled = config.getBoolean("modules.chat", true);
-        markersEnabled = config.getBoolean("modules.markers", true);
-        teamsEnabled = config.getBoolean("modules.teams", true);
-        staffEnabled = config.getBoolean("modules.staff", true);
-        systemEnabled = config.getBoolean("modules.system", true);
-        utilityEnabled = config.getBoolean("modules.utility", true);
-        tabEnabled = config.getBoolean("modules.tab", true);
-        sidebarEnabled = config.getBoolean("modules.sidebar", true);
-        antiRaidEnabled = config.getBoolean("modules.antiraid", true);
-        securityEnabled = config.getBoolean("modules.security", true);
-        economyEnabled = config.getBoolean("modules.economy", true);
-        jailsEnabled = config.getBoolean("modules.jails", true);
-        discordEnabled = config.getBoolean("modules.discord", true);
+        teleportEnabled = isModuleEnabled("teleport");
+        kitsEnabled = isModuleEnabled("kits");
+        chatEnabled = isModuleEnabled("chat");
+        markersEnabled = isModuleEnabled("markers");
+        teamsEnabled = isModuleEnabled("teams");
+        staffEnabled = isModuleEnabled("staff");
+        systemEnabled = isModuleEnabled("system");
+        utilityEnabled = isModuleEnabled("utility");
+        tabEnabled = isModuleEnabled("tab");
+        sidebarEnabled = isModuleEnabled("sidebar");
+        antiRaidEnabled = isModuleEnabled("antiraid");
+        securityEnabled = isModuleEnabled("security");
+        economyEnabled = isModuleEnabled("economy");
+        jailsEnabled = isModuleEnabled("jails");
+        discordEnabled = isModuleEnabled("discord");
     }
 
     private void loadSystemSettings() {

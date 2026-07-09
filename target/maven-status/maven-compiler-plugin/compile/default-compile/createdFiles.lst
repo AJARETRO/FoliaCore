@@ -45,6 +45,7 @@ dev/ajaretro/foliaCore/tasks/AutoBroadcaster.class
 dev/ajaretro/foliaCore/commands/UnignoreCommand.class
 dev/ajaretro/foliaCore/commands/BroadcastCommand.class
 dev/ajaretro/foliaCore/commands/StatusCommand$RegionSnapshot.class
+dev/ajaretro/foliaCore/FoliaCore$3.class
 dev/ajaretro/foliaCore/commands/HealCommand.class
 dev/ajaretro/foliaCore/commands/MarkerCommand.class
 dev/ajaretro/foliaCore/commands/BlockCommand.class
@@ -142,6 +143,7 @@ dev/ajaretro/foliaCore/managers/VanishManager.class
 dev/ajaretro/foliaCore/commands/StatusCommand.class
 dev/ajaretro/foliaCore/commands/DiscordBroadcastCommand.class
 dev/ajaretro/foliaCore/commands/JailCommand.class
+dev/ajaretro/foliaCore/commands/FcCommandExecutor.class
 dev/ajaretro/foliaCore/commands/MailCommand.class
 dev/ajaretro/foliaCore/commands/RepairCommand.class
 dev/ajaretro/foliaCore/utils/TimeUtil.class

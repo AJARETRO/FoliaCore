@@ -72,6 +72,7 @@ public final class FoliaCore extends JavaPlugin {
 
     // God mode state
     private final ConcurrentHashMap<UUID, Boolean> godModePlayers = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, org.bukkit.command.CommandExecutor> commandExecutors = new ConcurrentHashMap<>();
 
     // Tasks
     private EntityCleanupTask entityCleanupTask;
@@ -483,9 +484,15 @@ public final class FoliaCore extends JavaPlugin {
         registerCommandSafe("unlimited", miscAdminCmd);
         registerCommandSafe("rest", miscAdminCmd);
         registerCommandSafe("warpinfo", miscAdminCmd);
+
+        // Command Proxies (FC & CMI)
+        FcCommandExecutor fcExecutor = new FcCommandExecutor(this);
+        registerCommandSafe("fc", fcExecutor);
+        registerCommandSafe("cmi", fcExecutor);
     }
 
     private void registerCommandSafe(String name, org.bukkit.command.CommandExecutor executor) {
+        commandExecutors.put(name.toLowerCase(java.util.Locale.ROOT), executor);
         // Modern Paper API: use registerCommand() with BasicCommand wrapper
         try {
             final org.bukkit.command.Command bridgeCommand = new org.bukkit.command.Command(name) {
@@ -505,6 +512,20 @@ public final class FoliaCore extends JavaPlugin {
         } catch (Exception e) {
             getLogger().warning("Failed to register command '" + name + "': " + e.getMessage());
         }
+    }
+
+    public org.bukkit.command.CommandExecutor getCommandExecutor(String name) {
+        return commandExecutors.get(name.toLowerCase(java.util.Locale.ROOT));
+    }
+
+    public boolean executeCommandProxy(String commandName, org.bukkit.command.CommandExecutor executor, CommandSender sender, String[] args) {
+        org.bukkit.command.Command dummyCommand = new org.bukkit.command.Command(commandName) {
+            @Override
+            public boolean execute(CommandSender s, String label, String[] subArgs) {
+                return false;
+            }
+        };
+        return executeRegisteredCommand(commandName, executor, sender, dummyCommand, commandName, args);
     }
 
     private boolean executeRegisteredCommand(String commandName,
