@@ -31,7 +31,20 @@ public class ConfigManager {
             "status", "ping", "clearchat",
             "antiraid",
             "vanish", "socialspy", "staffchat", "sc",
-            "scoreboard", "sidebar"
+            "scoreboard", "sidebar",
+            "balance", "bal", "pay", "eco", "sell", "worth",
+            "jail", "unjail", "setjail", "deljail", "jails",
+            "discord", "link", "unlink", "discordbroadcast",
+            "ignore", "unignore", "ignorelist",
+            "powertool", "pt",
+            "ptime",
+            "pweather",
+            "rules",
+            "antioch", "beezooka", "fireball", "lightning", "nuke", "spawnmob",
+            "balancetop", "paytoggle", "payconfirmtoggle", "setworth",
+            "msgtoggle", "rtoggle",
+            "jailedplayers",
+            "afk", "compass", "enchant", "exp", "ext", "firework", "jump", "kickall", "kittycannon", "list", "me", "more", "motd", "near", "tpoffline", "playtime", "potion", "recipe", "remove", "renamehome", "rest", "seen", "settpr", "showkit", "editsign", "skull", "speed", "sudo", "suicide", "tempbanip", "banip", "unbanip", "thunder", "tpall", "tpauto", "tpacancel", "tpo", "tpohere", "tppos", "tpr", "tptoggle", "tree", "unlimited", "warpinfo", "toggleshout", "anvil", "grindstone", "loom", "smithingtable", "stonecutter", "cartographytable"
     };
 
     private final FoliaCore plugin;
@@ -53,6 +66,9 @@ public class ConfigManager {
     public boolean sidebarEnabled;
     public boolean antiRaidEnabled;
     public boolean securityEnabled;
+    public boolean economyEnabled;
+    public boolean jailsEnabled;
+    public boolean discordEnabled;
 
     // System settings
     public boolean maintenanceMode;
@@ -234,6 +250,9 @@ public class ConfigManager {
         sidebarEnabled = config.getBoolean("modules.sidebar", true);
         antiRaidEnabled = config.getBoolean("modules.antiraid", true);
         securityEnabled = config.getBoolean("modules.security", true);
+        economyEnabled = config.getBoolean("modules.economy", true);
+        jailsEnabled = config.getBoolean("modules.jails", true);
+        discordEnabled = config.getBoolean("modules.discord", true);
     }
 
     private void loadSystemSettings() {
@@ -322,6 +341,9 @@ public class ConfigManager {
     public boolean isUtilityEnabled() { return utilityEnabled; }
     public boolean isTabEnabled() { return tabEnabled; }
     public boolean isSidebarEnabled() { return sidebarEnabled; }
+    public boolean isEconomyEnabled() { return economyEnabled; }
+    public boolean isJailsEnabled() { return jailsEnabled; }
+    public boolean isDiscordEnabled() { return discordEnabled; }
 
     // System settings
     public boolean isMaintenanceMode() { return maintenanceMode; }

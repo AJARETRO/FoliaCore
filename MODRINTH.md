@@ -1,205 +1,102 @@
-# FoliaCore v5.6 Blue Nightingale
+# ✨ FoliaCore v5.8 BloodyMary
 
-FoliaCore is a Folia-first essentials and administration plugin for Minecraft servers that want one clean toolkit instead of many separate add-ons. It blends player convenience, staff utilities, teleports, moderation, visual polish, and permission control into a single package that feels intentionally built for regionalized servers.
+FoliaCore is a Folia-first essentials and administration suite for Minecraft servers that want a single polished toolkit instead of a pile of separate plugins. It is built from the ground up for regionalized runtime behavior, multi-threaded safety, visual flair, and day-to-day convenience without dragging in a heavy dependency stack.
 
-## Why server owners choose it
+This release, **v5.8 BloodyMary**, is a massive expansion that upgrades the plugin into a complete, native Essentials suite, adding 70+ commands, a unified flat-file/MySQL storage layer, a lightweight built-in Discord Bot gateway, and full integration with the **VaultUnlocked** economy API fork.
 
-FoliaCore is made for servers that want the essentials experience without the usual clutter.
+---
 
-- Built for Folia from the ground up.
-- Modern Paper command registration.
-- Modular feature toggles in `config.yml`.
-- Separate permission nodes for nearly every command.
-- Dynamic per-warp and per-kit access control.
-- A visually rich tab/sidebar blueprint in `tab-sidebar.yml`.
-- Modrinth update checks for easy release tracking.
-- No Vault economy layer, so the focus stays on gameplay, administration, and polish.
+## 💙 Why Use FoliaCore
 
-## Why it feels better to use
+FoliaCore exists because modern servers need more than a bunch of legacy Spigot/Paper commands with a Folia patch on top. A good essentials suite should feel alive, organized, and thread-safe under the server model it runs on.
 
-The difference is not just technical. It is practical.
+### Key Features:
+*   **Folia-Native Scheduling:** All tick-reliant operations (like projectile explosions, item interactions, block edits) run on location/entity regional threads via the `FoliaScheduler`.
+*   **Unified Multi-Engine Storage:** Supports flat-file/YAML caches and a remote MySQL database utilizing HikariCP connection pooling for multi-server synchronization.
+*   **VaultUnlocked Economy:** Native integration with the VaultUnlocked API fork for regional economy balances.
+*   **Lightweight Discord Gateway:** Dynamic chat linking and server broadcasts utilizing Java's native WebSockets and HTTP/JSON APIs (zero heavy external dependencies).
+*   **Modular Architecture:** Every module (economy, jails, discord, etc.) can be toggled on/off in `config.yml`.
+*   **Granular Permissions:** Sane permission structures for every single command.
 
-Players get fast access to homes, warps, kits, chat tools, mail, teleport requests, and small quality-of-life commands that reduce friction without turning the server into a plugin maze.
+---
 
-Staff get moderation, vanish, social spy, inventory tools, repair tools, time and weather control, anti-raid support, and clean access to the tools they actually need.
+## 🚀 Quick Start
 
-Developers and operators get something even more important: permission nodes that are easy to audit, easy to grant, and easy to document.
+1. Put the `folia_core-v5.8-BloodyMary.jar` in your server `plugins/` folder.
+2. Start the server on Folia with Java 21.
+3. Configure `plugins/FoliaCore/config.yml` to specify your storage type (`yaml` or `mysql`) and toggle modules.
+4. Assign permissions to players or groups using your permission manager.
 
-The new `/foliacore help` command also filters the command list by your permissions so staff and players can discover the tools they actually have.
-The `/foliacore reload` command is included for operators who want to refresh configuration without restarting.
+---
 
-## What is new in v5.6
+## 📟 Command & Permission Reference
 
-This release updates the plugin branding to v5.6 Blue Nightingale and formalizes the permission tree in the plugin metadata. The result is a cleaner release story and a more complete server-side permission setup.
+### 1. Economy Module
+| Command | Permission | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `/balance` | `foliacore.balance` | `true` | View player balance. |
+| `/balancetop` | `foliacore.balancetop` | `true` | View top balances. |
+| `/pay` | `foliacore.pay` | `true` | Send money to another player. |
+| `/paytoggle` | `foliacore.paytoggle` | `true` | Toggle accepting payments. |
+| `/payconfirmtoggle` | `foliacore.payconfirmtoggle` | `true` | Toggle payment confirmation. |
+| `/eco` | `foliacore.eco` | `false` | Admin economy management (give, take, set). |
+| `/sell` | `foliacore.sell` | `true` | Sell held items. |
+| `/worth` | `foliacore.worth` | `true` | Inspect item price. |
+| `/setworth` | `foliacore.setworth` | `false` | Set item price. |
 
-Notable changes:
+### 2. Jail Module
+| Command | Permission | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `/jail` | `foliacore.jail` | `false` | Jails a player. |
+| `/unjail` | `foliacore.unjail` | `false` | Unjails a player. |
+| `/setjail` | `foliacore.setjail` | `false` | Sets a jail location. |
+| `/deljail` | `foliacore.deljail` | `false` | Deletes a jail location. |
+| `/jails` | `foliacore.jails` | `true` | Lists jail locations. |
+| `/jailedplayers` | `foliacore.jailedplayers` | `false` | Lists jailed players. |
 
-- Added a permission gate for `/kit`.
-- Added a permission-aware `/foliacore help` command and a `/foliacore version` command.
-- Added a `/foliacore reload` command for quick configuration refreshes.
-- Declared all core permission defaults in `paper-plugin.yml`.
-- Updated the runtime banner to v5.6.
-- Standardized the release version across the build files.
-- Reworked the docs so operators and developers can scan them quickly.
+### 3. Thor, Projectiles & Explosives
+| Command | Permission | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `/antioch` | `foliacore.antioch` | `false` | Spawns active TNT at crosshairs. |
+| `/beezooka` | `foliacore.beezooka` | `false` | Shoots an exploding bee. |
+| `/fireball` | `foliacore.fireball` | `false` | Fires projectiles (fireball, snowballs, eggs, etc.). |
+| `/lightning` | `foliacore.lightning` | `false` | Strikes lightning at crosshairs. |
+| `/nuke` | `foliacore.nuke` | `false` | Spawns a rain of primed TNT. |
+| `/spawnmob` | `foliacore.spawnmob` | `false` | Spawns a mob type. |
+| `/kittycannon` | `foliacore.kittycannon` | `false` | Launches an exploding ocelot. |
+| `/tree` | `foliacore.tree` | `false` | Spawns a tree type. |
+| `/remove` | `foliacore.remove` | `false` | Butchering cleanup utility. |
 
-## Installation
+### 4. Discord Integration
+| Command | Permission | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `/discord` | `foliacore.discord` | `true` | View Discord information. |
+| `/link` | `foliacore.link` | `true` | Links Minecraft account to Discord. |
+| `/unlink` | `foliacore.unlink` | `true` | Unlinks Minecraft account from Discord. |
+| `/discordbroadcast` | `foliacore.discordbroadcast` | `false` | Broadcasts message to Discord channel. |
 
-1. Download the release jar.
-2. Put it in `plugins/`.
-3. Start the server once on Folia with Java 21.
-4. Edit `plugins/FoliaCore/config.yml` to enable or disable the systems you want.
-5. Edit `plugins/FoliaCore/tab-sidebar.yml` if you want the animated visual stack.
-6. Assign permissions per group or per player.
+### 5. Chat Filters & Ignores
+| Command | Permission | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `/ignore` | `foliacore.ignore` | `true` | Ignores a player's messages. |
+| `/unignore` | `foliacore.unignore` | `true` | Unignores a player. |
+| `/ignorelist` | `foliacore.ignorelist` | `true` | List ignored players. |
+| `/msgtoggle` | `foliacore.msgtoggle` | `true` | Blocks incoming private messages. |
+| `/rtoggle` | `foliacore.rtoggle` | `true` | Toggles message reply target filter. |
 
-## Permission design
+### 6. Worktable GUIs
+| Command | Permission | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `/anvil` | `foliacore.anvil` | `true` | Opens virtual anvil. |
+| `/grindstone` | `foliacore.grindstone` | `true` | Opens virtual grindstone. |
+| `/loom` | `foliacore.loom` | `true` | Opens virtual loom. |
+| `/smithingtable` | `foliacore.smithingtable` | `true` | Opens virtual smithing table. |
+| `/stonecutter` | `foliacore.stonecutter` | `true` | Opens virtual stonecutter. |
+| `/cartographytable` | `foliacore.cartographytable` | `true` | Opens virtual cartography table. |
 
-The plugin follows a simple rule set.
-
-- Player-friendly commands default to `true`.
-- Staff, admin, destructive, or high-impact commands default to `false`.
-- Warp and kit access can be narrowed further with individual nodes.
-
-### Important patterns
-
-- `/warp` can be granted globally with `foliacore.warp.all`.
-- Specific warps can be granted with `foliacore.warp.<warpname>`.
-- `/kit` uses `foliacore.kit`.
-- Kits created by staff generate their own node, such as `foliacore.kit.<kitname>`.
-- Kit creation and deletion stay on `foliacore.kit.admin`.
-
-## Command and permission reference
-
-### Core and information
-
-| Command | Permission node(s) | Default |
-| --- | --- | --- |
-| `/foliacore`, `/foliacore help` | `foliacore.help` | `true` |
-| `/foliacore reload` | `foliacore.reload` | `false` |
-| `/foliacore version` | `foliacore.version` | `true` |
-
-### Social and chat
-
-| Command | Permission node(s) | Default |
-| --- | --- | --- |
-| `/msg` | `foliacore.msg` | `true` |
-| `/reply` | `foliacore.reply` | `true` |
-| `/mail` | `foliacore.mail.send`, `foliacore.mail.read`, `foliacore.mail.clear` | mixed |
-| `/nick` | `foliacore.nick`, `foliacore.nick.color` | mixed |
-| `/realname` | `foliacore.realname` | `true` |
-| `/block` | `foliacore.block` | `true` |
-| `/unblock` | `foliacore.unblock` | `true` |
-| `/chat` | `foliacore.chat.global`, `foliacore.chat.world`, `foliacore.chat.regional` | `true` |
-| `/mute` | `foliacore.mute` | `false` |
-| `/unmute` | `foliacore.unmute` | `false` |
-| `/socialspy` | `foliacore.socialspy` | `false` |
-| `/staffchat`, `/sc` | `foliacore.staffchat` | `false` |
-
-### Teleport and travel
-
-| Command | Permission node(s) | Default |
-| --- | --- | --- |
-| `/sethome` | `foliacore.sethome` | `true` |
-| `/home` | `foliacore.home` | `true` |
-| `/homes` | `foliacore.homes.list` | `true` |
-| `/delhome` | `foliacore.delhome` | `true` |
-| `/tpa` | `foliacore.tpa` | `true` |
-| `/tpahere` | `foliacore.tpahere` | `true` |
-| `/tpaccept` | `foliacore.tpaccept` | `true` |
-| `/tpdeny` | `foliacore.tpdeny` | `true` |
-| `/spawn` | `foliacore.spawn` | `true` |
-| `/back` | `foliacore.back` | `true` |
-| `/warp` | `foliacore.warp.all`, `foliacore.warp.<warpname>` | mixed |
-| `/warps` | `foliacore.warps.list` | `true` |
-| `/setwarp` | `foliacore.setwarp` | `false` |
-| `/delwarp` | `foliacore.delwarp` | `false` |
-| `/setspawn` | `foliacore.setspawn` | `false` |
-| `/setfirstspawn` | `foliacore.setfirstspawn` | `false` |
-| `/tp` | `foliacore.tp`, `foliacore.tp.others` | `false` |
-| `/tphere` | `foliacore.tphere` | `false` |
-| `/gps` | `foliacore.gps` | `true` |
-
-### Teams and kits
-
-| Command | Permission node(s) | Default |
-| --- | --- | --- |
-| `/team` | `foliacore.team.create`, `foliacore.team.disband`, `foliacore.team.invite`, `foliacore.team.accept`, `foliacore.team.leave`, `foliacore.team.kick` | `true` |
-| `/kit` | `foliacore.kit` | `true` |
-| `/createkit` | `foliacore.kit.admin` | `false` |
-| `/delkit` | `foliacore.kit.admin` | `false` |
-
-### Utility and staff tools
-
-| Command | Permission node(s) | Default |
-| --- | --- | --- |
-| `/calc` | `foliacore.calc` | `true` |
-| `/trash`, `/dispose` | `foliacore.trash` | `true` |
-| `/workbench`, `/wb` | `foliacore.workbench` | `true` |
-| `/hat` | `foliacore.hat` | `true` |
-| `/enderchest`, `/ec` | `foliacore.enderchest`, `foliacore.enderchest.others` | mixed |
-| `/ping` | `foliacore.ping`, `foliacore.ping.others` | mixed |
-| `/scoreboard`, `/sidebar` | `foliacore.scoreboard.toggle` | `true` |
-| `/feed` | `foliacore.feed`, `foliacore.feed.others` | mixed |
-| `/fly` | `foliacore.fly`, `foliacore.fly.others` | mixed |
-| `/heal` | `foliacore.heal`, `foliacore.heal.others` | mixed |
-| `/god` | `foliacore.god`, `foliacore.god.others` | mixed |
-| `/repair` | `foliacore.repair`, `foliacore.repair.all`, `foliacore.repair.others`, `foliacore.repair.others.all` | mixed |
-| `/give` | `foliacore.give` | `false` |
-| `/clear` | `foliacore.clear`, `foliacore.clear.others` | mixed |
-| `/invsee` | `foliacore.invsee` | `false` |
-| `/gamemode`, `/gms`, `/gmc`, `/gma`, `/gmsp` | `foliacore.gamemode`, `foliacore.gamemode.others` | mixed |
-
-### Administration and control
-
-| Command | Permission node(s) | Default |
-| --- | --- | --- |
-| `/broadcast` | `foliacore.broadcast` | `false` |
-| `/time` | `foliacore.time` | `false` |
-| `/weather` | `foliacore.weather` | `false` |
-| `/status` | `foliacore.status` | `false` |
-| `/clearchat` | `foliacore.clearchat`, `foliacore.clearchat.bypass` | mixed |
-| `/vanish` | `foliacore.vanish` | `false` |
-| `/antiraid` | `foliacore.admin.antiraid` | `false` |
-| `/ban` | `foliacore.ban`, `foliacore.ban.exempt` | mixed |
-| `/tempban` | `foliacore.tempban`, `foliacore.ban.exempt` | mixed |
-| `/unban` | `foliacore.unban` | `false` |
-| `/kick` | `foliacore.kick`, `foliacore.kick.exempt` | mixed |
-| `/mute` | `foliacore.mute` | `false` |
-| `/unmute` | `foliacore.unmute` | `false` |
-| `/marker` | `foliacore.marker.set`, `foliacore.marker.delete`, `foliacore.marker.list` | `false` |
-
-## Visual systems
-
-`tab-sidebar.yml` is the optional visual blueprint for server owners who want more than plain text.
-
-It covers:
-
-- Tab header and footer animation.
-- Sidebar layouts and line control.
-- Nametags, belowname, bossbars, and ping spoofing.
-- Fonts, sprites, placeholders, and output formatting.
-- Toggle persistence for per-player visual settings.
-
-## For developers and server admins
-
-FoliaCore is clean to reason about because the code is split across clear surfaces:
-
-- `FoliaCore.java` handles registration.
-- Command classes enforce permission checks.
-- Managers handle persistence and runtime logic.
-- The plugin descriptor now publishes the permission defaults directly.
-
-That makes the plugin easier to audit, easier to document, and easier to grant to the right people.
-
-## Sponsor & Contributor Help
-
-TrueCloud Hosting sponsors FoliaCore.
-
-- Pricing: $0.50 per GB RAM.
-- Contact for more details: +8801989208751.
-- If someone wants to help as a contributor, send them here.
-
-## Final note
-
-If you want a Folia-friendly essentials suite that is practical first and polished second, FoliaCore is built for exactly that space.
-
-Enjoy the release, and shape the server around it.
+### 7. IP Ban Management
+| Command | Permission | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `/banip` | `foliacore.banip` | `false` | IP bans a player. |
+| `/tempbanip` | `foliacore.tempbanip` | `false` | Temporarily IP bans a player. |
+| `/unbanip` | `foliacore.unbanip` | `false` | Revokes an IP ban. |

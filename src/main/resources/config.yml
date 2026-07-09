@@ -12,6 +12,9 @@ modules:
   utility: true
   tab: true
   sidebar: true
+  economy: true
+  jails: true
+  discord: true
 
 # System Settings
 system:
@@ -85,3 +88,35 @@ sidebar:
       - "&7Ping: &b%player_ping%ms"
     method-6:
       - "&7Coords: &f%x% &7/&f%y% &7/&f%z%"
+
+# Unified Storage System Settings
+storage:
+  # Available types: yaml, mysql
+  type: yaml
+  mysql:
+    host: localhost
+    port: 3306
+    database: minecraft
+    username: root
+    password: ""
+    ssl: false
+
+# Economy Module Settings
+economy:
+  default-balance: 1000.0
+
+# Discord Bot Gateway Settings
+discord:
+  bot-token: "YOUR_DISCORD_BOT_TOKEN_HERE"
+  channel-id: "YOUR_DISCORD_CHANNEL_ID_HERE"
+  enabled: false
+
+# Rules Module Settings
+rules:
+  - "&61. &fBe respectful to other players."
+  - "&62. &fNo cheating, hacking, or exploiting."
+  - "&63. &fNo griefing or stealing in protected areas."
+  - "&64. &fDo not spam or advertise in chat."
+  - "&65. &fHave fun and play fair!"
+
+

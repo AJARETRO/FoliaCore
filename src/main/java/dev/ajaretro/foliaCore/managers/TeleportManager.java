@@ -343,4 +343,52 @@ public class TeleportManager {
 
         return null;
     }
+
+    private final ConcurrentHashMap<UUID, Boolean> autoAccept = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<UUID, Boolean> tpToggle = new ConcurrentHashMap<>();
+    private int minTprRange = 100;
+    private int maxTprRange = 5000;
+
+    public boolean toggleAutoAccept(UUID uuid) {
+        return autoAccept.compute(uuid, (k, v) -> v == null || !v);
+    }
+
+    public boolean isAutoAcceptEnabled(UUID uuid) {
+        return autoAccept.getOrDefault(uuid, false);
+    }
+
+    public boolean toggleTpToggle(UUID uuid) {
+        return tpToggle.compute(uuid, (k, v) -> v == null || !v);
+    }
+
+    public boolean isTpToggleDisabled(UUID uuid) {
+        return tpToggle.getOrDefault(uuid, false);
+    }
+
+    public int getMinTprRange() {
+        return minTprRange;
+    }
+
+    public void setMinTprRange(int val) {
+        this.minTprRange = val;
+    }
+
+    public int getMaxTprRange() {
+        return maxTprRange;
+    }
+
+    public void setMaxTprRange(int val) {
+        this.maxTprRange = val;
+    }
+
+    public void renameHome(UUID uuid, String oldName, String newName) {
+        var homes = playerHomes.get(uuid);
+        if (homes != null) {
+            Home h = homes.remove(oldName.toLowerCase());
+            if (h != null) {
+                homes.put(newName.toLowerCase(), h);
+                saveData();
+            }
+        }
+    }
 }

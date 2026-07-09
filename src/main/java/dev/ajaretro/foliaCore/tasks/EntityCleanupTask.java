@@ -1,11 +1,15 @@
 package dev.ajaretro.foliaCore.tasks;
 
 import dev.ajaretro.foliaCore.FoliaCore;
-import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Monster;
+import org.bukkit.entity.Player;
+import java.util.Arrays;
 
 /**
  * Entity cleanup task that runs per-region in Folia.
@@ -24,13 +28,13 @@ public class EntityCleanupTask {
         long intervalTicks = (long) intervalSeconds * 20;
         long intervalMillis = intervalTicks * 50L; // 1 tick = 50ms
 
-        // Run on global async scheduler at fixed rate (interval converted to ms)
+        // Run on global async scheduler at fixed rate to check performance
         Bukkit.getAsyncScheduler().runAtFixedRate(plugin, (task) -> {
-            cleanupRegion();
+            cleanupRegionsIfLagging();
         }, intervalMillis, intervalMillis, java.util.concurrent.TimeUnit.MILLISECONDS);
     }
 
-    private void cleanupRegion() {
+    private void cleanupRegionsIfLagging() {
         if (!plugin.getConfigManager().isEntityCleanupEnabled()) {
             return;
         }
@@ -45,38 +49,53 @@ public class EntityCleanupTask {
             return;
         }
 
-        plugin.getLogger().info("Low TPS detected (" + String.format("%.2f", tps) + "). Running entity cleanup...");
+        plugin.getLogger().warning("Low TPS detected (" + String.format("%.2f", tps) + "). Dispatching region-safe entity cleanups...");
 
-        for (org.bukkit.World world : Bukkit.getWorlds()) {
-            cleanupWorld(world);
-        }
-    }
+        // Safely dispatch tasks to region threads centered on online players
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.getScheduler().run(plugin, (task) -> {
+                if (!player.isOnline()) return;
 
-    private void cleanupWorld(org.bukkit.World world) {
-        int itemsRemoved = 0;
-        int mobsRemoved = 0;
+                Location loc = player.getLocation();
+                World world = loc.getWorld();
+                Chunk centerChunk = loc.getChunk();
+                int radius = 3; // Scan 7x7 grid centered around the player's region
 
-        for (Entity entity : world.getEntities()) {
-            // Remove ground items
-            if (entity instanceof Item) {
-                Item item = (Item) entity;
-                if (item.getTicksLived() > 300) { // 15 seconds
-                    item.remove();
-                    itemsRemoved++;
+                int itemsRemoved = 0;
+                int mobsRemoved = 0;
+
+                for (int dx = -radius; dx <= radius; dx++) {
+                    for (int dz = -radius; dz <= radius; dz++) {
+                        int cx = centerChunk.getX() + dx;
+                        int cz = centerChunk.getZ() + dz;
+
+                        if (world.isChunkLoaded(cx, cz)) {
+                            Chunk targetChunk = world.getChunkAt(cx, cz);
+                            for (Entity entity : targetChunk.getEntities()) {
+                                if (entity instanceof Item) {
+                                    Item item = (Item) entity;
+                                    if (item.getTicksLived() > 300) { // 15 seconds
+                                        item.remove();
+                                        itemsRemoved++;
+                                    }
+                                } else if (entity instanceof Monster) {
+                                    long monsterCount = Arrays.stream(targetChunk.getEntities())
+                                            .filter(e -> e instanceof Monster)
+                                            .count();
+                                    if (monsterCount > 25) { // Prevent entity crowding in active region
+                                        entity.remove();
+                                        mobsRemoved++;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-            }
-            // Remove excess hostile mobs
-            else if (entity instanceof Monster) {
-                // Keep friendly mobs, remove some hostile ones
-                if (world.getEntities().stream().filter(e -> e instanceof Monster).count() > 100) {
-                    entity.remove();
-                    mobsRemoved++;
-                }
-            }
-        }
 
-        if (itemsRemoved > 0 || mobsRemoved > 0) {
-            plugin.getLogger().info("Cleaned " + world.getName() + ": " + itemsRemoved + " items, " + mobsRemoved + " mobs");
+                if (itemsRemoved > 0 || mobsRemoved > 0) {
+                    plugin.getLogger().info("Cleaned region around " + player.getName() + " (" + world.getName() + "): " + itemsRemoved + " items, " + mobsRemoved + " mobs");
+                }
+            }, null);
         }
     }
 

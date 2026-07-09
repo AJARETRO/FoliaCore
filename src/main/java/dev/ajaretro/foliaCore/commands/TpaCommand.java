@@ -46,6 +46,17 @@ public class TpaCommand implements CommandExecutor {
             return true;
         }
 
+        if (plugin.getTeleportManager().isTpToggleDisabled(target.getUniqueId())) {
+            plugin.getMessenger().sendError(player, target.getName() + " is not accepting teleport requests.");
+            return true;
+        }
+
+        if (plugin.getTeleportManager().isAutoAcceptEnabled(target.getUniqueId())) {
+            plugin.getMessenger().sendSuccess(player, "Teleport request auto-accepted. Teleporting...");
+            plugin.getTeleportManager().startTeleport(player, target.getLocation(), "Teleported to " + target.getName());
+            return true;
+        }
+
         plugin.getTeleportManager().createTpaRequest(player.getUniqueId(), target.getUniqueId(), TeleportManager.TpaType.TPA);
         plugin.getMessenger().sendSuccess(player, "Teleport request sent to " + target.getName() + ".");
 

@@ -45,6 +45,21 @@ public class MsgCommand implements CommandExecutor {
             return true;
         }
 
+        if (plugin.getIgnoreManager().isIgnoring(target.getUniqueId(), player.getUniqueId())) {
+            plugin.getMessenger().sendError(sender, "This player has ignored you.");
+            return true;
+        }
+
+        if (plugin.getIgnoreManager().isIgnoring(player.getUniqueId(), target.getUniqueId())) {
+            plugin.getMessenger().sendError(sender, "You are ignoring this player.");
+            return true;
+        }
+
+        if (plugin.getChatManager().isMsgDisabled(target.getUniqueId())) {
+            plugin.getMessenger().sendError(sender, target.getName() + " has private messages disabled.");
+            return true;
+        }
+
         if (plugin.getChatManager().isBlocked(player.getUniqueId(), target.getUniqueId())) {
             plugin.getMessenger().sendError(sender, "You cannot message this player as they have you blocked.");
             return true;

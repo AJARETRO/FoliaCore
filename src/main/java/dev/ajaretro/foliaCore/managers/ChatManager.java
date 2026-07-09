@@ -277,4 +277,33 @@ public class ChatManager {
     public Map<UUID, String> getAllNicknames() {
         return nicknames;
     }
+
+    private final ConcurrentHashMap<UUID, Boolean> msgToggles = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<UUID, Boolean> replyToggles = new ConcurrentHashMap<>();
+
+    public boolean toggleMsg(UUID uuid) {
+        return msgToggles.compute(uuid, (k, v) -> v == null || !v);
+    }
+
+    public boolean isMsgDisabled(UUID uuid) {
+        return msgToggles.getOrDefault(uuid, false);
+    }
+
+    public boolean toggleReplyToggle(UUID uuid) {
+        return replyToggles.compute(uuid, (k, v) -> v == null || !v);
+    }
+
+    public boolean isReplyToggleDisabled(UUID uuid) {
+        return replyToggles.getOrDefault(uuid, false);
+    }
+
+    private final ConcurrentHashMap<UUID, Boolean> shoutToggles = new ConcurrentHashMap<>();
+
+    public boolean toggleShout(UUID uuid) {
+        return shoutToggles.compute(uuid, (k, v) -> v == null || !v);
+    }
+
+    public boolean isShoutEnabled(UUID uuid) {
+        return shoutToggles.getOrDefault(uuid, false);
+    }
 }

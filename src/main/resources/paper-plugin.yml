@@ -1,5 +1,5 @@
 name: FoliaCore
-version: 'v5.7-deathwish'
+version: 'v5.8-BloodyMary'
 main: dev.ajaretro.foliaCore.FoliaCore
 api-version: '1.21'
 prefix: "AJA_R3TR0_FoliaCore"
@@ -7,6 +7,12 @@ authors: [ AJA RETRO ]
 description: The essential plugin suite, rebuilt natively for Folia.
 website: ajaretro.dev
 folia-supported: true
+
+dependencies:
+  server:
+    Vault:
+      load: BEFORE
+      required: false
 
 # Commands are registered programmatically in FoliaCore.java
 # See registerCommands() method for runtime command registration

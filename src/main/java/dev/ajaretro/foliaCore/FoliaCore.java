@@ -1,11 +1,12 @@
 package dev.ajaretro.foliaCore;
 
 import dev.ajaretro.foliaCore.tasks.EntityCleanupTask;
-import dev.ajaretro.foliaCore.tasks.AutoBroadcasterTask;
+import dev.ajaretro.foliaCore.tasks.AutoBroadcaster;
 import dev.ajaretro.foliaCore.commands.*;
 import dev.ajaretro.foliaCore.listeners.*;
 import dev.ajaretro.foliaCore.managers.*;
 import dev.ajaretro.foliaCore.utils.Messenger;
+import dev.ajaretro.foliaCore.storage.StorageManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bstats.bukkit.Metrics;
@@ -35,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * - Staff utilities and performance monitoring
  * 
  * @author AJARETRO
- * @version v5.7 Deathwish
+ * @version v5.8 BloodyMary
  */
 public final class FoliaCore extends JavaPlugin {
 
@@ -61,12 +62,20 @@ public final class FoliaCore extends JavaPlugin {
     private SpawnManager spawnManager;
     private AntiRaidManager antiRaidManager;
 
+    // Storage and New systems
+    private StorageManager storageManager;
+    private EconomyManager economyManager;
+    private JailManager jailManager;
+    private DiscordManager discordManager;
+    private IgnoreManager ignoreManager;
+    private PowertoolManager powertoolManager;
+
     // God mode state
     private final ConcurrentHashMap<UUID, Boolean> godModePlayers = new ConcurrentHashMap<>();
 
     // Tasks
     private EntityCleanupTask entityCleanupTask;
-    private AutoBroadcasterTask autoBroadcasterTask;
+    private AutoBroadcaster autoBroadcaster;
     private ModrinthUpdateChecker updateChecker;
 
     private final ThreadLocal<Integer> commandActionDepth = ThreadLocal.withInitial(() -> 0);
@@ -78,6 +87,9 @@ public final class FoliaCore extends JavaPlugin {
         // Load config FIRST
         this.configManager = new ConfigManager(this);
         this.configManager.load();
+
+        this.storageManager = new StorageManager(this);
+        this.storageManager.init();
 
         this.messenger = new Messenger("&l[ &4AJA_RETRO/&3FoliaCore&f ]");
         this.updateChecker = new ModrinthUpdateChecker(this);
@@ -109,6 +121,12 @@ public final class FoliaCore extends JavaPlugin {
         this.banManager = new BanManager(this);
         this.antiRaidManager = new AntiRaidManager(this);
 
+        this.economyManager = new EconomyManager(this);
+        this.jailManager = new JailManager(this);
+        this.discordManager = new DiscordManager(this);
+        this.ignoreManager = new IgnoreManager(this);
+        this.powertoolManager = new PowertoolManager(this);
+
         // Initialize feature managers conditionally
         if (configManager.chatEnabled) {
             this.chatManager = new ChatManager(this);
@@ -136,8 +154,9 @@ public final class FoliaCore extends JavaPlugin {
             this.entityCleanupTask = new EntityCleanupTask(this);
             this.entityCleanupTask.start();
             
-            this.autoBroadcasterTask = new AutoBroadcasterTask(this);
-            this.autoBroadcasterTask.start();
+            this.autoBroadcaster = new AutoBroadcaster(this);
+            this.autoBroadcaster.load();
+            this.autoBroadcaster.start();
             
             getLogger().info("System tasks started.");
         }
@@ -171,6 +190,13 @@ public final class FoliaCore extends JavaPlugin {
         if (antiRaidManager != null) antiRaidManager.saveData();
         if (spawnManager != null) spawnManager.saveData();
 
+        if (configManager.isEconomyEnabled() && economyManager != null) economyManager.saveData();
+        if (configManager.isJailsEnabled() && jailManager != null) jailManager.saveData();
+        if (configManager.isDiscordEnabled() && discordManager != null) discordManager.shutdown();
+        if (ignoreManager != null) ignoreManager.saveData();
+        if (powertoolManager != null) powertoolManager.saveData();
+        if (storageManager != null) storageManager.shutdown();
+
         getLogger().info("FoliaCore shutdown sequence completed.");
     }
 
@@ -186,6 +212,12 @@ public final class FoliaCore extends JavaPlugin {
         if (antiRaidManager != null) antiRaidManager.load();
         if (banManager != null) banManager.load();
         if (spawnManager != null) spawnManager.load();
+
+        if (configManager.isEconomyEnabled() && economyManager != null) economyManager.load();
+        if (configManager.isJailsEnabled() && jailManager != null) jailManager.load();
+        if (configManager.isDiscordEnabled() && discordManager != null) discordManager.load();
+        if (ignoreManager != null) ignoreManager.load();
+        if (powertoolManager != null) powertoolManager.load();
     }
 
     private void registerListeners() {
@@ -218,7 +250,8 @@ public final class FoliaCore extends JavaPlugin {
             pm.registerEvents(new SecurityListener(this), this);
         }
         pm.registerEvents(new GodModeListener(this), this);
-        pm.registerEvents(new MaintenanceListener(this), this);
+        pm.registerEvents(new PowertoolListener(this), this);
+        pm.registerEvents(new JailListener(this), this);
     }
 
     private void registerCommands() {
@@ -320,6 +353,136 @@ public final class FoliaCore extends JavaPlugin {
         registerCommandSafe("foliacore", new FoliaCoreCommand(this));
         registerCommandSafe("scoreboard", new ScoreboardToggleCommand(this));
         registerCommandSafe("sidebar", new ScoreboardToggleCommand(this));
+
+        if (configManager.isEconomyEnabled()) {
+            registerCommandSafe("balance", new BalanceCommand(this));
+            registerCommandSafe("bal", new BalanceCommand(this));
+            registerCommandSafe("pay", new PayCommand(this));
+            registerCommandSafe("eco", new EcoCommand(this));
+            registerCommandSafe("sell", new SellCommand(this));
+            registerCommandSafe("worth", new WorthCommand(this));
+        }
+
+        if (configManager.isJailsEnabled()) {
+            registerCommandSafe("jail", new JailCommand(this));
+            registerCommandSafe("unjail", new UnjailCommand(this));
+            registerCommandSafe("setjail", new SetJailCommand(this));
+            registerCommandSafe("deljail", new DelJailCommand(this));
+            registerCommandSafe("jails", new JailsCommand(this));
+        }
+
+        if (configManager.isDiscordEnabled()) {
+            registerCommandSafe("discord", new DiscordCommand(this));
+            registerCommandSafe("link", new LinkCommand(this));
+            registerCommandSafe("unlink", new UnlinkCommand(this));
+            registerCommandSafe("discordbroadcast", new DiscordBroadcastCommand(this));
+        }
+
+        registerCommandSafe("ignore", new IgnoreCommand(this));
+        registerCommandSafe("unignore", new UnignoreCommand(this));
+        registerCommandSafe("ignorelist", new IgnoreListCommand(this));
+        registerCommandSafe("powertool", new PowertoolCommand(this));
+        registerCommandSafe("pt", new PowertoolCommand(this));
+        registerCommandSafe("ptime", new PTimeCommand(this));
+        registerCommandSafe("pweather", new PWeatherCommand(this));
+        registerCommandSafe("rules", new RulesCommand(this));
+
+        // Thor / Explosives / Projectiles
+        ThorExplosivesCommand thorCmd = new ThorExplosivesCommand(this);
+        registerCommandSafe("antioch", thorCmd);
+        registerCommandSafe("beezooka", thorCmd);
+        registerCommandSafe("fireball", thorCmd);
+        registerCommandSafe("lightning", thorCmd);
+        registerCommandSafe("nuke", thorCmd);
+        registerCommandSafe("spawnmob", thorCmd);
+        registerCommandSafe("kittycannon", thorCmd);
+        registerCommandSafe("tree", thorCmd);
+        registerCommandSafe("remove", thorCmd);
+
+        // Economy Utilities
+        EconomyUtilsCommand ecoUtils = new EconomyUtilsCommand(this);
+        registerCommandSafe("balancetop", ecoUtils);
+        registerCommandSafe("paytoggle", ecoUtils);
+        registerCommandSafe("payconfirmtoggle", ecoUtils);
+        registerCommandSafe("setworth", ecoUtils);
+
+        // Ignore & Reply Filters
+        IgnoreReplyFiltersCommand ignoreReplyCmd = new IgnoreReplyFiltersCommand(this);
+        registerCommandSafe("msgtoggle", ignoreReplyCmd);
+        registerCommandSafe("rtoggle", ignoreReplyCmd);
+
+        // Jail Secondary
+        JailSecondaryCommand jailSecCmd = new JailSecondaryCommand(this);
+        registerCommandSafe("jailedplayers", jailSecCmd);
+
+        // Client & Server Environment
+        ClientServerCommand clientServerCmd = new ClientServerCommand(this);
+        registerCommandSafe("afk", clientServerCmd);
+        registerCommandSafe("compass", clientServerCmd);
+        registerCommandSafe("enchant", clientServerCmd);
+        registerCommandSafe("exp", clientServerCmd);
+        registerCommandSafe("ext", clientServerCmd);
+        registerCommandSafe("firework", clientServerCmd);
+        registerCommandSafe("jump", clientServerCmd);
+        registerCommandSafe("kickall", clientServerCmd);
+        registerCommandSafe("list", clientServerCmd);
+        registerCommandSafe("me", clientServerCmd);
+        registerCommandSafe("more", clientServerCmd);
+        registerCommandSafe("motd", clientServerCmd);
+        registerCommandSafe("near", clientServerCmd);
+        registerCommandSafe("seen", clientServerCmd);
+        registerCommandSafe("skull", clientServerCmd);
+        registerCommandSafe("speed", clientServerCmd);
+        registerCommandSafe("sudo", clientServerCmd);
+        registerCommandSafe("suicide", clientServerCmd);
+        registerCommandSafe("editsign", clientServerCmd);
+        registerCommandSafe("thunder", clientServerCmd);
+        registerCommandSafe("potion", clientServerCmd);
+        registerCommandSafe("recipe", clientServerCmd);
+        registerCommandSafe("playtime", clientServerCmd);
+
+        // Teleport Utilities
+        TeleportUtilsCommand tpUtilsCmd = new TeleportUtilsCommand(this);
+        registerCommandSafe("tpoffline", tpUtilsCmd);
+        registerCommandSafe("settpr", tpUtilsCmd);
+        registerCommandSafe("renamehome", tpUtilsCmd);
+        registerCommandSafe("tpall", tpUtilsCmd);
+        registerCommandSafe("tpauto", tpUtilsCmd);
+        registerCommandSafe("tpacancel", tpUtilsCmd);
+        registerCommandSafe("tpo", tpUtilsCmd);
+        registerCommandSafe("tpohere", tpUtilsCmd);
+        registerCommandSafe("tppos", tpUtilsCmd);
+        registerCommandSafe("tpr", tpUtilsCmd);
+        registerCommandSafe("tptoggle", tpUtilsCmd);
+
+        // Worktable GUIs
+        InventoryGuisCommand invGuisCmd = new InventoryGuisCommand(this);
+        registerCommandSafe("anvil", invGuisCmd);
+        registerCommandSafe("grindstone", invGuisCmd);
+        registerCommandSafe("loom", invGuisCmd);
+        registerCommandSafe("smithingtable", invGuisCmd);
+        registerCommandSafe("stonecutter", invGuisCmd);
+        registerCommandSafe("cartographytable", invGuisCmd);
+
+        // Kit Info
+        KitInfoCommand kitInfoCmd = new KitInfoCommand(this);
+        registerCommandSafe("showkit", kitInfoCmd);
+
+        // Chat Shout Mode
+        ChatShoutCommand shoutCmd = new ChatShoutCommand(this);
+        registerCommandSafe("toggleshout", shoutCmd);
+
+        // IP Ban Commands
+        IpBanCommand ipBanCmd = new IpBanCommand(this);
+        registerCommandSafe("banip", ipBanCmd);
+        registerCommandSafe("tempbanip", ipBanCmd);
+        registerCommandSafe("unbanip", ipBanCmd);
+
+        // Miscellaneous Admin Commands (instantiates and registers event listener inside constructor)
+        MiscAdminCommand miscAdminCmd = new MiscAdminCommand(this);
+        registerCommandSafe("unlimited", miscAdminCmd);
+        registerCommandSafe("rest", miscAdminCmd);
+        registerCommandSafe("warpinfo", miscAdminCmd);
     }
 
     private void registerCommandSafe(String name, org.bukkit.command.CommandExecutor executor) {
@@ -475,7 +638,7 @@ public final class FoliaCore extends JavaPlugin {
                 LegacyComponentSerializer.legacyAmpersand().deserialize("")
         );
         Bukkit.getConsoleSender().sendMessage(
-            LegacyComponentSerializer.legacyAmpersand().deserialize("&l&6   ✦ &b&lFOLIACORE &3v5.7-deathwish&b&l DEATHWISH &6✦")
+            LegacyComponentSerializer.legacyAmpersand().deserialize("&l&6   ✦ &b&lFOLIACORE &3v5.8-BloodyMary&b&l BLOODYMARY &6✦")
         );
         Bukkit.getConsoleSender().sendMessage(
                 LegacyComponentSerializer.legacyAmpersand().deserialize("&f   Folia-Native Essentials Suite")
@@ -528,6 +691,12 @@ public final class FoliaCore extends JavaPlugin {
     public SocialSpyManager getSocialSpyManager() { return socialSpyManager; }
     public SpawnManager getSpawnManager() { return spawnManager; }
     public ModrinthUpdateChecker getUpdateChecker() { return updateChecker; }
+    public StorageManager getStorageManager() { return storageManager; }
+    public EconomyManager getEconomyManager() { return economyManager; }
+    public JailManager getJailManager() { return jailManager; }
+    public DiscordManager getDiscordManager() { return discordManager; }
+    public IgnoreManager getIgnoreManager() { return ignoreManager; }
+    public PowertoolManager getPowertoolManager() { return powertoolManager; }
 
     public boolean toggleGodMode(UUID playerUUID) {
         return godModePlayers.compute(playerUUID, (k, v) -> v == null || !v);

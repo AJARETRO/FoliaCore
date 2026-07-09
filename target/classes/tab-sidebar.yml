@@ -1,10 +1,10 @@
-# FoliaCore Blue Nightingale Visual Blueprint
+# FoliaCore BloodyMary Visual Blueprint
 #
 # This file is a premium-style visual system template for servers that want a
 # dedicated tab/sidebar configuration surface. It is written as a blueprint for
 # an advanced manager such as AdvancedDisplayManager.
 
-version: "v-3.2-Blue-Nightingale"
+version: "v5.8-BloodyMary"
 
 database:
   mysql-enabled: true

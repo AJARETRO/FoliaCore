@@ -47,13 +47,23 @@ public class ChatListener implements Listener {
             }
         });
 
+        // Filter out viewers who have ignored or blocked the sender
+        event.viewers().removeIf(audience -> {
+            if (audience instanceof Player) {
+                Player viewer = (Player) audience;
+                return plugin.getIgnoreManager().isIgnoring(viewer.getUniqueId(), player.getUniqueId()) ||
+                       chatManager.isBlocked(viewer.getUniqueId(), player.getUniqueId());
+            }
+            return false;
+        });
+
         if (!chatManager.isChatRangesEnabled()) {
             return;
         }
 
         String messageString = plugin.getMessenger().componentToString(event.originalMessage());
         String globalPrefix = chatManager.getGlobalPrefix();
-        boolean isGlobal = false;
+        boolean isGlobal = chatManager.isShoutEnabled(player.getUniqueId());
 
         if (messageString.startsWith(globalPrefix)) {
             String messageWithoutPrefix = messageString.substring(globalPrefix.length()).trim();
