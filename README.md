@@ -1,35 +1,34 @@
-# ✨ FoliaCore v5.9 Ragnarok
+# FoliaCore v6.0-Ragnarok
 
-FoliaCore is a Folia-first essentials and administration suite for Minecraft servers that want a single polished toolkit instead of a pile of separate plugins. It is built from the ground up for regionalized runtime behavior, multi-threaded safety, visual flair, and day-to-day convenience without dragging in a heavy dependency stack.
+FoliaCore is an essentials and administration suite built specifically for Folia servers. Instead of running multiple separate plugins, it consolidates core utilities into a single toolkit designed from the ground up for multi-threaded safety and regionalized performance.
 
-This release, **v5.9 Ragnarok**, is a massive expansion that upgrades the plugin into a complete, native Essentials suite, featuring 160+ commands, a unified flat-file/MySQL storage layer, a lightweight built-in Discord Bot gateway, and full integration with the **VaultUnlocked** economy API fork.
+The **v6.0-Ragnarok** release features integrated command modules, a dual storage layer (YAML and MySQL), an optional lightweight Discord bridge, and native VaultUnlocked economy integration.
 
 ---
 
-## 💙 Why Use FoliaCore
+## Why FoliaCore?
 
-FoliaCore exists because modern servers need more than a bunch of legacy Spigot/Paper commands with a Folia patch on top. A good essentials suite should feel alive, organized, and thread-safe under the server model it runs on.
+Minecraft servers running Folia require utilities that are thread-safe and region-aware. FoliaCore avoids legacy synchronous scheduling blocking and schedules operations appropriately across region threads.
 
 ### Key Features:
-*   **Folia-Native Scheduling:** All tick-reliant operations (like projectile explosions, item interactions, block edits) run on location/entity regional threads via the `FoliaScheduler`.
-*   **Unified Multi-Engine Storage:** Supports flat-file/YAML caches and a remote MySQL database utilizing HikariCP connection pooling for multi-server synchronization.
-*   **VaultUnlocked Economy:** Asynchronous database calls wrap around VaultUnlocked for lag-free payments.
-*   **Lightweight Discord Gateway:** Dynamic chat linking and server broadcasts utilizing native WebSockets.
-*   **Modular Toggles:** Easily enable or disable modules in `config.yml`.
-*   **160+ Built-In Commands:** Complete command dictionary covering all server needs.
+*   **Folia-Native Scheduling:** Actions like projectile teleports, item interactions, and block checks run safely on regional threads using a custom `FoliaScheduler`.
+*   **Multi-Engine Storage:** Supports local YAML file storage and MySQL database backends (with HikariCP connection pooling) for synchronizing data across multiple server instances.
+*   **VaultUnlocked Economy:** Native integration with the VaultUnlocked economy API fork with asynchronous transaction queries.
+*   **Built-in Discord Bridge:** WebSockets-based chat synchronization and server status broadcasting with minimal resource overhead.
+*   **Modular Control:** Turn individual feature modules on or off inside the configuration file.
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
-1. Put the `folia_core-v6.0-Ragnarok.jar` in your server `plugins/` folder.
-2. Start the server on Folia with Java 21.
-3. Configure `plugins/FoliaCore/config.yml` to specify your storage type (`yaml` or `mysql`) and toggle modules.
-4. Assign permissions to players or groups using your permission manager.
+1. Place the `folia_core-v6.0-Ragnarok.jar` inside your server's `plugins/` directory.
+2. Run your server using Folia and Java 21.
+3. Edit `plugins/FoliaCore/config.yml` to set your database storage type and toggle features.
+4. Set up permissions in your preferred permission manager.
 
 ---
 
-## 📟 Comprehensive Command & Permission Reference (160+ Commands)
+## Command & Permission Reference (160+ Commands)
 
 ### 📌 Teleport & Coordinates Modules
 

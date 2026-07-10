@@ -1,17 +1,17 @@
-# 📊 FoliaCore vs Legacy Essential Plugins
+# FoliaCore vs Legacy Plugins
 
-This document provides a comprehensive comparison between **FoliaCore v5.8** and traditional essential plugins (such as **EssentialsX** or **CMI**) on Folia servers.
+This document compares FoliaCore v6.0-Ragnarok and legacy essentials plugins on a regionalized server framework (like Folia).
 
 | Aspect | Legacy Plugins (Spigot/Paper) | FoliaCore (Folia-Native) |
 | :--- | :--- | :--- |
-| **Scheduler Compliance** | ❌ Block tick thread, causing crashes on Folia. | ✅ Regionalized scheduler, 100% thread-safe. |
-| **Storage Architecture** | ❌ Flat-file per-player locks. | ✅ Unified YAML/MySQL storage using HikariCP. |
-| **Economy Engine** | ❌ Sync-dependent Vault operations. | ✅ Asynchronous VaultUnlocked integration. |
-| **Lightweight Integrations** | ❌ Large dependency jars (e.g. JDA). | ✅ Lightweight HTTP/WebSocket gateway APIs. |
-| **Admin Controls** | ⚠️ Global locks and synchronized lists. | ✅ Location-aware culling and chunk management. |
+| **Scheduler Compliance** | Sync-dependent Bukkit scheduler, causing thread warnings or exceptions on Folia. | Region-aware scheduler, processing tasks on chunk threads. |
+| **Storage Architecture** | Flat-file locks per-player. | Dual YAML and MySQL backend storage with HikariCP connection pooling. |
+| **Economy Engine** | Synchronous Vault calls that block tick loops. | Asynchronous VaultUnlocked transaction wrappers. |
+| **Discord Bot Integration** | Heavy library stacks (like JDA) running on main threads. | Lightweight WebSocket and HTTP calls with zero heavy dependencies. |
+| **Area Actions** | Global checks that span loaded regions. | Location-aware regional tasks matching player region loops. |
 
 ---
 
-## ⚡ Why Choose FoliaCore?
+## Technical Performance
 
-If you are running a **Folia** server, running legacy plugins will result in server crashes, chunk-thread lockups, and database pool blockages. FoliaCore utilizes Paper's modern asynchronous APIs and Folia's regional schedulers to future-proof your server performance.
+Folia separates chunk ticking into distinct region threads. Standard plugins written for single-threaded Spigot/Paper can cause performance spikes or instability when running commands, accessing player data, or performing teleports. FoliaCore scheduling conforms to Folia's regional lifecycle, protecting stability and avoiding thread-lock issues.
