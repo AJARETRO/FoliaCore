@@ -463,3 +463,12 @@ Minecraft servers running Folia require utilities that are thread-safe and regio
 
 For support, custom developments, or other inquiries, contact AJA RETRO:
 *   **WhatsApp:** +8801989208751
+
+---
+
+## 📦 AJA RETRO Plugin Suite
+*   [DeMalware-RETRO](https://modrinth.com/mod/demalware-retro) - Advanced JVM agent early-boot malware protection scanner.
+*   [CircuitBreaker](https://modrinth.com/mod/circuitbreaker) - Dynamic lag machine culler and entity optimizer.
+*   [FoliaCore](https://modrinth.com/mod/folia-core) - Multi-threaded native essentials suite built for Folia.
+*   [RetroWorldPurger](https://modrinth.com/plugin/retroworldpurger) - Automatic region file purger and storage optimizer.
+*   [RetroMail](https://modrinth.com/plugin/retromail) - High-performance SMTP server integration for mail delivery.
