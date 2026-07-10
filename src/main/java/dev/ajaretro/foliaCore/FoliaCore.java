@@ -172,8 +172,30 @@ public final class FoliaCore extends JavaPlugin {
             this.updateChecker.checkForUpdates();
         }
 
+        // Check for DeMalware-RETRO active agent
+        if (System.getProperty("demalware.agent.active") == null) {
+            Bukkit.getConsoleSender().sendMessage(
+                LegacyComponentSerializer.legacyAmpersand().deserialize("&l&4==================================================")
+            );
+            Bukkit.getConsoleSender().sendMessage(
+                LegacyComponentSerializer.legacyAmpersand().deserialize("&l&c[FoliaCore] [SECURITY] WARNING: DeMalware-RETRO is not installed or early-boot protection is inactive!")
+            );
+            Bukkit.getConsoleSender().sendMessage(
+                LegacyComponentSerializer.legacyAmpersand().deserialize("&l&c[FoliaCore] [SECURITY] Please install it to protect your server from malicious plugins and backdoors.")
+            );
+            Bukkit.getConsoleSender().sendMessage(
+                LegacyComponentSerializer.legacyAmpersand().deserialize("&l&c[FoliaCore] [SECURITY] Modrinth: https://modrinth.com/mod/demalware-retro")
+            );
+            Bukkit.getConsoleSender().sendMessage(
+                LegacyComponentSerializer.legacyAmpersand().deserialize("&l&c[FoliaCore] [SECURITY] GitHub: https://github.com/AJARETRO/DeMalware-RETRO")
+            );
+            Bukkit.getConsoleSender().sendMessage(
+                LegacyComponentSerializer.legacyAmpersand().deserialize("&l&4==================================================")
+            );
+        }
+
         Bukkit.getConsoleSender().sendMessage(
-                LegacyComponentSerializer.legacyAmpersand().deserialize("&l&4[FoliaCore] &aPlugin initialized successfully! &7(Backend: REGIONIZED)")
+                LegacyComponentSerializer.legacyAmpersand().deserialize("&l&a[FoliaCore] Plugin initialized successfully! &7(Backend: REGIONIZED)")
         );
     }
 
