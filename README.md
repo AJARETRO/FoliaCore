@@ -459,10 +459,11 @@ Minecraft servers running Folia require utilities that are thread-safe and regio
 
 ---
 
-## 📞 Contact & Support
+## 💬 Contact & Custom Quotes
 
-For support, custom developments, or other inquiries, contact AJA RETRO:
-*   **WhatsApp:** +8801989208751
+Need direct support or looking to quote a custom plugin? We design and build everything from **lightweight server utility plugins** up to **high-concurrency enterprise-grade server systems**:
+*   🟢 **WhatsApp:** [+880 1989-208751](https://wa.me/8801989208751)
+*   ✉️ **Quotes & Support:** Get in touch directly on WhatsApp for dedicated support, licensing, or custom software inquiries.
 
 ---
 
