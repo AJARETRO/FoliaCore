@@ -15,3 +15,11 @@ This document compares FoliaCore v6.0-Ragnarok and legacy essentials plugins on 
 ## Technical Performance
 
 Folia separates chunk ticking into distinct region threads. Standard plugins written for single-threaded Spigot/Paper can cause performance spikes or instability when running commands, accessing player data, or performing teleports. FoliaCore scheduling conforms to Folia's regional lifecycle, protecting stability and avoiding thread-lock issues.
+
+---
+
+## 💬 Contact & Custom Quotes
+
+Need direct support or looking to quote a custom plugin? We design and build everything from **lightweight server utility plugins** up to **high-concurrency enterprise-grade server systems**:
+*   🟢 **WhatsApp:** [+880 1989-208751](https://wa.me/8801989208751)
+*   ✉️ **Quotes & Support:** Get in touch directly on WhatsApp for dedicated support, licensing, or custom software inquiries.
